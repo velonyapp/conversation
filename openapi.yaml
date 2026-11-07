@@ -1,0 +1,564 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ConversationService API
+    description: The Conversation Service provides APIs for managing conversations, participants, and messages.
+    version: 0.0.1
+servers:
+    - url: https://api.velony.app
+paths:
+    /v1/conversations:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_ListConversations
+            parameters:
+                - name: pageSize
+                  in: query
+                  description: "The maximum number of conversations to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 20 conversations will be returned.\r\n The maximum value is 50; values above 50 will be coerced to 50."
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  description: "A page token, received from a previous `ListConversations` call.\r\n Provide this to retrieve the subsequent page.\r\n\r\n When paginating, all other parameters provided to `ListConversations` must match\r\n the call that provided the page token."
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ListConversationsResponse'
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_CreateConversation
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+    /v1/conversations/{conversation}:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_GetConversation
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+        delete:
+            tags:
+                - ConversationService
+            operationId: ConversationService_DeleteConversation
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        patch:
+            tags:
+                - ConversationService
+            operationId: ConversationService_UpdateConversation
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: updateMask
+                  in: query
+                  description: The list of fields to be updated.
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+    /v1/conversations/{conversation}/messages:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_ListMessages
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  description: "The maximum number of messages to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 50 messages will be returned.\r\n The maximum value is 200; values above 200 will be coerced to 200."
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  description: "A page token, received from a previous `ListMessages` call.\r\n Provide this to retrieve the subsequent page.\r\n\r\n When paginating, all other parameters provided to `ListMessages` must match\r\n the call that provided the page token."
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ListMessagesResponse'
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_CreateMessage
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.Message'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.Message'
+    /v1/conversations/{conversation}/messages/{message}:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_GetMessage
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: message
+                  in: path
+                  description: The message id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.Message'
+        delete:
+            tags:
+                - ConversationService
+            operationId: ConversationService_DeleteMessage
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: message
+                  in: path
+                  description: The message id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        patch:
+            tags:
+                - ConversationService
+            operationId: ConversationService_UpdateMessage
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: message
+                  in: path
+                  description: The message id.
+                  required: true
+                  schema:
+                    type: string
+                - name: updateMask
+                  in: query
+                  description: The list of fields to be updated.
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.Message'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.Message'
+    /v1/conversations/{conversation}/messages:batchGet:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_BatchGetMessages
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: names
+                  in: query
+                  description: "The names of the messages to retrieve.\r\n A maximum of 200 messages can be retrieved in a batch.\r\n Format: conversations/{conversation}/messages/{message}"
+                  schema:
+                    type: array
+                    items:
+                        type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.BatchGetMessagesResponse'
+    /v1/conversations/{conversation}/users:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_ListConversationUsers
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  description: "The maximum number of conversation users to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 50 conversation users will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  description: "A page token, received from a previous `ListConversationUsers` call.\r\n Provide this to retrieve the subsequent page.\r\n\r\n When paginating, all other parameters provided to `ListConversationUsers` must match\r\n the call that provided the page token."
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ListConversationUsersResponse'
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_CreateConversationUser
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
+    /v1/conversations/{conversation}/users/{user}:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_GetConversationUser
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
+        delete:
+            tags:
+                - ConversationService
+            operationId: ConversationService_DeleteConversationUser
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/conversations/{conversation}/users:batchGet:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_BatchGetConversationUsers
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: names
+                  in: query
+                  description: "The names of the conversation users to retrieve.\r\n A maximum of 100 conversation users can be retrieved in a batch.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+                  schema:
+                    type: array
+                    items:
+                        type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.BatchGetConversationUsersResponse'
+    /v1/conversations:batchGet:
+        get:
+            tags:
+                - ConversationService
+            operationId: ConversationService_BatchGetConversations
+            parameters:
+                - name: names
+                  in: query
+                  description: "The names of the conversation to retrieve.\r\n A maximum of 100 conversation can be retrieved in a batch.\r\n Format: conversations/{conversation}"
+                  schema:
+                    type: array
+                    items:
+                        type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.BatchGetConversationsResponse'
+components:
+    schemas:
+        velony.conversation.api.v1.BatchGetConversationUsersResponse:
+            type: object
+            properties:
+                conversationUsers:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
+                    description: Conversation users requested.
+        velony.conversation.api.v1.BatchGetConversationsResponse:
+            type: object
+            properties:
+                conversations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+                    description: Conversations requested.
+        velony.conversation.api.v1.BatchGetMessagesResponse:
+            type: object
+            properties:
+                messages:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.conversation.api.v1.Message'
+                    description: Messages requested.
+        velony.conversation.api.v1.Conversation:
+            required:
+                - title
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The resource name of the conversation.\r\n Format: conversations/{conversation}"
+                title:
+                    type: string
+                    description: "The title of the conversation.\r\n Must contain between 1 and 100 characters."
+                description:
+                    type: string
+                    description: "The description of the conversation.\r\n Must not exceed 2000 characters."
+                lastMessage:
+                    readOnly: true
+                    type: string
+                    description: "The most recent message in the conversation, if any.\r\n Format: conversations/{conversation}/messages/{message}"
+                createTime:
+                    readOnly: true
+                    type: string
+                    description: The time when the conversation was created.
+                    format: date-time
+                updateTime:
+                    readOnly: true
+                    type: string
+                    description: The time when the conversation was last updated.
+                    format: date-time
+        velony.conversation.api.v1.ConversationUser:
+            required:
+                - user
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The resource name of the conversation user.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+                user:
+                    type: string
+                    description: "The user associated with the conversation.\r\n Format: users/{user}"
+                role:
+                    readOnly: true
+                    type: integer
+                    description: The user's role in the conversation.
+                    format: enum
+                createTime:
+                    readOnly: true
+                    type: string
+                    description: The time when the user joined the conversation.
+                    format: date-time
+                updateTime:
+                    readOnly: true
+                    type: string
+                    description: The time when the user's role in the conversation was last changed.
+                    format: date-time
+        velony.conversation.api.v1.ListConversationUsersResponse:
+            type: object
+            properties:
+                conversationUsers:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
+                    description: The conversation users from the specified conversation.
+                nextPageToken:
+                    type: string
+                    description: "A token, which can be sent as `page_token` to retrieve the next page.\r\n If this field is omitted, there are no subsequent pages."
+        velony.conversation.api.v1.ListConversationsResponse:
+            type: object
+            properties:
+                conversations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+                    description: The conversation users from the currently authenticated user.
+                nextPageToken:
+                    type: string
+                    description: "A token, which can be sent as `page_token` to retrieve the next page.\r\n If this field is omitted, there are no subsequent pages."
+        velony.conversation.api.v1.ListMessagesResponse:
+            type: object
+            properties:
+                messages:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.conversation.api.v1.Message'
+                    description: The messages from the specified conversation.
+                nextPageToken:
+                    type: string
+                    description: "A token, which can be sent as `page_token` to retrieve the next page.\r\n If this field is omitted, there are no subsequent pages."
+        velony.conversation.api.v1.Message:
+            required:
+                - content
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The resource name of the message.\r\n Format: conversations/{conversation}/messages/{message}"
+                user:
+                    readOnly: true
+                    type: string
+                    description: "The author of the message, if they still exist.\r\n Format: users/{user}"
+                content:
+                    type: string
+                    description: "The content of the message.\r\n Must not exceed 65536 characters."
+                createTime:
+                    readOnly: true
+                    type: string
+                    description: The time when the message was sent.
+                    format: date-time
+                updateTime:
+                    readOnly: true
+                    type: string
+                    description: The time when the message was last edited.
+                    format: date-time
+tags:
+    - name: ConversationService

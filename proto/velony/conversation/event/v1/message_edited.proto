@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package velony.conversation.event.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/conversation/gen/event/v1;eventv1";
+
+message MessageEditedPayload {
+  string                    message_id      = 1;
+  string                    conversation_id = 2;
+  optional string           user_id         = 3;
+  string                    content         = 4;
+  google.protobuf.Timestamp edit_time       = 5;
+  uint32                    version         = 6;
+}

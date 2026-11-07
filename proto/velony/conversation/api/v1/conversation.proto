@@ -1,0 +1,585 @@
+syntax = "proto3";
+
+package velony.conversation.api.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/conversation/gen/api/v1;apiv1";
+
+// The Conversation Service provides APIs for managing conversations, participants, and messages.
+service ConversationService {
+  option (google.api.default_host) = "api.velony.app";
+
+  rpc GetConversation(GetConversationRequest) returns (Conversation) {
+    option (google.api.http) = {
+      get: "/v1/{name=conversations/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc ListConversations(ListConversationsRequest) returns (ListConversationsResponse) {
+    option (google.api.http) = {
+      get: "/v1/conversations"
+    };
+  }
+
+  rpc BatchGetConversations(BatchGetConversationsRequest) returns (BatchGetConversationsResponse) {
+    option (google.api.http) = {
+      get: "/v1/conversations:batchGet"
+    };
+  }
+
+  rpc CreateConversation(CreateConversationRequest) returns (Conversation) {
+    option (google.api.http) = {
+      post: "/v1/conversations"
+      body: "conversation"
+    };
+    option (google.api.method_signature) = "conversation";
+  }
+
+  rpc UpdateConversation(UpdateConversationRequest) returns (Conversation) {
+    option (google.api.http) = {
+      patch: "/v1/{conversation.name=conversations/*}"
+      body : "conversation"
+    };
+    option (google.api.method_signature) = "conversation,update_mask";
+  }
+
+  rpc DeleteConversation(DeleteConversationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=conversations/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc GetConversationUser(GetConversationUserRequest) returns (ConversationUser) {
+    option (google.api.http) = {
+      get: "/v1/{name=conversations/*/users/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc ListConversationUsers(ListConversationUsersRequest) returns (ListConversationUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=conversations/*}/users"
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  rpc BatchGetConversationUsers(BatchGetConversationUsersRequest) returns (BatchGetConversationUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=conversations/*}/users:batchGet"
+    };
+  }
+
+  rpc CreateConversationUser(CreateConversationUserRequest) returns (ConversationUser) {
+    option (google.api.http) = {
+      post: "/v1/{parent=conversations/*}/users"
+      body: "conversation_user"
+    };
+    option (google.api.method_signature) = "parent,conversation_user";
+  }
+
+  rpc DeleteConversationUser(DeleteConversationUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=conversations/*/users/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc GetMessage(GetMessageRequest) returns (Message) {
+    option (google.api.http) = {
+      get: "/v1/{name=conversations/*/messages/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc ListMessages(ListMessagesRequest) returns (ListMessagesResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=conversations/*}/messages"
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  rpc BatchGetMessages(BatchGetMessagesRequest) returns (BatchGetMessagesResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=conversations/*}/messages:batchGet"
+    };
+  }
+
+  rpc CreateMessage(CreateMessageRequest) returns (Message) {
+    option (google.api.http) = {
+      post: "/v1/{parent=conversations/*}/messages"
+      body: "message"
+    };
+    option (google.api.method_signature) = "parent,message";
+  }
+
+  rpc UpdateMessage(UpdateMessageRequest) returns (Message) {
+    option (google.api.http) = {
+      patch: "/v1/{message.name=conversations/*/messages/*}"
+      body : "message"
+    };
+    option (google.api.method_signature) = "message,update_mask";
+  }
+
+  rpc DeleteMessage(DeleteMessageRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=conversations/*/messages/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+}
+
+message Conversation {
+  option (google.api.resource) = {
+    type    : "api.velony.app/Conversation"
+    pattern : "conversations/{conversation}"
+    singular: "conversation"
+    plural  : "conversations"
+  };
+
+  // The resource name of the conversation.
+  // Format: conversations/{conversation}
+  string name = 1 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
+
+  // The title of the conversation.
+  // Must contain between 1 and 100 characters.
+  string title = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The description of the conversation.
+  // Must not exceed 2000 characters.
+  string description = 3 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // The most recent message in the conversation, if any.
+  // Format: conversations/{conversation}/messages/{message}
+  optional string last_message = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Message"
+    }
+  ];
+
+  // The time when the conversation was created.
+  google.protobuf.Timestamp create_time = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
+
+  // The time when the conversation was last updated.
+  google.protobuf.Timestamp update_time = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}
+
+message ConversationUser {
+  enum Role {
+    ROLE_UNSPECIFIED = 0;
+
+    OWNER  = 1;
+    ADMIN  = 2;
+    MEMBER = 3;
+  }
+
+  option (google.api.resource) = {
+    type    : "api.velony.app/ConversationUser"
+    pattern : "conversations/{conversation}/users/{conversation_user}"
+    singular: "conversationUser"
+    plural  : "conversationUsers"
+  };
+
+  // The resource name of the conversation user.
+  // Format: conversations/{conversation}/users/{conversation_user}
+  string name = 1 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
+
+  // The user associated with the conversation.
+  // Format: users/{user}
+  string user = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.field_behavior) = IMMUTABLE,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+
+  // The user's role in the conversation.
+  Role role = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+
+  // The time when the user joined the conversation.
+  google.protobuf.Timestamp create_time = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
+
+  // The time when the user's role in the conversation was last changed.
+  google.protobuf.Timestamp update_time = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}
+
+message Message {
+  option (google.api.resource) = {
+    type    : "api.velony.app/Message"
+    pattern : "conversations/{conversation}/messages/{message}"
+    singular: "message"
+    plural  : "messages"
+  };
+
+  // The resource name of the message.
+  // Format: conversations/{conversation}/messages/{message}
+  string name = 1 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
+
+  // The author of the message, if they still exist.
+  // Format: users/{user}
+  optional string user = 2 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+
+  // The content of the message.
+  // Must not exceed 65536 characters.
+  string content = 3 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The time when the message was sent.
+  google.protobuf.Timestamp create_time = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
+
+  // The time when the message was last edited.
+  google.protobuf.Timestamp update_time = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}
+
+message GetConversationRequest {
+  // The name of the conversation to retrieve.
+  // Format: conversations/{conversation}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+}
+
+message ListConversationsRequest {
+  // The maximum number of conversations to return. The service may return fewer than
+  // this value.
+  // If unspecified, at most 20 conversations will be returned.
+  // The maximum value is 50; values above 50 will be coerced to 50.
+  int32 page_size = 1 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // A page token, received from a previous `ListConversations` call.
+  // Provide this to retrieve the subsequent page.
+  //
+  // When paginating, all other parameters provided to `ListConversations` must match
+  // the call that provided the page token.
+  string page_token = 2 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+}
+
+message ListConversationsResponse {
+  // The conversation users from the currently authenticated user.
+  repeated Conversation conversations = 1;
+
+  // A token, which can be sent as `page_token` to retrieve the next page.
+  // If this field is omitted, there are no subsequent pages.
+  string next_page_token = 2;
+}
+
+message BatchGetConversationsRequest {
+  // The names of the conversation to retrieve.
+  // A maximum of 100 conversation can be retrieved in a batch.
+  // Format: conversations/{conversation}
+  repeated string names = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+}
+
+message BatchGetConversationsResponse {
+  // Conversations requested.
+  repeated Conversation conversations = 1;
+}
+
+message CreateConversationRequest {
+  // The conversation to create.
+  Conversation conversation = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message UpdateConversationRequest {
+  // The conversation to update.
+  //
+  // The conversation's `name` field is used to identify the conversation to be updated.
+  // Format: conversations/{conversation}
+  Conversation conversation = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The list of fields to be updated.
+  google.protobuf.FieldMask update_mask = 2 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+}
+
+message DeleteConversationRequest {
+  // The name of the conversation to delete.
+  // Format: conversations/{conversation}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+}
+
+message GetConversationUserRequest {
+  // The name of the conversation user to retrieve.
+  // Format: conversations/{conversation}/users/{conversation_user}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/ConversationUser"
+    }
+  ];
+}
+
+message ListConversationUsersRequest {
+  // The parent, which owns this collection of conversation users.
+  // Format: conversations/{conversation}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+
+  // The maximum number of conversation users to return. The service may return fewer than
+  // this value.
+  // If unspecified, at most 50 conversation users will be returned.
+  // The maximum value is 100; values above 100 will be coerced to 100.
+  int32 page_size = 2 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // A page token, received from a previous `ListConversationUsers` call.
+  // Provide this to retrieve the subsequent page.
+  //
+  // When paginating, all other parameters provided to `ListConversationUsers` must match
+  // the call that provided the page token.
+  string page_token = 3 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+}
+
+message ListConversationUsersResponse {
+  // The conversation users from the specified conversation.
+  repeated ConversationUser conversation_users = 1;
+
+  // A token, which can be sent as `page_token` to retrieve the next page.
+  // If this field is omitted, there are no subsequent pages.
+  string next_page_token = 2;
+}
+
+message BatchGetConversationUsersRequest {
+  // The parent resource shared by all conversation users being retrieved.
+  // Format: conversations/{conversation}
+  // If this is set, the parent of all of the conversation users specified in `names`
+  // must match this field.
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+
+  // The names of the conversation users to retrieve.
+  // A maximum of 100 conversation users can be retrieved in a batch.
+  // Format: conversations/{conversation}/users/{conversation_user}
+  repeated string names = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/ConversationUser"
+    }
+  ];
+}
+
+message BatchGetConversationUsersResponse {
+  // Conversation users requested.
+  repeated ConversationUser conversation_users = 1;
+}
+
+message CreateConversationUserRequest {
+  // The parent resource where this conversation user will be created.
+  // Format: conversations/{conversation}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+
+  // The conversation user to create.
+  ConversationUser conversation_user = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message DeleteConversationUserRequest {
+  // The name of the conversation user to delete.
+  // Format: conversations/{conversation}/users/{conversation_user}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/ConversationUser"
+    }
+  ];
+}
+
+message GetMessageRequest {
+  // The name of the message to retrieve.
+  // Format: conversations/{conversation}/messages/{message}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Message"
+    }
+  ];
+}
+
+message ListMessagesRequest {
+  // The parent, which owns this collection of messages.
+  // Format: conversations/{conversation}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+
+  // The maximum number of messages to return. The service may return fewer than
+  // this value.
+  // If unspecified, at most 50 messages will be returned.
+  // The maximum value is 200; values above 200 will be coerced to 200.
+  int32 page_size = 2 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // A page token, received from a previous `ListMessages` call.
+  // Provide this to retrieve the subsequent page.
+  //
+  // When paginating, all other parameters provided to `ListMessages` must match
+  // the call that provided the page token.
+  string page_token = 3 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+}
+
+message ListMessagesResponse {
+  // The messages from the specified conversation.
+  repeated Message messages = 1;
+
+  // A token, which can be sent as `page_token` to retrieve the next page.
+  // If this field is omitted, there are no subsequent pages.
+  string next_page_token = 2;
+}
+
+message BatchGetMessagesRequest {
+  // The parent resource shared by all messages being retrieved.
+  // Format: conversations/{conversation}
+  // If this is set, the parent of all of the messages specified in `names`
+  // must match this field.
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+
+  // The names of the messages to retrieve.
+  // A maximum of 200 messages can be retrieved in a batch.
+  // Format: conversations/{conversation}/messages/{message}
+  repeated string names = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Message"
+    }
+  ];
+}
+
+message BatchGetMessagesResponse {
+  // Messages requested.
+  repeated Message messages = 1;
+}
+
+message CreateMessageRequest {
+  // The parent resource where this message will be created.
+  // Format: conversations/{conversation}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+
+  // The message to create.
+  Message message = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message UpdateMessageRequest {
+  // The message to update.
+  //
+  // The message's `name` field is used to identify the message to be updated.
+  // Format: conversations/{conversation}/messages/{message}
+  Message message = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The list of fields to be updated.
+  google.protobuf.FieldMask update_mask = 2 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+}
+
+message DeleteMessageRequest {
+  // The name of the message to delete.
+  // Format: messages/{message}/messages/{message}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Message"
+    }
+  ];
+}
