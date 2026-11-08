@@ -15,7 +15,7 @@ func NewConversationUserPolicy() *ConversationUserPolicy {
 	return &ConversationUserPolicy{}
 }
 
-func (p *ConversationUserPolicy) CanTransferOwnershipToOther(conversationUser, other *entity.ConversationUser) error {
+func (p *ConversationUserPolicy) CanElectOther(conversationUser, other *entity.ConversationUser) error {
 	if conversationUser.ID().Equal(other.ID()) {
 		return errors.New("")
 	}
@@ -30,7 +30,7 @@ func (p *ConversationUserPolicy) CanTransferOwnershipToOther(conversationUser, o
 	return errors.New("")
 }
 
-func (p *ConversationUserPolicy) CanPromoteOtherToAdmin(conversationUser, other *entity.ConversationUser) error {
+func (p *ConversationUserPolicy) CanPromoteOther(conversationUser, other *entity.ConversationUser) error {
 	if conversationUser.ID().Equal(other.ID()) {
 		return errors.New("")
 	}
@@ -48,7 +48,7 @@ func (p *ConversationUserPolicy) CanPromoteOtherToAdmin(conversationUser, other 
 	return errors.New("")
 }
 
-func (p *ConversationUserPolicy) CanDemoteOtherToMember(conversationUser, other *entity.ConversationUser) error {
+func (p *ConversationUserPolicy) CanDemoteOther(conversationUser, other *entity.ConversationUser) error {
 	if conversationUser.ID().Equal(other.ID()) {
 		return errors.New("")
 	}
