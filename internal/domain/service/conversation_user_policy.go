@@ -6,7 +6,18 @@ import (
 	"github.com/velonyapp/conversation/internal/domain/entity"
 )
 
-var ()
+var (
+	ErrCannotActOnSelf          = errors.New("cannot perform this action on yourself")
+	ErrConversationMismatch     = errors.New("conversation mismatch")
+	ErrCannotElectOther         = errors.New("cannot elect another user")
+	ErrCannotPromoteOther       = errors.New("cannot promote another user")
+	ErrCannotDemoteOther        = errors.New("cannot demote another user")
+	ErrCannotKickOther          = errors.New("cannot kick another user")
+	ErrCannotUpdateConversation = errors.New("cannot update conversation")
+	ErrCannotDeleteConversation = errors.New("cannot delete conversation")
+	ErrCannotEditMessage        = errors.New("cannot edit message")
+	ErrCannotDeleteMessage      = errors.New("cannot delete message")
+)
 
 type ConversationUserPolicy struct {
 }
@@ -17,25 +28,25 @@ func NewConversationUserPolicy() *ConversationUserPolicy {
 
 func (p *ConversationUserPolicy) CanElectOther(conversationUser, other *entity.ConversationUser) error {
 	if conversationUser.ID().Equal(other.ID()) {
-		return errors.New("")
+		return ErrCannotActOnSelf
 	}
 	if !conversationUser.ConversationID().Equal(other.ConversationID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if conversationUser.Role().IsOwner() {
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotElectOther
 }
 
 func (p *ConversationUserPolicy) CanPromoteOther(conversationUser, other *entity.ConversationUser) error {
 	if conversationUser.ID().Equal(other.ID()) {
-		return errors.New("")
+		return ErrCannotActOnSelf
 	}
 	if !conversationUser.ConversationID().Equal(other.ConversationID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if conversationUser.Role().IsOwner() {
@@ -45,15 +56,15 @@ func (p *ConversationUserPolicy) CanPromoteOther(conversationUser, other *entity
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotPromoteOther
 }
 
 func (p *ConversationUserPolicy) CanDemoteOther(conversationUser, other *entity.ConversationUser) error {
 	if conversationUser.ID().Equal(other.ID()) {
-		return errors.New("")
+		return ErrCannotActOnSelf
 	}
 	if !conversationUser.ConversationID().Equal(other.ConversationID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if conversationUser.Role().IsOwner() {
@@ -63,15 +74,15 @@ func (p *ConversationUserPolicy) CanDemoteOther(conversationUser, other *entity.
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotDemoteOther
 }
 
 func (p *ConversationUserPolicy) CanKickOther(conversationUser, other *entity.ConversationUser) error {
 	if conversationUser.ID().Equal(other.ID()) {
-		return errors.New("")
+		return ErrCannotActOnSelf
 	}
 	if !conversationUser.ConversationID().Equal(other.ConversationID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if conversationUser.Role().IsOwner() {
@@ -81,31 +92,31 @@ func (p *ConversationUserPolicy) CanKickOther(conversationUser, other *entity.Co
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotKickOther
 }
 
 func (p *ConversationUserPolicy) CanUpdateConversation(conversationUser *entity.ConversationUser, conversation *entity.Conversation) error {
 	if !conversationUser.ConversationID().Equal(conversation.ID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if conversationUser.Role().IsOwner() || conversationUser.Role().IsAdmin() {
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotUpdateConversation
 }
 
 func (p *ConversationUserPolicy) CanDeleteConversation(conversationUser *entity.ConversationUser, conversation *entity.Conversation) error {
 	if !conversationUser.ConversationID().Equal(conversation.ID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if conversationUser.Role().IsOwner() {
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotDeleteConversation
 }
 
 func (p *ConversationUserPolicy) CanSendMessage(conversationUser *entity.ConversationUser) error {
@@ -114,19 +125,19 @@ func (p *ConversationUserPolicy) CanSendMessage(conversationUser *entity.Convers
 
 func (p *ConversationUserPolicy) CanEditMessage(conversationUser *entity.ConversationUser, message *entity.Message) error {
 	if !conversationUser.ConversationID().Equal(message.ConversationID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if message.HasUser() && conversationUser.UserID().Equal(*message.UserID()) {
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotEditMessage
 }
 
 func (p *ConversationUserPolicy) CanDeleteMessage(conversationUser *entity.ConversationUser, message *entity.Message) error {
 	if !conversationUser.ConversationID().Equal(message.ConversationID()) {
-		return errors.New("")
+		return ErrConversationMismatch
 	}
 
 	if message.HasUser() && conversationUser.UserID().Equal(*message.UserID()) {
@@ -136,5 +147,5 @@ func (p *ConversationUserPolicy) CanDeleteMessage(conversationUser *entity.Conve
 		return nil
 	}
 
-	return errors.New("")
+	return ErrCannotDeleteMessage
 }
