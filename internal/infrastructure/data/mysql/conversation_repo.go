@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/velonyapp/conversation/internal/application/domainevent"
 	"github.com/velonyapp/conversation/internal/domain/entity"
 	"github.com/velonyapp/conversation/internal/domain/repo"
 	"github.com/velonyapp/conversation/internal/domain/vo"
@@ -14,12 +15,17 @@ import (
 var _ repo.Conversation = (*conversationRepo)(nil)
 
 type conversationRepo struct {
-	db *sql.DB
+	db         *sql.DB
+	dispatcher *domainevent.Dispatcher
 }
 
-func NewConversationRepo(db *sql.DB) repo.Conversation {
+func NewConversationRepo(
+	db *sql.DB,
+	dispatcher *domainevent.Dispatcher,
+) repo.Conversation {
 	return &conversationRepo{
-		db: db,
+		db:         db,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -126,6 +132,12 @@ func (r *conversationRepo) Save(ctx context.Context, conversation *entity.Conver
 			if rowsAffected == 0 {
 				return repo.ErrConversationVersionConflict
 			}
+		}
+	}
+
+	for _, domainEvent := range conversation.PullEvents() {
+		if err := r.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			return err
 		}
 	}
 

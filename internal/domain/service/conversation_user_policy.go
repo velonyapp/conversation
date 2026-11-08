@@ -15,6 +15,7 @@ var (
 	ErrCannotKickOther          = errors.New("cannot kick another user")
 	ErrCannotUpdateConversation = errors.New("cannot update conversation")
 	ErrCannotDeleteConversation = errors.New("cannot delete conversation")
+	ErrCannotLeaveConversation  = errors.New("cannot leave conversation")
 	ErrCannotEditMessage        = errors.New("cannot edit message")
 	ErrCannotDeleteMessage      = errors.New("cannot delete message")
 )
@@ -95,11 +96,18 @@ func (p *ConversationUserPolicy) CanKickOther(conversationUser, other *entity.Co
 	return ErrCannotKickOther
 }
 
-func (p *ConversationUserPolicy) CanUpdateConversation(conversationUser *entity.ConversationUser, conversation *entity.Conversation) error {
-	if !conversationUser.ConversationID().Equal(conversation.ID()) {
-		return ErrConversationMismatch
+func (p *ConversationUserPolicy) CanAddUser(conversationUser *entity.ConversationUser) error {
+	if conversationUser.Role().IsOwner() {
+		return nil
+	}
+	if conversationUser.Role().IsAdmin() {
+		return nil
 	}
 
+	return ErrCannotKickOther
+}
+
+func (p *ConversationUserPolicy) CanUpdateConversation(conversationUser *entity.ConversationUser) error {
 	if conversationUser.Role().IsOwner() || conversationUser.Role().IsAdmin() {
 		return nil
 	}
@@ -107,16 +115,20 @@ func (p *ConversationUserPolicy) CanUpdateConversation(conversationUser *entity.
 	return ErrCannotUpdateConversation
 }
 
-func (p *ConversationUserPolicy) CanDeleteConversation(conversationUser *entity.ConversationUser, conversation *entity.Conversation) error {
-	if !conversationUser.ConversationID().Equal(conversation.ID()) {
-		return ErrConversationMismatch
-	}
-
+func (p *ConversationUserPolicy) CanDeleteConversation(conversationUser *entity.ConversationUser) error {
 	if conversationUser.Role().IsOwner() {
 		return nil
 	}
 
 	return ErrCannotDeleteConversation
+}
+
+func (p *ConversationUserPolicy) CanLeaveConversation(conversationUser *entity.ConversationUser) error {
+	if conversationUser.Role().IsOwner() {
+		return ErrCannotLeaveConversation
+	}
+
+	return nil
 }
 
 func (p *ConversationUserPolicy) CanSendMessage(conversationUser *entity.ConversationUser) error {

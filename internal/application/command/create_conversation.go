@@ -61,6 +61,9 @@ func (h *createConversationHandler) Handle(
 	if err != nil {
 		return CreateConversationResult{}, err
 	}
+	if actor == nil {
+		return CreateConversationResult{}, common.ErrUserNotFound
+	}
 
 	title, err := vo.NewConversationTitle(cmd.Title)
 	if err != nil {
@@ -98,7 +101,7 @@ func (h *createConversationHandler) Handle(
 		Conversation: common.ConversationResult{
 			ID:          conversation.ID().String(),
 			Title:       conversation.Title().String(),
-			Description: conversation.DeleteTime().String(),
+			Description: conversation.Description().String(),
 			CreateTime:  conversation.CreateTime(),
 			UpdateTime:  conversation.UpdateTime(),
 		},

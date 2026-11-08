@@ -7,6 +7,7 @@ import (
 	"github.com/velonyapp/conversation/internal/application/common"
 	"github.com/velonyapp/conversation/internal/application/port"
 	"github.com/velonyapp/conversation/internal/domain/repo"
+	"github.com/velonyapp/conversation/internal/domain/service"
 	"github.com/velonyapp/conversation/internal/domain/vo"
 )
 
@@ -16,8 +17,7 @@ type LeaveConversation struct {
 	ConversationID string
 }
 
-type LeaveConversationResult struct {
-}
+type LeaveConversationResult struct{}
 
 func (LeaveConversation) resultType() LeaveConversationResult {
 	return LeaveConversationResult{}
@@ -26,17 +26,29 @@ func (LeaveConversation) resultType() LeaveConversationResult {
 type LeaveConversationHandler Handler[LeaveConversation, LeaveConversationResult]
 
 type leaveConversationHandler struct {
-	conversationUserRepo repo.ConversationUser
-	unitOfWork           port.UnitOfWork
+	conversationRepo       repo.Conversation
+	userRepo               repo.User
+	conversationUserRepo   repo.ConversationUser
+	messageRepo            repo.Message
+	conversationUserPolicy *service.ConversationUserPolicy
+	unitOfWork             port.UnitOfWork
 }
 
 func NewLeaveConversationHandler(
+	conversationRepo repo.Conversation,
+	userRepo repo.User,
 	conversationUserRepo repo.ConversationUser,
+	messageRepo repo.Message,
+	conversationUserPolicy *service.ConversationUserPolicy,
 	unitOfWork port.UnitOfWork,
 ) LeaveConversationHandler {
 	return &leaveConversationHandler{
-		conversationUserRepo: conversationUserRepo,
-		unitOfWork:           unitOfWork,
+		conversationUserRepo:   conversationUserRepo,
+		userRepo:               userRepo,
+		conversationRepo:       conversationRepo,
+		messageRepo:            messageRepo,
+		conversationUserPolicy: conversationUserPolicy,
+		unitOfWork:             unitOfWork,
 	}
 }
 
@@ -50,20 +62,24 @@ func (h *leaveConversationHandler) Handle(
 
 	conversationID, _ := vo.NewConversationID(cmd.ConversationID)
 
-	actor, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
+	conversationUser, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
 	if err != nil {
 		return LeaveConversationResult{}, err
 	}
-	if actor == nil {
+	if conversationUser == nil {
 		return LeaveConversationResult{}, common.ErrConversationUserNotFound
 	}
 
-	if err := actor.Remove(now); err != nil {
+	if err := h.conversationUserPolicy.CanLeaveConversation(conversationUser); err != nil {
+		return LeaveConversationResult{}, err
+	}
+
+	if err := conversationUser.Remove(now); err != nil {
 		return LeaveConversationResult{}, err
 	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		return h.conversationUserRepo.Save(ctx, actor)
+		return h.conversationUserRepo.Save(ctx, conversationUser)
 	}); err != nil {
 		return LeaveConversationResult{}, err
 	}

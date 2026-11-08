@@ -22,8 +22,8 @@ func (e *EventEncoder) Encode(eventPayload integrationevent.IntegrationEvent) (p
 		return conversationUpdatedPayload(eventPayload), nil
 	case integrationevent.ConversationDeleted:
 		return conversationDeletedPayload(eventPayload), nil
-	case integrationevent.ConversationUserJoined:
-		return conversationUserJoinedPayload(eventPayload), nil
+	case integrationevent.ConversationUserAdded:
+		return conversationUserAddedPayload(eventPayload), nil
 	case integrationevent.ConversationUserUpdated:
 		return conversationUserUpdatedPayload(eventPayload), nil
 	case integrationevent.ConversationUserRemoved:

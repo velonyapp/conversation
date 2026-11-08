@@ -6,53 +6,53 @@ import (
 	"github.com/velonyapp/conversation/internal/domain/vo"
 )
 
-var _ DomainEvent = (*ConversationUserJoined)(nil)
+var _ DomainEvent = (*ConversationUserAdded)(nil)
 
-type ConversationUserJoined struct {
+type ConversationUserAdded struct {
 	BaseDomainEvent
 
 	conversationID vo.ConversationID
 	userID         vo.UserID
 	role           vo.ConversationUserRole
-	joinTime       time.Time
+	addTime        time.Time
 	version        uint32
 }
 
-func NewConversationUserJoined(
+func NewConversationUserAdded(
 	id vo.ConversationUserID,
 	conversationID vo.ConversationID,
 	userID vo.UserID,
 	role vo.ConversationUserRole,
-	joinTime time.Time,
+	addTime time.Time,
 	version uint32,
-) ConversationUserJoined {
-	return ConversationUserJoined{
+) ConversationUserAdded {
+	return ConversationUserAdded{
 		BaseDomainEvent: NewBaseDomainEvent(id.String()),
 
 		conversationID: conversationID,
 		userID:         userID,
 		role:           role,
-		joinTime:       joinTime,
+		addTime:        addTime,
 		version:        version,
 	}
 }
 
-func (e ConversationUserJoined) ConversationID() vo.ConversationID {
+func (e ConversationUserAdded) ConversationID() vo.ConversationID {
 	return e.conversationID
 }
 
-func (e ConversationUserJoined) UserID() vo.UserID {
+func (e ConversationUserAdded) UserID() vo.UserID {
 	return e.userID
 }
 
-func (e ConversationUserJoined) Role() vo.ConversationUserRole {
+func (e ConversationUserAdded) Role() vo.ConversationUserRole {
 	return e.role
 }
 
-func (e ConversationUserJoined) JoinTime() time.Time {
-	return e.joinTime
+func (e ConversationUserAdded) AddTime() time.Time {
+	return e.addTime
 }
 
-func (e ConversationUserJoined) Version() uint32 {
+func (e ConversationUserAdded) Version() uint32 {
 	return e.version
 }

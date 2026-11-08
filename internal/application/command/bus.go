@@ -11,6 +11,13 @@ func NewBus(
 	createConversationHandler CreateConversationHandler,
 	updateConversationHandler UpdateConversationHandler,
 	deleteConversationHandler DeleteConversationHandler,
+	joinConversationHandler JoinConversationHandler,
+	leaveConversationHandler LeaveConversationHandler,
+	addConversationUserHandler AddConversationUserHandler,
+	kickConversationUserHandler KickConversationUserHandler,
+	electConversationUserHandler ElectConversationUserHandler,
+	promoteConversationUserHandler PromoteConversationUserHandler,
+	demoteConversationUserHandler DemoteConversationUserHandler,
 	createMessageHandler CreateMessageHandler,
 	editMessageHandler EditMessageHandler,
 	deleteMessageHandler DeleteMessageHandler,
@@ -22,6 +29,13 @@ func NewBus(
 	Register(bus, createConversationHandler)
 	Register(bus, updateConversationHandler)
 	Register(bus, deleteConversationHandler)
+	Register(bus, joinConversationHandler)
+	Register(bus, leaveConversationHandler)
+	Register(bus, addConversationUserHandler)
+	Register(bus, kickConversationUserHandler)
+	Register(bus, electConversationUserHandler)
+	Register(bus, promoteConversationUserHandler)
+	Register(bus, demoteConversationUserHandler)
 	Register(bus, createMessageHandler)
 	Register(bus, editMessageHandler)
 	Register(bus, deleteMessageHandler)

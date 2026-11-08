@@ -48,7 +48,7 @@ func NewConversationUser(
 	}
 
 	c.recordEvent(
-		event.NewConversationUserJoined(
+		event.NewConversationUserAdded(
 			c.id,
 			c.conversationID,
 			c.userID,

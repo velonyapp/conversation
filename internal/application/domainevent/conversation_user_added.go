@@ -8,24 +8,24 @@ import (
 	"github.com/velonyapp/conversation/internal/domain/event"
 )
 
-var _ Handler[event.ConversationUserJoined] = (*ConversationUserJoinedHandler)(nil)
+var _ Handler[event.ConversationUserAdded] = (*ConversationUserAddedHandler)(nil)
 
-type ConversationUserJoinedHandler struct {
+type ConversationUserAddedHandler struct {
 	eventPublisher port.EventPublisher
 }
 
-func NewConversationUserJoinedHandler(
+func NewConversationUserAddedHandler(
 	eventPublisher port.EventPublisher,
-) *ConversationUserJoinedHandler {
-	return &ConversationUserJoinedHandler{
+) *ConversationUserAddedHandler {
+	return &ConversationUserAddedHandler{
 		eventPublisher: eventPublisher,
 	}
 }
 
-func (h *ConversationUserJoinedHandler) Execute(ctx context.Context, domainEvent event.ConversationUserJoined) error {
-	integrationEvent := integrationevent.NewConversationUserJoined(
+func (h *ConversationUserAddedHandler) Execute(ctx context.Context, domainEvent event.ConversationUserAdded) error {
+	integrationEvent := integrationevent.NewConversationUserAdded(
 		domainEvent.AggregateID(),
-		domainEvent.JoinTime(),
+		domainEvent.AddTime(),
 		domainEvent.ConversationID().String(),
 		domainEvent.UserID().String(),
 		domainEvent.Role().String(),

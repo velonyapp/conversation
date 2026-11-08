@@ -15,6 +15,8 @@ var ProviderSet = wire.NewSet(
 	mysql.NewConversationUserRepo,
 	mysql.NewMessageRepo,
 	mysql.NewConversationQuery,
+	mysql.NewConversationUserQuery,
+	mysql.NewMessageQuery,
 	mysql.NewEventPublisher,
 	protobuf.NewEventEncoder,
 )

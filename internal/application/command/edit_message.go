@@ -74,6 +74,9 @@ func (h *editMessageHandler) Handle(
 	if err != nil {
 		return EditMessageResult{}, err
 	}
+	if message == nil {
+		return EditMessageResult{}, common.ErrMessageNotFound
+	}
 
 	if err := h.conversationUserPolicy.CanEditMessage(actor, message); err != nil {
 		return EditMessageResult{}, err

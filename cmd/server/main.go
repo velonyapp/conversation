@@ -8,6 +8,7 @@ import (
 
 	"github.com/velonyapp/conversation/internal/conf"
 	"github.com/velonyapp/conversation/internal/observability/telemetry"
+	"github.com/velonyapp/conversation/internal/presentation/transport"
 
 	"buf.build/go/protovalidate"
 	"github.com/go-kratos/kratos/contrib/otel/v3/tracing"
@@ -34,7 +35,7 @@ func init() {
 	flag.StringVar(&flagconf, "config", "../../configs", "config path, eg: -config config.yaml")
 }
 
-func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, kc *transport.KafkaConsumer) *kratos.App {
 	return kratos.New(
 		kratos.ID(InstanceID),
 		kratos.Name(Name),
@@ -44,6 +45,7 @@ func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 		kratos.Server(
 			gs,
 			hs,
+			kc,
 		),
 	)
 }

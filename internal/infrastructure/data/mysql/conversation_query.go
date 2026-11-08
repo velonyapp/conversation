@@ -3,6 +3,8 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -122,7 +124,24 @@ func (q *conversationQuery) BatchFind(ctx context.Context, conversationIDs []vo.
 	return results, nil
 }
 
+type conversationCursor struct {
+	Time time.Time `json:"time"`
+	ID   string    `json:"id"`
+}
+
 func (q *conversationQuery) List(ctx context.Context, scope query.ConversationScope, pageSize int32, pageToken string) ([]common.ConversationResult, string, error) {
+	var cursor conversationCursor
+	if pageToken != "" {
+		data, err := base64.RawURLEncoding.DecodeString(pageToken)
+		if err != nil {
+			return nil, "", err
+		}
+
+		if err := json.Unmarshal(data, &cursor); err != nil {
+			return nil, "", err
+		}
+	}
+
 	const query = `
 		SELECT
 			c.id,
@@ -130,43 +149,66 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 			c.description,
 			c.last_message_id,
 			c.create_time,
-			c.update_time
+			c.update_time,
+			c.last_message_create_time
 		FROM conversations c
 		INNER JOIN conversation_users cu
 			ON c.id = cu.conversation_id
 		WHERE cu.user_id = ?
-			AND (c.xxxxxxx, c.id) < (?, ?)
+			AND (? = '' OR (COALESCE(c.last_message_create_time, c.update_time), c.id) < (?, ?))
 		ORDER BY
-			c.xxxxxxx DESC,
+			COALESCE(c.last_message_create_time, c.update_time) DESC,
 			c.id DESC
 		LIMIT ?
 	`
 
 	rows, err := executor(ctx, q.db).QueryContext(ctx, query,
 		scope.UserID.String(),
-		"TODO: c.xxxxxxx",
-		"TODO: c.id",
-		pageSize,
+		pageToken,
+		cursor.Time,
+		cursor.ID,
+		int64(pageSize)+1,
 	)
 	if err != nil {
 		return nil, "", err
 	}
 	defer rows.Close()
 
-	conversations := make([]common.ConversationResult, 0)
+	conversations := make([]common.ConversationResult, 0, pageSize)
+	var nextCursor conversationCursor
+
 	for rows.Next() {
-		conversation, err := scanQueryConversation(rows)
+		if len(conversations) == int(pageSize) {
+			data, err := json.Marshal(nextCursor)
+			if err != nil {
+				return nil, "", err
+			}
+
+			return conversations, base64.RawURLEncoding.EncodeToString(data), nil
+		}
+
+		var lastMessageCreateTime sql.NullTime
+		conversation, err := scanQueryConversation(rows, &lastMessageCreateTime)
 		if err != nil {
 			return nil, "", err
 		}
 
+		nextCursor.ID = conversation.ID
+		nextCursor.Time = conversation.UpdateTime
+		if lastMessageCreateTime.Valid {
+			nextCursor.Time = lastMessageCreateTime.Time
+		}
+
 		conversations = append(conversations, conversation)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, "", err
+	}
 
-	return conversations, "TODO: nextPageToken", nil
+	return conversations, "", nil
 }
 
-func scanQueryConversation(scanner queryConversationScanner) (common.ConversationResult, error) {
+func scanQueryConversation(scanner queryConversationScanner, lastMessageCreateTime ...*sql.NullTime) (common.ConversationResult, error) {
 	var (
 		id               string
 		title            string
@@ -176,14 +218,19 @@ func scanQueryConversation(scanner queryConversationScanner) (common.Conversatio
 		updateTime       time.Time
 	)
 
-	if err := scanner.Scan(
+	dest := []any{
 		&id,
 		&title,
 		&description,
 		&lastMessageIDRaw,
 		&createTime,
 		&updateTime,
-	); err != nil {
+	}
+	if len(lastMessageCreateTime) > 0 {
+		dest = append(dest, lastMessageCreateTime[0])
+	}
+
+	if err := scanner.Scan(dest...); err != nil {
 		return common.ConversationResult{}, err
 	}
 

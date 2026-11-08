@@ -71,16 +71,16 @@ func (h *updateConversationHandler) Handle(
 		return UpdateConversationResult{}, common.ErrConversationUserNotFound
 	}
 
+	if err := h.conversationUserPolicy.CanUpdateConversation(actor); err != nil {
+		return UpdateConversationResult{}, err
+	}
+
 	conversation, err := h.conversationRepo.FindByID(ctx, conversationID)
 	if err != nil {
 		return UpdateConversationResult{}, err
 	}
 	if conversation == nil {
 		return UpdateConversationResult{}, common.ErrConversationNotFound
-	}
-
-	if err := h.conversationUserPolicy.CanUpdateConversation(actor, conversation); err != nil {
-		return UpdateConversationResult{}, err
 	}
 
 	if cmd.Title != nil {
@@ -113,7 +113,7 @@ func (h *updateConversationHandler) Handle(
 	conversationResult := common.ConversationResult{
 		ID:          conversation.ID().String(),
 		Title:       conversation.Title().String(),
-		Description: conversation.DeleteTime().String(),
+		Description: conversation.Description().String(),
 		CreateTime:  conversation.CreateTime(),
 		UpdateTime:  conversation.UpdateTime(),
 	}

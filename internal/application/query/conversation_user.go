@@ -9,10 +9,11 @@ import (
 
 type ConversationUserScope struct {
 	ConversationID vo.ConversationID
+	UserID         vo.UserID
 }
 
 type ConversationUser interface {
-	Get(ctx context.Context, userID vo.UserID, scope ConversationUserScope) (*common.ConversationUserResult, error)
-	BatchGet(ctx context.Context, userIDs []vo.UserID, scope ConversationUserScope) (map[vo.ConversationUserID]common.ConversationUserResult, error)
+	Find(ctx context.Context, conversationUserID vo.ConversationUserID, scope ConversationUserScope) (*common.ConversationUserResult, error)
+	BatchFind(ctx context.Context, conversationUserIDs []vo.ConversationUserID, scope ConversationUserScope) (map[vo.ConversationUserID]common.ConversationUserResult, error)
 	List(ctx context.Context, scope ConversationUserScope, pageSize int32, pageToken string) ([]common.ConversationUserResult, string, error)
 }

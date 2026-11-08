@@ -9,10 +9,12 @@ package main
 import (
 	"github.com/go-kratos/kratos/v3"
 	"github.com/velonyapp/conversation/internal/application/command"
+	"github.com/velonyapp/conversation/internal/application/domainevent"
 	"github.com/velonyapp/conversation/internal/application/query"
 	"github.com/velonyapp/conversation/internal/conf"
 	"github.com/velonyapp/conversation/internal/domain/service"
 	"github.com/velonyapp/conversation/internal/infrastructure/data/mysql"
+	"github.com/velonyapp/conversation/internal/infrastructure/messaging/protobuf"
 	"github.com/velonyapp/conversation/internal/presentation/middleware"
 	service2 "github.com/velonyapp/conversation/internal/presentation/service"
 	"github.com/velonyapp/conversation/internal/presentation/transport"
@@ -31,25 +33,53 @@ func wireApp(auth *conf.Auth, confTransport *conf.Transport, data *conf.Data, lo
 	if err != nil {
 		return nil, nil, err
 	}
-	conversation := mysql.NewConversationRepo(db)
+	eventEncoder := protobuf.NewEventEncoder()
+	eventPublisher := mysql.NewEventPublisher(db, eventEncoder)
+	conversationCreatedHandler := domainevent.NewConversationCreatedHandler(eventPublisher)
+	conversationUpdatedHandler := domainevent.NewConversationUpdatedHandler(eventPublisher)
+	conversationDeletedHandler := domainevent.NewConversationDeletedHandler(eventPublisher)
+	conversationUserAddedHandler := domainevent.NewConversationUserAddedHandler(eventPublisher)
+	conversationUserUpdatedHandler := domainevent.NewConversationUserUpdatedHandler(eventPublisher)
+	conversationUserRemovedHandler := domainevent.NewConversationUserRemovedHandler(eventPublisher)
+	messageCreatedHandler := domainevent.NewMessageCreatedHandler(eventPublisher)
+	messageEditedHandler := domainevent.NewMessageEditedHandler(eventPublisher)
+	messageDeletedHandler := domainevent.NewMessageDeletedHandler(eventPublisher)
+	dispatcher := domainevent.NewDispatcher(conversationCreatedHandler, conversationUpdatedHandler, conversationDeletedHandler, conversationUserAddedHandler, conversationUserUpdatedHandler, conversationUserRemovedHandler, messageCreatedHandler, messageEditedHandler, messageDeletedHandler)
+	conversation := mysql.NewConversationRepo(db, dispatcher)
 	user := mysql.NewUserRepo(db)
-	conversationUser := mysql.NewConversationUserRepo(db)
+	conversationUser := mysql.NewConversationUserRepo(db, dispatcher)
 	unitOfWork := mysql.NewUnitOfWork(db)
 	createConversationHandler := command.NewCreateConversationHandler(conversation, user, conversationUser, unitOfWork)
-	message := mysql.NewMessageRepo(db)
+	message := mysql.NewMessageRepo(db, dispatcher)
 	conversationUserPolicy := service.NewConversationUserPolicy()
 	updateConversationHandler := command.NewUpdateConversationHandler(conversation, conversationUser, message, conversationUserPolicy, unitOfWork)
 	deleteConversationHandler := command.NewDeleteConversationHandler(conversation, conversationUser, conversationUserPolicy, unitOfWork)
+	joinConversationHandler := command.NewJoinConversationHandler(conversation, user, conversationUser, message, unitOfWork)
+	leaveConversationHandler := command.NewLeaveConversationHandler(conversation, user, conversationUser, message, conversationUserPolicy, unitOfWork)
+	addConversationUserHandler := command.NewAddConversationUserHandler(user, conversationUser, conversationUserPolicy, unitOfWork)
+	kickConversationUserHandler := command.NewKickConversationUserHandler(conversationUser, conversationUserPolicy, unitOfWork)
+	electConversationUserHandler := command.NewElectConversationUserHandler(conversationUser, conversationUserPolicy, unitOfWork)
+	promoteConversationUserHandler := command.NewPromoteConversationUserHandler(conversationUser, conversationUserPolicy, unitOfWork)
+	demoteConversationUserHandler := command.NewDemoteConversationUserHandler(conversationUser, conversationUserPolicy, unitOfWork)
 	createMessageHandler := command.NewCreateMessageHandler(conversationUser, message, conversationUserPolicy, unitOfWork)
 	editMessageHandler := command.NewEditMessageHandler(conversationUser, message, conversationUserPolicy, unitOfWork)
 	deleteMessageHandler := command.NewDeleteMessageHandler(conversationUser, message, conversationUserPolicy, unitOfWork)
 	createUserHandler := command.NewCreateUserHandler(user)
 	deleteUserHandler := command.NewDeleteUserHandler(user)
-	bus := command.NewBus(createConversationHandler, updateConversationHandler, deleteConversationHandler, createMessageHandler, editMessageHandler, deleteMessageHandler, createUserHandler, deleteUserHandler)
+	bus := command.NewBus(createConversationHandler, updateConversationHandler, deleteConversationHandler, joinConversationHandler, leaveConversationHandler, addConversationUserHandler, kickConversationUserHandler, electConversationUserHandler, promoteConversationUserHandler, demoteConversationUserHandler, createMessageHandler, editMessageHandler, deleteMessageHandler, createUserHandler, deleteUserHandler)
 	queryConversation := mysql.NewConversationQuery(db)
 	getConversationHandler := query.NewGetConversationHandler(queryConversation)
+	listConversationsHandler := query.NewListConversationsHandler(queryConversation)
 	batchGetConversationsHandler := query.NewBatchGetConversationsHandler(queryConversation)
-	queryBus := query.NewBus(getConversationHandler, batchGetConversationsHandler)
+	queryConversationUser := mysql.NewConversationUserQuery(db)
+	getConversationUserHandler := query.NewGetConversationUserHandler(queryConversationUser)
+	listConversationUsersHandler := query.NewListConversationUsersHandler(queryConversationUser)
+	batchGetConversationUsersHandler := query.NewBatchGetConversationUsersHandler(queryConversationUser)
+	queryMessage := mysql.NewMessageQuery(db)
+	getMessageHandler := query.NewGetMessageHandler(queryMessage)
+	listMessagesHandler := query.NewListMessagesHandler(queryMessage)
+	batchGetMessagesHandler := query.NewBatchGetMessagesHandler(queryMessage)
+	queryBus := query.NewBus(getConversationHandler, listConversationsHandler, batchGetConversationsHandler, getConversationUserHandler, listConversationUsersHandler, batchGetConversationUsersHandler, getMessageHandler, listMessagesHandler, batchGetMessagesHandler)
 	api := service2.NewAPI(bus, queryBus)
 	tracing := middleware.NewTracing()
 	metrics, err := middleware.NewMetrics()
@@ -64,7 +94,9 @@ func wireApp(auth *conf.Auth, confTransport *conf.Transport, data *conf.Data, lo
 	validation := middleware.NewValidation()
 	server := transport.NewGRPCServer(confTransport, api, tracing, metrics, errorMapper, authentication, validation)
 	httpServer := transport.NewHTTPServer(confTransport, api, tracing, metrics, errorMapper, authentication, validation)
-	app := newApp(logger, server, httpServer)
+	consumer := service2.NewConsumer(bus)
+	kafkaConsumer := transport.NewKafkaConsumer(confTransport, consumer)
+	app := newApp(logger, server, httpServer, kafkaConsumer)
 	return app, func() {
 	}, nil
 }

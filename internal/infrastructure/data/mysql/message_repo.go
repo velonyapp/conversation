@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/velonyapp/conversation/internal/application/domainevent"
 	"github.com/velonyapp/conversation/internal/domain/entity"
 	"github.com/velonyapp/conversation/internal/domain/repo"
 	"github.com/velonyapp/conversation/internal/domain/vo"
@@ -14,12 +15,17 @@ import (
 var _ repo.Message = (*messageRepo)(nil)
 
 type messageRepo struct {
-	db *sql.DB
+	db         *sql.DB
+	dispatcher *domainevent.Dispatcher
 }
 
-func NewMessageRepo(db *sql.DB) repo.Message {
+func NewMessageRepo(
+	db *sql.DB,
+	dispatcher *domainevent.Dispatcher,
+) repo.Message {
 	return &messageRepo{
-		db: db,
+		db:         db,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -69,7 +75,7 @@ func (r *messageRepo) FindLastByConversationID(ctx context.Context, conversation
 		FROM messages m
 		INNER JOIN conversations c
 			ON m.id = c.last_message_id
-		WHERE conversations.id = ?
+		WHERE c.id = ?
 		LIMIT 1
 	`
 
@@ -94,13 +100,44 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 
 	if message.IsDeleted() {
 		if !message.IsNew() {
-			const query = `
-				DELETE FROM messages
-				WHERE id = ?
-			`
+			const conversationQuery = `
+        	    UPDATE conversations c
+        	    LEFT JOIN (
+        	        SELECT
+        	            id,
+        	            create_time
+        	        FROM messages
+        	        WHERE conversation_id = ?
+        	            AND id <> ?
+        	        ORDER BY
+        	            create_time DESC,
+        	            id DESC
+        	        LIMIT 1
+        	    ) lm ON TRUE
+        	    SET
+        	        c.last_message_id = lm.id,
+        	        c.last_message_create_time = lm.create_time
+        	    WHERE c.id = ?
+        	        AND c.last_message_id = ?
+        	`
 
-			_, err := executor(ctx, r.db).ExecContext(ctx, query, message.ID().String())
-			if err != nil {
+			if _, err := executor(ctx, r.db).ExecContext(ctx, conversationQuery,
+				message.ConversationID().String(),
+				message.ID().String(),
+				message.ConversationID().String(),
+				message.ID().String(),
+			); err != nil {
+				return err
+			}
+
+			const query = `
+        	    DELETE FROM messages
+        	    WHERE id = ?
+        	`
+
+			if _, err := executor(ctx, r.db).ExecContext(ctx, query,
+				message.ID().String(),
+			); err != nil {
 				return err
 			}
 		}
@@ -135,6 +172,25 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 			); err != nil {
 				return err
 			}
+
+			const conversationQuery = `
+				UPDATE conversations
+				SET
+					last_message_id = ?,
+					last_message_create_time = ?
+				WHERE id = ?
+					AND (last_message_id IS NULL OR (last_message_create_time, last_message_id) < (?, ?))
+			`
+
+			if _, err := executor(ctx, r.db).ExecContext(ctx, conversationQuery,
+				message.ID().String(),
+				message.CreateTime(),
+				message.ConversationID().String(),
+				message.CreateTime(),
+				message.ID().String(),
+			); err != nil {
+				return err
+			}
 		} else {
 			const query = `
 			    UPDATE messages
@@ -163,6 +219,12 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 			if rowsAffected == 0 {
 				return repo.ErrMessageVersionConflict
 			}
+		}
+	}
+
+	for _, domainEvent := range message.PullEvents() {
+		if err := r.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			return err
 		}
 	}
 

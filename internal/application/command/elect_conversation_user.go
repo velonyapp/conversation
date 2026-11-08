@@ -19,6 +19,7 @@ type ElectConversationUser struct {
 }
 
 type ElectConversationUserResult struct {
+	ConversationUser common.ConversationUserResult
 }
 
 func (ElectConversationUser) resultType() ElectConversationUserResult {
@@ -94,5 +95,13 @@ func (h *electConversationUserHandler) Handle(
 		return ElectConversationUserResult{}, err
 	}
 
-	return ElectConversationUserResult{}, nil
+	return ElectConversationUserResult{
+		ConversationUser: common.ConversationUserResult{
+			ID:         target.ID().String(),
+			UserID:     target.UserID().String(),
+			Role:       target.Role().String(),
+			CreateTime: target.CreateTime(),
+			UpdateTime: target.UpdateTime(),
+		},
+	}, nil
 }

@@ -17,7 +17,7 @@ paths:
             parameters:
                 - name: pageSize
                   in: query
-                  description: "The maximum number of conversations to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 20 conversations will be returned.\r\n The maximum value is 50; values above 50 will be coerced to 50."
+                  description: "The maximum number of conversations to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 20 conversations will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
                   schema:
                     type: integer
                     format: int32
@@ -128,7 +128,7 @@ paths:
                     type: string
                 - name: pageSize
                   in: query
-                  description: "The maximum number of messages to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 50 messages will be returned.\r\n The maximum value is 200; values above 200 will be coerced to 200."
+                  description: "The maximum number of messages to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 50 messages will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
                   schema:
                     type: integer
                     format: int32
@@ -264,7 +264,7 @@ paths:
                     type: string
                 - name: names
                   in: query
-                  description: "The names of the messages to retrieve.\r\n A maximum of 200 messages can be retrieved in a batch.\r\n Format: conversations/{conversation}/messages/{message}"
+                  description: "The names of the messages to retrieve.\r\n A maximum of 100 messages can be retrieved in a batch.\r\n Format: conversations/{conversation}/messages/{message}"
                   schema:
                     type: array
                     items:
@@ -290,7 +290,7 @@ paths:
                     type: string
                 - name: pageSize
                   in: query
-                  description: "The maximum number of conversation users to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 50 conversation users will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
+                  description: "The maximum number of conversation users to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 20 conversation users will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
                   schema:
                     type: integer
                     format: int32
@@ -376,6 +376,99 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /v1/conversations/{conversation}/users/{user}:demote:
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_DemoteConversationUser
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.DemoteConversationUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
+    /v1/conversations/{conversation}/users/{user}:elect:
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_ElectConversationUser
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.ElectConversationUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
+    /v1/conversations/{conversation}/users/{user}:promote:
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_PromoteConversationUser
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.PromoteConversationUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
     /v1/conversations/{conversation}/users:batchGet:
         get:
             tags:
@@ -402,6 +495,56 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.conversation.api.v1.BatchGetConversationUsersResponse'
+    /v1/conversations/{conversation}:join:
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_JoinConversation
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.JoinConversationRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
+    /v1/conversations/{conversation}:leave:
+        post:
+            tags:
+                - ConversationService
+            operationId: ConversationService_LeaveConversation
+            parameters:
+                - name: conversation
+                  in: path
+                  description: The conversation id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.conversation.api.v1.LeaveConversationRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.conversation.api.v1.LeaveConversationResponse'
     /v1/conversations:batchGet:
         get:
             tags:
@@ -461,7 +604,7 @@ components:
                     description: "The title of the conversation.\r\n Must contain between 1 and 100 characters."
                 description:
                     type: string
-                    description: "The description of the conversation.\r\n Must not exceed 2000 characters."
+                    description: "The description of the conversation.\r\n Must not exceed 1000 characters."
                 lastMessage:
                     readOnly: true
                     type: string
@@ -502,6 +645,41 @@ components:
                     type: string
                     description: The time when the user's role in the conversation was last changed.
                     format: date-time
+        velony.conversation.api.v1.DemoteConversationUserRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The name of the conversation user to demote to member.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+        velony.conversation.api.v1.ElectConversationUserRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The name of the conversation user to elect as owner.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+        velony.conversation.api.v1.JoinConversationRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The name of the conversation to join.\r\n Format: conversations/{conversation}"
+        velony.conversation.api.v1.LeaveConversationRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The name of the conversation to leave.\r\n Format: conversations/{conversation}"
+        velony.conversation.api.v1.LeaveConversationResponse:
+            type: object
+            properties: {}
         velony.conversation.api.v1.ListConversationUsersResponse:
             type: object
             properties:
@@ -560,5 +738,13 @@ components:
                     type: string
                     description: The time when the message was last edited.
                     format: date-time
+        velony.conversation.api.v1.PromoteConversationUserRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: "The name of the conversation user to promote to admin.\r\n Format: conversations/{conversation}/users/{conversation_user}"
 tags:
     - name: ConversationService

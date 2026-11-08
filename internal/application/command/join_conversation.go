@@ -18,6 +18,7 @@ type JoinConversation struct {
 }
 
 type JoinConversationResult struct {
+	Conversation common.ConversationResult
 }
 
 func (JoinConversation) resultType() JoinConversationResult {
@@ -30,6 +31,7 @@ type joinConversationHandler struct {
 	conversationRepo     repo.Conversation
 	userRepo             repo.User
 	conversationUserRepo repo.ConversationUser
+	messageRepo          repo.Message
 	unitOfWork           port.UnitOfWork
 }
 
@@ -37,12 +39,14 @@ func NewJoinConversationHandler(
 	conversationRepo repo.Conversation,
 	userRepo repo.User,
 	conversationUserRepo repo.ConversationUser,
+	messageRepo repo.Message,
 	unitOfWork port.UnitOfWork,
 ) JoinConversationHandler {
 	return &joinConversationHandler{
 		conversationUserRepo: conversationUserRepo,
 		userRepo:             userRepo,
 		conversationRepo:     conversationRepo,
+		messageRepo:          messageRepo,
 		unitOfWork:           unitOfWork,
 	}
 }
@@ -86,5 +90,23 @@ func (h *joinConversationHandler) Handle(
 		return JoinConversationResult{}, err
 	}
 
-	return JoinConversationResult{}, nil
+	conversationResult := common.ConversationResult{
+		ID:          conversation.ID().String(),
+		Title:       conversation.Title().String(),
+		Description: conversation.Description().String(),
+		CreateTime:  conversation.CreateTime(),
+		UpdateTime:  conversation.UpdateTime(),
+	}
+	lastMessage, err := h.messageRepo.FindLastByConversationID(ctx, conversationID)
+	if err != nil {
+		return JoinConversationResult{}, err
+	}
+	if lastMessage != nil {
+		value := lastMessage.ID().String()
+		conversationResult.LastMessageID = &value
+	}
+
+	return JoinConversationResult{
+		Conversation: conversationResult,
+	}, nil
 }

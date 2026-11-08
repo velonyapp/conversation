@@ -86,7 +86,7 @@ type Conversation struct {
 	// Must contain between 1 and 100 characters.
 	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	// The description of the conversation.
-	// Must not exceed 2000 characters.
+	// Must not exceed 1000 characters.
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	// The most recent message in the conversation, if any.
 	// Format: conversations/{conversation}/messages/{message}
@@ -389,7 +389,7 @@ type ListConversationsRequest struct {
 	// The maximum number of conversations to return. The service may return fewer than
 	// this value.
 	// If unspecified, at most 20 conversations will be returned.
-	// The maximum value is 50; values above 50 will be coerced to 50.
+	// The maximum value is 100; values above 100 will be coerced to 100.
 	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// A page token, received from a previous `ListConversations` call.
 	// Provide this to retrieve the subsequent page.
@@ -740,6 +740,134 @@ func (x *DeleteConversationRequest) GetName() string {
 	return ""
 }
 
+type JoinConversationRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the conversation to join.
+	// Format: conversations/{conversation}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *JoinConversationRequest) Reset() {
+	*x = JoinConversationRequest{}
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *JoinConversationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JoinConversationRequest) ProtoMessage() {}
+
+func (x *JoinConversationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JoinConversationRequest.ProtoReflect.Descriptor instead.
+func (*JoinConversationRequest) Descriptor() ([]byte, []int) {
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *JoinConversationRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type LeaveConversationRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the conversation to leave.
+	// Format: conversations/{conversation}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LeaveConversationRequest) Reset() {
+	*x = LeaveConversationRequest{}
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LeaveConversationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LeaveConversationRequest) ProtoMessage() {}
+
+func (x *LeaveConversationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LeaveConversationRequest.ProtoReflect.Descriptor instead.
+func (*LeaveConversationRequest) Descriptor() ([]byte, []int) {
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *LeaveConversationRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type LeaveConversationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LeaveConversationResponse) Reset() {
+	*x = LeaveConversationResponse{}
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LeaveConversationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LeaveConversationResponse) ProtoMessage() {}
+
+func (x *LeaveConversationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LeaveConversationResponse.ProtoReflect.Descriptor instead.
+func (*LeaveConversationResponse) Descriptor() ([]byte, []int) {
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{13}
+}
+
 type GetConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the conversation user to retrieve.
@@ -751,7 +879,7 @@ type GetConversationUserRequest struct {
 
 func (x *GetConversationUserRequest) Reset() {
 	*x = GetConversationUserRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[11]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -763,7 +891,7 @@ func (x *GetConversationUserRequest) String() string {
 func (*GetConversationUserRequest) ProtoMessage() {}
 
 func (x *GetConversationUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[11]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -776,7 +904,7 @@ func (x *GetConversationUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConversationUserRequest.ProtoReflect.Descriptor instead.
 func (*GetConversationUserRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{11}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetConversationUserRequest) GetName() string {
@@ -793,7 +921,7 @@ type ListConversationUsersRequest struct {
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
 	// The maximum number of conversation users to return. The service may return fewer than
 	// this value.
-	// If unspecified, at most 50 conversation users will be returned.
+	// If unspecified, at most 20 conversation users will be returned.
 	// The maximum value is 100; values above 100 will be coerced to 100.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// A page token, received from a previous `ListConversationUsers` call.
@@ -808,7 +936,7 @@ type ListConversationUsersRequest struct {
 
 func (x *ListConversationUsersRequest) Reset() {
 	*x = ListConversationUsersRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[12]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -820,7 +948,7 @@ func (x *ListConversationUsersRequest) String() string {
 func (*ListConversationUsersRequest) ProtoMessage() {}
 
 func (x *ListConversationUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[12]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -833,7 +961,7 @@ func (x *ListConversationUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConversationUsersRequest.ProtoReflect.Descriptor instead.
 func (*ListConversationUsersRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{12}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListConversationUsersRequest) GetParent() string {
@@ -870,7 +998,7 @@ type ListConversationUsersResponse struct {
 
 func (x *ListConversationUsersResponse) Reset() {
 	*x = ListConversationUsersResponse{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[13]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -882,7 +1010,7 @@ func (x *ListConversationUsersResponse) String() string {
 func (*ListConversationUsersResponse) ProtoMessage() {}
 
 func (x *ListConversationUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[13]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -895,7 +1023,7 @@ func (x *ListConversationUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConversationUsersResponse.ProtoReflect.Descriptor instead.
 func (*ListConversationUsersResponse) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{13}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListConversationUsersResponse) GetConversationUsers() []*ConversationUser {
@@ -929,7 +1057,7 @@ type BatchGetConversationUsersRequest struct {
 
 func (x *BatchGetConversationUsersRequest) Reset() {
 	*x = BatchGetConversationUsersRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[14]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -941,7 +1069,7 @@ func (x *BatchGetConversationUsersRequest) String() string {
 func (*BatchGetConversationUsersRequest) ProtoMessage() {}
 
 func (x *BatchGetConversationUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[14]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -954,7 +1082,7 @@ func (x *BatchGetConversationUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetConversationUsersRequest.ProtoReflect.Descriptor instead.
 func (*BatchGetConversationUsersRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{14}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *BatchGetConversationUsersRequest) GetParent() string {
@@ -981,7 +1109,7 @@ type BatchGetConversationUsersResponse struct {
 
 func (x *BatchGetConversationUsersResponse) Reset() {
 	*x = BatchGetConversationUsersResponse{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[15]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -993,7 +1121,7 @@ func (x *BatchGetConversationUsersResponse) String() string {
 func (*BatchGetConversationUsersResponse) ProtoMessage() {}
 
 func (x *BatchGetConversationUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[15]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1006,7 +1134,7 @@ func (x *BatchGetConversationUsersResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use BatchGetConversationUsersResponse.ProtoReflect.Descriptor instead.
 func (*BatchGetConversationUsersResponse) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{15}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *BatchGetConversationUsersResponse) GetConversationUsers() []*ConversationUser {
@@ -1018,10 +1146,10 @@ func (x *BatchGetConversationUsersResponse) GetConversationUsers() []*Conversati
 
 type CreateConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The parent resource where this conversation user will be created.
+	// The parent resource where this conversation user will be added.
 	// Format: conversations/{conversation}
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
-	// The conversation user to create.
+	// The conversation user to add.
 	ConversationUser *ConversationUser `protobuf:"bytes,2,opt,name=conversation_user,json=conversationUser,proto3" json:"conversation_user,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -1029,7 +1157,7 @@ type CreateConversationUserRequest struct {
 
 func (x *CreateConversationUserRequest) Reset() {
 	*x = CreateConversationUserRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[16]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1041,7 +1169,7 @@ func (x *CreateConversationUserRequest) String() string {
 func (*CreateConversationUserRequest) ProtoMessage() {}
 
 func (x *CreateConversationUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[16]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1054,7 +1182,7 @@ func (x *CreateConversationUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateConversationUserRequest.ProtoReflect.Descriptor instead.
 func (*CreateConversationUserRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{16}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CreateConversationUserRequest) GetParent() string {
@@ -1073,7 +1201,7 @@ func (x *CreateConversationUserRequest) GetConversationUser() *ConversationUser 
 
 type DeleteConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation user to delete.
+	// The name of the conversation user to kick.
 	// Format: conversations/{conversation}/users/{conversation_user}
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1082,7 +1210,7 @@ type DeleteConversationUserRequest struct {
 
 func (x *DeleteConversationUserRequest) Reset() {
 	*x = DeleteConversationUserRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[17]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1094,7 +1222,7 @@ func (x *DeleteConversationUserRequest) String() string {
 func (*DeleteConversationUserRequest) ProtoMessage() {}
 
 func (x *DeleteConversationUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[17]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,10 +1235,148 @@ func (x *DeleteConversationUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteConversationUserRequest.ProtoReflect.Descriptor instead.
 func (*DeleteConversationUserRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{17}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *DeleteConversationUserRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type ElectConversationUserRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the conversation user to elect as owner.
+	// Format: conversations/{conversation}/users/{conversation_user}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ElectConversationUserRequest) Reset() {
+	*x = ElectConversationUserRequest{}
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ElectConversationUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ElectConversationUserRequest) ProtoMessage() {}
+
+func (x *ElectConversationUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ElectConversationUserRequest.ProtoReflect.Descriptor instead.
+func (*ElectConversationUserRequest) Descriptor() ([]byte, []int) {
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ElectConversationUserRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type PromoteConversationUserRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the conversation user to promote to admin.
+	// Format: conversations/{conversation}/users/{conversation_user}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PromoteConversationUserRequest) Reset() {
+	*x = PromoteConversationUserRequest{}
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PromoteConversationUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PromoteConversationUserRequest) ProtoMessage() {}
+
+func (x *PromoteConversationUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PromoteConversationUserRequest.ProtoReflect.Descriptor instead.
+func (*PromoteConversationUserRequest) Descriptor() ([]byte, []int) {
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *PromoteConversationUserRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type DemoteConversationUserRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the conversation user to demote to member.
+	// Format: conversations/{conversation}/users/{conversation_user}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DemoteConversationUserRequest) Reset() {
+	*x = DemoteConversationUserRequest{}
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DemoteConversationUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DemoteConversationUserRequest) ProtoMessage() {}
+
+func (x *DemoteConversationUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DemoteConversationUserRequest.ProtoReflect.Descriptor instead.
+func (*DemoteConversationUserRequest) Descriptor() ([]byte, []int) {
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *DemoteConversationUserRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
@@ -1128,7 +1394,7 @@ type GetMessageRequest struct {
 
 func (x *GetMessageRequest) Reset() {
 	*x = GetMessageRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[18]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1140,7 +1406,7 @@ func (x *GetMessageRequest) String() string {
 func (*GetMessageRequest) ProtoMessage() {}
 
 func (x *GetMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[18]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1153,7 +1419,7 @@ func (x *GetMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMessageRequest.ProtoReflect.Descriptor instead.
 func (*GetMessageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{18}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetMessageRequest) GetName() string {
@@ -1171,7 +1437,7 @@ type ListMessagesRequest struct {
 	// The maximum number of messages to return. The service may return fewer than
 	// this value.
 	// If unspecified, at most 50 messages will be returned.
-	// The maximum value is 200; values above 200 will be coerced to 200.
+	// The maximum value is 100; values above 100 will be coerced to 100.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// A page token, received from a previous `ListMessages` call.
 	// Provide this to retrieve the subsequent page.
@@ -1185,7 +1451,7 @@ type ListMessagesRequest struct {
 
 func (x *ListMessagesRequest) Reset() {
 	*x = ListMessagesRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[19]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1197,7 +1463,7 @@ func (x *ListMessagesRequest) String() string {
 func (*ListMessagesRequest) ProtoMessage() {}
 
 func (x *ListMessagesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[19]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1210,7 +1476,7 @@ func (x *ListMessagesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMessagesRequest.ProtoReflect.Descriptor instead.
 func (*ListMessagesRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{19}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ListMessagesRequest) GetParent() string {
@@ -1247,7 +1513,7 @@ type ListMessagesResponse struct {
 
 func (x *ListMessagesResponse) Reset() {
 	*x = ListMessagesResponse{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[20]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1259,7 +1525,7 @@ func (x *ListMessagesResponse) String() string {
 func (*ListMessagesResponse) ProtoMessage() {}
 
 func (x *ListMessagesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[20]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1272,7 +1538,7 @@ func (x *ListMessagesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMessagesResponse.ProtoReflect.Descriptor instead.
 func (*ListMessagesResponse) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{20}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ListMessagesResponse) GetMessages() []*Message {
@@ -1297,7 +1563,7 @@ type BatchGetMessagesRequest struct {
 	// must match this field.
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
 	// The names of the messages to retrieve.
-	// A maximum of 200 messages can be retrieved in a batch.
+	// A maximum of 100 messages can be retrieved in a batch.
 	// Format: conversations/{conversation}/messages/{message}
 	Names         []string `protobuf:"bytes,2,rep,name=names,proto3" json:"names,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1306,7 +1572,7 @@ type BatchGetMessagesRequest struct {
 
 func (x *BatchGetMessagesRequest) Reset() {
 	*x = BatchGetMessagesRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[21]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1318,7 +1584,7 @@ func (x *BatchGetMessagesRequest) String() string {
 func (*BatchGetMessagesRequest) ProtoMessage() {}
 
 func (x *BatchGetMessagesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[21]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1331,7 +1597,7 @@ func (x *BatchGetMessagesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetMessagesRequest.ProtoReflect.Descriptor instead.
 func (*BatchGetMessagesRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{21}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *BatchGetMessagesRequest) GetParent() string {
@@ -1358,7 +1624,7 @@ type BatchGetMessagesResponse struct {
 
 func (x *BatchGetMessagesResponse) Reset() {
 	*x = BatchGetMessagesResponse{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[22]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1370,7 +1636,7 @@ func (x *BatchGetMessagesResponse) String() string {
 func (*BatchGetMessagesResponse) ProtoMessage() {}
 
 func (x *BatchGetMessagesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[22]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1383,7 +1649,7 @@ func (x *BatchGetMessagesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetMessagesResponse.ProtoReflect.Descriptor instead.
 func (*BatchGetMessagesResponse) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{22}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *BatchGetMessagesResponse) GetMessages() []*Message {
@@ -1406,7 +1672,7 @@ type CreateMessageRequest struct {
 
 func (x *CreateMessageRequest) Reset() {
 	*x = CreateMessageRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[23]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1418,7 +1684,7 @@ func (x *CreateMessageRequest) String() string {
 func (*CreateMessageRequest) ProtoMessage() {}
 
 func (x *CreateMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[23]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1431,7 +1697,7 @@ func (x *CreateMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMessageRequest.ProtoReflect.Descriptor instead.
 func (*CreateMessageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{23}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *CreateMessageRequest) GetParent() string {
@@ -1463,7 +1729,7 @@ type UpdateMessageRequest struct {
 
 func (x *UpdateMessageRequest) Reset() {
 	*x = UpdateMessageRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[24]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1475,7 +1741,7 @@ func (x *UpdateMessageRequest) String() string {
 func (*UpdateMessageRequest) ProtoMessage() {}
 
 func (x *UpdateMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[24]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1488,7 +1754,7 @@ func (x *UpdateMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMessageRequest.ProtoReflect.Descriptor instead.
 func (*UpdateMessageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{24}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *UpdateMessageRequest) GetMessage() *Message {
@@ -1516,7 +1782,7 @@ type DeleteMessageRequest struct {
 
 func (x *DeleteMessageRequest) Reset() {
 	*x = DeleteMessageRequest{}
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[25]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1528,7 +1794,7 @@ func (x *DeleteMessageRequest) String() string {
 func (*DeleteMessageRequest) ProtoMessage() {}
 
 func (x *DeleteMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[25]
+	mi := &file_velony_conversation_api_v1_conversation_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1541,7 +1807,7 @@ func (x *DeleteMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMessageRequest.ProtoReflect.Descriptor instead.
 func (*DeleteMessageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{25}
+	return file_velony_conversation_api_v1_conversation_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *DeleteMessageRequest) GetName() string {
@@ -1618,7 +1884,14 @@ const file_velony_conversation_api_v1_conversation_proto_rawDesc = "" +
 	"updateMask\"T\n" +
 	"\x19DeleteConversationRequest\x127\n" +
 	"\x04name\x18\x01 \x01(\tB#\xe0A\x02\xfaA\x1d\n" +
-	"\x1bapi.velony.app/ConversationR\x04name\"Y\n" +
+	"\x1bapi.velony.app/ConversationR\x04name\"R\n" +
+	"\x17JoinConversationRequest\x127\n" +
+	"\x04name\x18\x01 \x01(\tB#\xe0A\x02\xfaA\x1d\n" +
+	"\x1bapi.velony.app/ConversationR\x04name\"S\n" +
+	"\x18LeaveConversationRequest\x127\n" +
+	"\x04name\x18\x01 \x01(\tB#\xe0A\x02\xfaA\x1d\n" +
+	"\x1bapi.velony.app/ConversationR\x04name\"\x1b\n" +
+	"\x19LeaveConversationResponse\"Y\n" +
 	"\x1aGetConversationUserRequest\x12;\n" +
 	"\x04name\x18\x01 \x01(\tB'\xe0A\x02\xfaA!\n" +
 	"\x1fapi.velony.app/ConversationUserR\x04name\"\xa1\x01\n" +
@@ -1643,6 +1916,15 @@ const file_velony_conversation_api_v1_conversation_proto_rawDesc = "" +
 	"\x1bapi.velony.app/ConversationR\x06parent\x12^\n" +
 	"\x11conversation_user\x18\x02 \x01(\v2,.velony.conversation.api.v1.ConversationUserB\x03\xe0A\x02R\x10conversationUser\"\\\n" +
 	"\x1dDeleteConversationUserRequest\x12;\n" +
+	"\x04name\x18\x01 \x01(\tB'\xe0A\x02\xfaA!\n" +
+	"\x1fapi.velony.app/ConversationUserR\x04name\"[\n" +
+	"\x1cElectConversationUserRequest\x12;\n" +
+	"\x04name\x18\x01 \x01(\tB'\xe0A\x02\xfaA!\n" +
+	"\x1fapi.velony.app/ConversationUserR\x04name\"]\n" +
+	"\x1ePromoteConversationUserRequest\x12;\n" +
+	"\x04name\x18\x01 \x01(\tB'\xe0A\x02\xfaA!\n" +
+	"\x1fapi.velony.app/ConversationUserR\x04name\"\\\n" +
+	"\x1dDemoteConversationUserRequest\x12;\n" +
 	"\x04name\x18\x01 \x01(\tB'\xe0A\x02\xfaA!\n" +
 	"\x1fapi.velony.app/ConversationUserR\x04name\"G\n" +
 	"\x11GetMessageRequest\x122\n" +
@@ -1674,19 +1956,24 @@ const file_velony_conversation_api_v1_conversation_proto_rawDesc = "" +
 	"updateMask\"J\n" +
 	"\x14DeleteMessageRequest\x122\n" +
 	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16api.velony.app/MessageR\x04name2\xed\x17\n" +
+	"\x16api.velony.app/MessageR\x04name2\x8e\x1f\n" +
 	"\x13ConversationService\x12\x9a\x01\n" +
 	"\x0fGetConversation\x122.velony.conversation.api.v1.GetConversationRequest\x1a(.velony.conversation.api.v1.Conversation\")\xdaA\x04name\x82\xd3\xe4\x93\x02\x1c\x12\x1a/v1/{name=conversations/*}\x12\x9b\x01\n" +
 	"\x11ListConversations\x124.velony.conversation.api.v1.ListConversationsRequest\x1a5.velony.conversation.api.v1.ListConversationsResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/conversations\x12\xb0\x01\n" +
 	"\x15BatchGetConversations\x128.velony.conversation.api.v1.BatchGetConversationsRequest\x1a9.velony.conversation.api.v1.BatchGetConversationsResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/v1/conversations:batchGet\x12\xad\x01\n" +
 	"\x12CreateConversation\x125.velony.conversation.api.v1.CreateConversationRequest\x1a(.velony.conversation.api.v1.Conversation\"6\xdaA\fconversation\x82\xd3\xe4\x93\x02!:\fconversation\"\x11/v1/conversations\x12\xcf\x01\n" +
 	"\x12UpdateConversation\x125.velony.conversation.api.v1.UpdateConversationRequest\x1a(.velony.conversation.api.v1.Conversation\"X\xdaA\x18conversation,update_mask\x82\xd3\xe4\x93\x027:\fconversation2'/v1/{conversation.name=conversations/*}\x12\x8e\x01\n" +
-	"\x12DeleteConversation\x125.velony.conversation.api.v1.DeleteConversationRequest\x1a\x16.google.protobuf.Empty\")\xdaA\x04name\x82\xd3\xe4\x93\x02\x1c*\x1a/v1/{name=conversations/*}\x12\xae\x01\n" +
+	"\x12DeleteConversation\x125.velony.conversation.api.v1.DeleteConversationRequest\x1a\x16.google.protobuf.Empty\")\xdaA\x04name\x82\xd3\xe4\x93\x02\x1c*\x1a/v1/{name=conversations/*}\x12\xa4\x01\n" +
+	"\x10JoinConversation\x123.velony.conversation.api.v1.JoinConversationRequest\x1a(.velony.conversation.api.v1.Conversation\"1\xdaA\x04name\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/v1/{name=conversations/*}:join\x12\xb4\x01\n" +
+	"\x11LeaveConversation\x124.velony.conversation.api.v1.LeaveConversationRequest\x1a5.velony.conversation.api.v1.LeaveConversationResponse\"2\xdaA\x04name\x82\xd3\xe4\x93\x02%:\x01*\" /v1/{name=conversations/*}:leave\x12\xae\x01\n" +
 	"\x13GetConversationUser\x126.velony.conversation.api.v1.GetConversationUserRequest\x1a,.velony.conversation.api.v1.ConversationUser\"1\xdaA\x04name\x82\xd3\xe4\x93\x02$\x12\"/v1/{name=conversations/*/users/*}\x12\xc1\x01\n" +
 	"\x15ListConversationUsers\x128.velony.conversation.api.v1.ListConversationUsersRequest\x1a9.velony.conversation.api.v1.ListConversationUsersResponse\"3\xdaA\x06parent\x82\xd3\xe4\x93\x02$\x12\"/v1/{parent=conversations/*}/users\x12\xcd\x01\n" +
 	"\x19BatchGetConversationUsers\x12<.velony.conversation.api.v1.BatchGetConversationUsersRequest\x1a=.velony.conversation.api.v1.BatchGetConversationUsersResponse\"3\x82\xd3\xe4\x93\x02-\x12+/v1/{parent=conversations/*}/users:batchGet\x12\xdb\x01\n" +
 	"\x16CreateConversationUser\x129.velony.conversation.api.v1.CreateConversationUserRequest\x1a,.velony.conversation.api.v1.ConversationUser\"X\xdaA\x18parent,conversation_user\x82\xd3\xe4\x93\x027:\x11conversation_user\"\"/v1/{parent=conversations/*}/users\x12\x9e\x01\n" +
-	"\x16DeleteConversationUser\x129.velony.conversation.api.v1.DeleteConversationUserRequest\x1a\x16.google.protobuf.Empty\"1\xdaA\x04name\x82\xd3\xe4\x93\x02$*\"/v1/{name=conversations/*/users/*}\x12\x96\x01\n" +
+	"\x16DeleteConversationUser\x129.velony.conversation.api.v1.DeleteConversationUserRequest\x1a\x16.google.protobuf.Empty\"1\xdaA\x04name\x82\xd3\xe4\x93\x02$*\"/v1/{name=conversations/*/users/*}\x12\xbb\x01\n" +
+	"\x15ElectConversationUser\x128.velony.conversation.api.v1.ElectConversationUserRequest\x1a,.velony.conversation.api.v1.ConversationUser\":\xdaA\x04name\x82\xd3\xe4\x93\x02-:\x01*\"(/v1/{name=conversations/*/users/*}:elect\x12\xc1\x01\n" +
+	"\x17PromoteConversationUser\x12:.velony.conversation.api.v1.PromoteConversationUserRequest\x1a,.velony.conversation.api.v1.ConversationUser\"<\xdaA\x04name\x82\xd3\xe4\x93\x02/:\x01*\"*/v1/{name=conversations/*/users/*}:promote\x12\xbe\x01\n" +
+	"\x16DemoteConversationUser\x129.velony.conversation.api.v1.DemoteConversationUserRequest\x1a,.velony.conversation.api.v1.ConversationUser\";\xdaA\x04name\x82\xd3\xe4\x93\x02.:\x01*\")/v1/{name=conversations/*/users/*}:demote\x12\x96\x01\n" +
 	"\n" +
 	"GetMessage\x12-.velony.conversation.api.v1.GetMessageRequest\x1a#.velony.conversation.api.v1.Message\"4\xdaA\x04name\x82\xd3\xe4\x93\x02'\x12%/v1/{name=conversations/*/messages/*}\x12\xa9\x01\n" +
 	"\fListMessages\x12/.velony.conversation.api.v1.ListMessagesRequest\x1a0.velony.conversation.api.v1.ListMessagesResponse\"6\xdaA\x06parent\x82\xd3\xe4\x93\x02'\x12%/v1/{parent=conversations/*}/messages\x12\xb5\x01\n" +
@@ -1708,7 +1995,7 @@ func file_velony_conversation_api_v1_conversation_proto_rawDescGZIP() []byte {
 }
 
 var file_velony_conversation_api_v1_conversation_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_velony_conversation_api_v1_conversation_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_velony_conversation_api_v1_conversation_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_velony_conversation_api_v1_conversation_proto_goTypes = []any{
 	(ConversationUser_Role)(0),                // 0: velony.conversation.api.v1.ConversationUser.Role
 	(*Conversation)(nil),                      // 1: velony.conversation.api.v1.Conversation
@@ -1722,38 +2009,44 @@ var file_velony_conversation_api_v1_conversation_proto_goTypes = []any{
 	(*CreateConversationRequest)(nil),         // 9: velony.conversation.api.v1.CreateConversationRequest
 	(*UpdateConversationRequest)(nil),         // 10: velony.conversation.api.v1.UpdateConversationRequest
 	(*DeleteConversationRequest)(nil),         // 11: velony.conversation.api.v1.DeleteConversationRequest
-	(*GetConversationUserRequest)(nil),        // 12: velony.conversation.api.v1.GetConversationUserRequest
-	(*ListConversationUsersRequest)(nil),      // 13: velony.conversation.api.v1.ListConversationUsersRequest
-	(*ListConversationUsersResponse)(nil),     // 14: velony.conversation.api.v1.ListConversationUsersResponse
-	(*BatchGetConversationUsersRequest)(nil),  // 15: velony.conversation.api.v1.BatchGetConversationUsersRequest
-	(*BatchGetConversationUsersResponse)(nil), // 16: velony.conversation.api.v1.BatchGetConversationUsersResponse
-	(*CreateConversationUserRequest)(nil),     // 17: velony.conversation.api.v1.CreateConversationUserRequest
-	(*DeleteConversationUserRequest)(nil),     // 18: velony.conversation.api.v1.DeleteConversationUserRequest
-	(*GetMessageRequest)(nil),                 // 19: velony.conversation.api.v1.GetMessageRequest
-	(*ListMessagesRequest)(nil),               // 20: velony.conversation.api.v1.ListMessagesRequest
-	(*ListMessagesResponse)(nil),              // 21: velony.conversation.api.v1.ListMessagesResponse
-	(*BatchGetMessagesRequest)(nil),           // 22: velony.conversation.api.v1.BatchGetMessagesRequest
-	(*BatchGetMessagesResponse)(nil),          // 23: velony.conversation.api.v1.BatchGetMessagesResponse
-	(*CreateMessageRequest)(nil),              // 24: velony.conversation.api.v1.CreateMessageRequest
-	(*UpdateMessageRequest)(nil),              // 25: velony.conversation.api.v1.UpdateMessageRequest
-	(*DeleteMessageRequest)(nil),              // 26: velony.conversation.api.v1.DeleteMessageRequest
-	(*timestamppb.Timestamp)(nil),             // 27: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),             // 28: google.protobuf.FieldMask
-	(*emptypb.Empty)(nil),                     // 29: google.protobuf.Empty
+	(*JoinConversationRequest)(nil),           // 12: velony.conversation.api.v1.JoinConversationRequest
+	(*LeaveConversationRequest)(nil),          // 13: velony.conversation.api.v1.LeaveConversationRequest
+	(*LeaveConversationResponse)(nil),         // 14: velony.conversation.api.v1.LeaveConversationResponse
+	(*GetConversationUserRequest)(nil),        // 15: velony.conversation.api.v1.GetConversationUserRequest
+	(*ListConversationUsersRequest)(nil),      // 16: velony.conversation.api.v1.ListConversationUsersRequest
+	(*ListConversationUsersResponse)(nil),     // 17: velony.conversation.api.v1.ListConversationUsersResponse
+	(*BatchGetConversationUsersRequest)(nil),  // 18: velony.conversation.api.v1.BatchGetConversationUsersRequest
+	(*BatchGetConversationUsersResponse)(nil), // 19: velony.conversation.api.v1.BatchGetConversationUsersResponse
+	(*CreateConversationUserRequest)(nil),     // 20: velony.conversation.api.v1.CreateConversationUserRequest
+	(*DeleteConversationUserRequest)(nil),     // 21: velony.conversation.api.v1.DeleteConversationUserRequest
+	(*ElectConversationUserRequest)(nil),      // 22: velony.conversation.api.v1.ElectConversationUserRequest
+	(*PromoteConversationUserRequest)(nil),    // 23: velony.conversation.api.v1.PromoteConversationUserRequest
+	(*DemoteConversationUserRequest)(nil),     // 24: velony.conversation.api.v1.DemoteConversationUserRequest
+	(*GetMessageRequest)(nil),                 // 25: velony.conversation.api.v1.GetMessageRequest
+	(*ListMessagesRequest)(nil),               // 26: velony.conversation.api.v1.ListMessagesRequest
+	(*ListMessagesResponse)(nil),              // 27: velony.conversation.api.v1.ListMessagesResponse
+	(*BatchGetMessagesRequest)(nil),           // 28: velony.conversation.api.v1.BatchGetMessagesRequest
+	(*BatchGetMessagesResponse)(nil),          // 29: velony.conversation.api.v1.BatchGetMessagesResponse
+	(*CreateMessageRequest)(nil),              // 30: velony.conversation.api.v1.CreateMessageRequest
+	(*UpdateMessageRequest)(nil),              // 31: velony.conversation.api.v1.UpdateMessageRequest
+	(*DeleteMessageRequest)(nil),              // 32: velony.conversation.api.v1.DeleteMessageRequest
+	(*timestamppb.Timestamp)(nil),             // 33: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),             // 34: google.protobuf.FieldMask
+	(*emptypb.Empty)(nil),                     // 35: google.protobuf.Empty
 }
 var file_velony_conversation_api_v1_conversation_proto_depIdxs = []int32{
-	27, // 0: velony.conversation.api.v1.Conversation.create_time:type_name -> google.protobuf.Timestamp
-	27, // 1: velony.conversation.api.v1.Conversation.update_time:type_name -> google.protobuf.Timestamp
+	33, // 0: velony.conversation.api.v1.Conversation.create_time:type_name -> google.protobuf.Timestamp
+	33, // 1: velony.conversation.api.v1.Conversation.update_time:type_name -> google.protobuf.Timestamp
 	0,  // 2: velony.conversation.api.v1.ConversationUser.role:type_name -> velony.conversation.api.v1.ConversationUser.Role
-	27, // 3: velony.conversation.api.v1.ConversationUser.create_time:type_name -> google.protobuf.Timestamp
-	27, // 4: velony.conversation.api.v1.ConversationUser.update_time:type_name -> google.protobuf.Timestamp
-	27, // 5: velony.conversation.api.v1.Message.create_time:type_name -> google.protobuf.Timestamp
-	27, // 6: velony.conversation.api.v1.Message.update_time:type_name -> google.protobuf.Timestamp
+	33, // 3: velony.conversation.api.v1.ConversationUser.create_time:type_name -> google.protobuf.Timestamp
+	33, // 4: velony.conversation.api.v1.ConversationUser.update_time:type_name -> google.protobuf.Timestamp
+	33, // 5: velony.conversation.api.v1.Message.create_time:type_name -> google.protobuf.Timestamp
+	33, // 6: velony.conversation.api.v1.Message.update_time:type_name -> google.protobuf.Timestamp
 	1,  // 7: velony.conversation.api.v1.ListConversationsResponse.conversations:type_name -> velony.conversation.api.v1.Conversation
 	1,  // 8: velony.conversation.api.v1.BatchGetConversationsResponse.conversations:type_name -> velony.conversation.api.v1.Conversation
 	1,  // 9: velony.conversation.api.v1.CreateConversationRequest.conversation:type_name -> velony.conversation.api.v1.Conversation
 	1,  // 10: velony.conversation.api.v1.UpdateConversationRequest.conversation:type_name -> velony.conversation.api.v1.Conversation
-	28, // 11: velony.conversation.api.v1.UpdateConversationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	34, // 11: velony.conversation.api.v1.UpdateConversationRequest.update_mask:type_name -> google.protobuf.FieldMask
 	2,  // 12: velony.conversation.api.v1.ListConversationUsersResponse.conversation_users:type_name -> velony.conversation.api.v1.ConversationUser
 	2,  // 13: velony.conversation.api.v1.BatchGetConversationUsersResponse.conversation_users:type_name -> velony.conversation.api.v1.ConversationUser
 	2,  // 14: velony.conversation.api.v1.CreateConversationUserRequest.conversation_user:type_name -> velony.conversation.api.v1.ConversationUser
@@ -1761,43 +2054,53 @@ var file_velony_conversation_api_v1_conversation_proto_depIdxs = []int32{
 	3,  // 16: velony.conversation.api.v1.BatchGetMessagesResponse.messages:type_name -> velony.conversation.api.v1.Message
 	3,  // 17: velony.conversation.api.v1.CreateMessageRequest.message:type_name -> velony.conversation.api.v1.Message
 	3,  // 18: velony.conversation.api.v1.UpdateMessageRequest.message:type_name -> velony.conversation.api.v1.Message
-	28, // 19: velony.conversation.api.v1.UpdateMessageRequest.update_mask:type_name -> google.protobuf.FieldMask
+	34, // 19: velony.conversation.api.v1.UpdateMessageRequest.update_mask:type_name -> google.protobuf.FieldMask
 	4,  // 20: velony.conversation.api.v1.ConversationService.GetConversation:input_type -> velony.conversation.api.v1.GetConversationRequest
 	5,  // 21: velony.conversation.api.v1.ConversationService.ListConversations:input_type -> velony.conversation.api.v1.ListConversationsRequest
 	7,  // 22: velony.conversation.api.v1.ConversationService.BatchGetConversations:input_type -> velony.conversation.api.v1.BatchGetConversationsRequest
 	9,  // 23: velony.conversation.api.v1.ConversationService.CreateConversation:input_type -> velony.conversation.api.v1.CreateConversationRequest
 	10, // 24: velony.conversation.api.v1.ConversationService.UpdateConversation:input_type -> velony.conversation.api.v1.UpdateConversationRequest
 	11, // 25: velony.conversation.api.v1.ConversationService.DeleteConversation:input_type -> velony.conversation.api.v1.DeleteConversationRequest
-	12, // 26: velony.conversation.api.v1.ConversationService.GetConversationUser:input_type -> velony.conversation.api.v1.GetConversationUserRequest
-	13, // 27: velony.conversation.api.v1.ConversationService.ListConversationUsers:input_type -> velony.conversation.api.v1.ListConversationUsersRequest
-	15, // 28: velony.conversation.api.v1.ConversationService.BatchGetConversationUsers:input_type -> velony.conversation.api.v1.BatchGetConversationUsersRequest
-	17, // 29: velony.conversation.api.v1.ConversationService.CreateConversationUser:input_type -> velony.conversation.api.v1.CreateConversationUserRequest
-	18, // 30: velony.conversation.api.v1.ConversationService.DeleteConversationUser:input_type -> velony.conversation.api.v1.DeleteConversationUserRequest
-	19, // 31: velony.conversation.api.v1.ConversationService.GetMessage:input_type -> velony.conversation.api.v1.GetMessageRequest
-	20, // 32: velony.conversation.api.v1.ConversationService.ListMessages:input_type -> velony.conversation.api.v1.ListMessagesRequest
-	22, // 33: velony.conversation.api.v1.ConversationService.BatchGetMessages:input_type -> velony.conversation.api.v1.BatchGetMessagesRequest
-	24, // 34: velony.conversation.api.v1.ConversationService.CreateMessage:input_type -> velony.conversation.api.v1.CreateMessageRequest
-	25, // 35: velony.conversation.api.v1.ConversationService.UpdateMessage:input_type -> velony.conversation.api.v1.UpdateMessageRequest
-	26, // 36: velony.conversation.api.v1.ConversationService.DeleteMessage:input_type -> velony.conversation.api.v1.DeleteMessageRequest
-	1,  // 37: velony.conversation.api.v1.ConversationService.GetConversation:output_type -> velony.conversation.api.v1.Conversation
-	6,  // 38: velony.conversation.api.v1.ConversationService.ListConversations:output_type -> velony.conversation.api.v1.ListConversationsResponse
-	8,  // 39: velony.conversation.api.v1.ConversationService.BatchGetConversations:output_type -> velony.conversation.api.v1.BatchGetConversationsResponse
-	1,  // 40: velony.conversation.api.v1.ConversationService.CreateConversation:output_type -> velony.conversation.api.v1.Conversation
-	1,  // 41: velony.conversation.api.v1.ConversationService.UpdateConversation:output_type -> velony.conversation.api.v1.Conversation
-	29, // 42: velony.conversation.api.v1.ConversationService.DeleteConversation:output_type -> google.protobuf.Empty
-	2,  // 43: velony.conversation.api.v1.ConversationService.GetConversationUser:output_type -> velony.conversation.api.v1.ConversationUser
-	14, // 44: velony.conversation.api.v1.ConversationService.ListConversationUsers:output_type -> velony.conversation.api.v1.ListConversationUsersResponse
-	16, // 45: velony.conversation.api.v1.ConversationService.BatchGetConversationUsers:output_type -> velony.conversation.api.v1.BatchGetConversationUsersResponse
-	2,  // 46: velony.conversation.api.v1.ConversationService.CreateConversationUser:output_type -> velony.conversation.api.v1.ConversationUser
-	29, // 47: velony.conversation.api.v1.ConversationService.DeleteConversationUser:output_type -> google.protobuf.Empty
-	3,  // 48: velony.conversation.api.v1.ConversationService.GetMessage:output_type -> velony.conversation.api.v1.Message
-	21, // 49: velony.conversation.api.v1.ConversationService.ListMessages:output_type -> velony.conversation.api.v1.ListMessagesResponse
-	23, // 50: velony.conversation.api.v1.ConversationService.BatchGetMessages:output_type -> velony.conversation.api.v1.BatchGetMessagesResponse
-	3,  // 51: velony.conversation.api.v1.ConversationService.CreateMessage:output_type -> velony.conversation.api.v1.Message
-	3,  // 52: velony.conversation.api.v1.ConversationService.UpdateMessage:output_type -> velony.conversation.api.v1.Message
-	29, // 53: velony.conversation.api.v1.ConversationService.DeleteMessage:output_type -> google.protobuf.Empty
-	37, // [37:54] is the sub-list for method output_type
-	20, // [20:37] is the sub-list for method input_type
+	12, // 26: velony.conversation.api.v1.ConversationService.JoinConversation:input_type -> velony.conversation.api.v1.JoinConversationRequest
+	13, // 27: velony.conversation.api.v1.ConversationService.LeaveConversation:input_type -> velony.conversation.api.v1.LeaveConversationRequest
+	15, // 28: velony.conversation.api.v1.ConversationService.GetConversationUser:input_type -> velony.conversation.api.v1.GetConversationUserRequest
+	16, // 29: velony.conversation.api.v1.ConversationService.ListConversationUsers:input_type -> velony.conversation.api.v1.ListConversationUsersRequest
+	18, // 30: velony.conversation.api.v1.ConversationService.BatchGetConversationUsers:input_type -> velony.conversation.api.v1.BatchGetConversationUsersRequest
+	20, // 31: velony.conversation.api.v1.ConversationService.CreateConversationUser:input_type -> velony.conversation.api.v1.CreateConversationUserRequest
+	21, // 32: velony.conversation.api.v1.ConversationService.DeleteConversationUser:input_type -> velony.conversation.api.v1.DeleteConversationUserRequest
+	22, // 33: velony.conversation.api.v1.ConversationService.ElectConversationUser:input_type -> velony.conversation.api.v1.ElectConversationUserRequest
+	23, // 34: velony.conversation.api.v1.ConversationService.PromoteConversationUser:input_type -> velony.conversation.api.v1.PromoteConversationUserRequest
+	24, // 35: velony.conversation.api.v1.ConversationService.DemoteConversationUser:input_type -> velony.conversation.api.v1.DemoteConversationUserRequest
+	25, // 36: velony.conversation.api.v1.ConversationService.GetMessage:input_type -> velony.conversation.api.v1.GetMessageRequest
+	26, // 37: velony.conversation.api.v1.ConversationService.ListMessages:input_type -> velony.conversation.api.v1.ListMessagesRequest
+	28, // 38: velony.conversation.api.v1.ConversationService.BatchGetMessages:input_type -> velony.conversation.api.v1.BatchGetMessagesRequest
+	30, // 39: velony.conversation.api.v1.ConversationService.CreateMessage:input_type -> velony.conversation.api.v1.CreateMessageRequest
+	31, // 40: velony.conversation.api.v1.ConversationService.UpdateMessage:input_type -> velony.conversation.api.v1.UpdateMessageRequest
+	32, // 41: velony.conversation.api.v1.ConversationService.DeleteMessage:input_type -> velony.conversation.api.v1.DeleteMessageRequest
+	1,  // 42: velony.conversation.api.v1.ConversationService.GetConversation:output_type -> velony.conversation.api.v1.Conversation
+	6,  // 43: velony.conversation.api.v1.ConversationService.ListConversations:output_type -> velony.conversation.api.v1.ListConversationsResponse
+	8,  // 44: velony.conversation.api.v1.ConversationService.BatchGetConversations:output_type -> velony.conversation.api.v1.BatchGetConversationsResponse
+	1,  // 45: velony.conversation.api.v1.ConversationService.CreateConversation:output_type -> velony.conversation.api.v1.Conversation
+	1,  // 46: velony.conversation.api.v1.ConversationService.UpdateConversation:output_type -> velony.conversation.api.v1.Conversation
+	35, // 47: velony.conversation.api.v1.ConversationService.DeleteConversation:output_type -> google.protobuf.Empty
+	1,  // 48: velony.conversation.api.v1.ConversationService.JoinConversation:output_type -> velony.conversation.api.v1.Conversation
+	14, // 49: velony.conversation.api.v1.ConversationService.LeaveConversation:output_type -> velony.conversation.api.v1.LeaveConversationResponse
+	2,  // 50: velony.conversation.api.v1.ConversationService.GetConversationUser:output_type -> velony.conversation.api.v1.ConversationUser
+	17, // 51: velony.conversation.api.v1.ConversationService.ListConversationUsers:output_type -> velony.conversation.api.v1.ListConversationUsersResponse
+	19, // 52: velony.conversation.api.v1.ConversationService.BatchGetConversationUsers:output_type -> velony.conversation.api.v1.BatchGetConversationUsersResponse
+	2,  // 53: velony.conversation.api.v1.ConversationService.CreateConversationUser:output_type -> velony.conversation.api.v1.ConversationUser
+	35, // 54: velony.conversation.api.v1.ConversationService.DeleteConversationUser:output_type -> google.protobuf.Empty
+	2,  // 55: velony.conversation.api.v1.ConversationService.ElectConversationUser:output_type -> velony.conversation.api.v1.ConversationUser
+	2,  // 56: velony.conversation.api.v1.ConversationService.PromoteConversationUser:output_type -> velony.conversation.api.v1.ConversationUser
+	2,  // 57: velony.conversation.api.v1.ConversationService.DemoteConversationUser:output_type -> velony.conversation.api.v1.ConversationUser
+	3,  // 58: velony.conversation.api.v1.ConversationService.GetMessage:output_type -> velony.conversation.api.v1.Message
+	27, // 59: velony.conversation.api.v1.ConversationService.ListMessages:output_type -> velony.conversation.api.v1.ListMessagesResponse
+	29, // 60: velony.conversation.api.v1.ConversationService.BatchGetMessages:output_type -> velony.conversation.api.v1.BatchGetMessagesResponse
+	3,  // 61: velony.conversation.api.v1.ConversationService.CreateMessage:output_type -> velony.conversation.api.v1.Message
+	3,  // 62: velony.conversation.api.v1.ConversationService.UpdateMessage:output_type -> velony.conversation.api.v1.Message
+	35, // 63: velony.conversation.api.v1.ConversationService.DeleteMessage:output_type -> google.protobuf.Empty
+	42, // [42:64] is the sub-list for method output_type
+	20, // [20:42] is the sub-list for method input_type
 	20, // [20:20] is the sub-list for extension type_name
 	20, // [20:20] is the sub-list for extension extendee
 	0,  // [0:20] is the sub-list for field type_name
@@ -1816,7 +2119,7 @@ func file_velony_conversation_api_v1_conversation_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_conversation_api_v1_conversation_proto_rawDesc), len(file_velony_conversation_api_v1_conversation_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   26,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

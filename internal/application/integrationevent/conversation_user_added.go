@@ -2,9 +2,9 @@ package integrationevent
 
 import "time"
 
-var _ IntegrationEvent = (*ConversationUserJoined)(nil)
+var _ IntegrationEvent = (*ConversationUserAdded)(nil)
 
-type ConversationUserJoined struct {
+type ConversationUserAdded struct {
 	BaseIntegrationEvent
 
 	conversationID string
@@ -13,15 +13,15 @@ type ConversationUserJoined struct {
 	version        uint32
 }
 
-func NewConversationUserJoined(
+func NewConversationUserAdded(
 	aggregateID string,
 	occurTime time.Time,
 	conversationID string,
 	userID string,
 	role string,
 	version uint32,
-) ConversationUserJoined {
-	return ConversationUserJoined{
+) ConversationUserAdded {
+	return ConversationUserAdded{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(aggregateID, occurTime),
 
 		conversationID: conversationID,
@@ -31,26 +31,26 @@ func NewConversationUserJoined(
 	}
 }
 
-func (e ConversationUserJoined) Type() string {
-	return "conversation.conversation-user.joined"
+func (e ConversationUserAdded) Type() string {
+	return "conversation.conversation-user.added"
 }
 
-func (e ConversationUserJoined) AggregateType() string {
+func (e ConversationUserAdded) AggregateType() string {
 	return "conversation-user"
 }
 
-func (e ConversationUserJoined) ConversationID() string {
+func (e ConversationUserAdded) ConversationID() string {
 	return e.conversationID
 }
 
-func (e ConversationUserJoined) UserID() string {
+func (e ConversationUserAdded) UserID() string {
 	return e.userID
 }
 
-func (e ConversationUserJoined) Role() string {
+func (e ConversationUserAdded) Role() string {
 	return e.role
 }
 
-func (e ConversationUserJoined) Version() uint32 {
+func (e ConversationUserAdded) Version() uint32 {
 	return e.version
 }

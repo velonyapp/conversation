@@ -72,6 +72,9 @@ func (h *deleteMessageHandler) Handle(
 	if err != nil {
 		return DeleteMessageResult{}, err
 	}
+	if message == nil {
+		return DeleteMessageResult{}, common.ErrMessageNotFound
+	}
 
 	if err := h.conversationUserPolicy.CanDeleteMessage(actor, message); err != nil {
 		return DeleteMessageResult{}, err

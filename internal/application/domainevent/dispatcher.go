@@ -19,6 +19,9 @@ func NewDispatcher(
 	conversationCreatedHandler *ConversationCreatedHandler,
 	conversationUpdatedHandler *ConversationUpdatedHandler,
 	conversationDeletedHandler *ConversationDeletedHandler,
+	conversationUserAddedHandler *ConversationUserAddedHandler,
+	conversationUserUpdatedHandler *ConversationUserUpdatedHandler,
+	conversationUserRemovedHandler *ConversationUserRemovedHandler,
 	messageCreatedHandler *MessageCreatedHandler,
 	messageEditedHandler *MessageEditedHandler,
 	messageDeletedHandler *MessageDeletedHandler,
@@ -35,6 +38,9 @@ func NewDispatcher(
 	registerHandler(dispatcher, conversationCreatedHandler)
 	registerHandler(dispatcher, conversationUpdatedHandler)
 	registerHandler(dispatcher, conversationDeletedHandler)
+	registerHandler(dispatcher, conversationUserAddedHandler)
+	registerHandler(dispatcher, conversationUserUpdatedHandler)
+	registerHandler(dispatcher, conversationUserRemovedHandler)
 	registerHandler(dispatcher, messageCreatedHandler)
 	registerHandler(dispatcher, messageEditedHandler)
 	registerHandler(dispatcher, messageDeletedHandler)

@@ -10,8 +10,10 @@ import (
 
 var ProviderSet = wire.NewSet(
 	service.NewAPI,
+	service.NewConsumer,
 	transport.NewGRPCServer,
 	transport.NewHTTPServer,
+	transport.NewKafkaConsumer,
 	middleware.NewTracing,
 	middleware.NewMetrics,
 	middleware.NewErrorMapper,

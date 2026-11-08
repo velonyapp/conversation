@@ -1,13 +1,14 @@
 CREATE TABLE conversations (
-    id              CHAR(36) PRIMARY KEY,
-    title           TEXT NOT NULL,
-    description     TEXT NOT NULL,
-    last_message_id CHAR(36),
-    create_time     TIMESTAMP(6) NOT NULL,
-    update_time     TIMESTAMP(6) NOT NULL,
-    version         INT NOT NULL,
+    id                       CHAR(36) PRIMARY KEY,
+    title                    TEXT NOT NULL,
+    description              TEXT NOT NULL,
+    create_time              TIMESTAMP(6) NOT NULL,
+    update_time              TIMESTAMP(6) NOT NULL,
+    last_message_id          CHAR(36),
+    last_message_create_time TIMESTAMP(6),
+    version                  INT NOT NULL,
 
-    INDEX idx_conversations_update_time (update_time)
+    INDEX idx_conversations_last_activity_time ((COALESCE(last_message_create_time, update_time)))
 ) ENGINE = InnoDB;
 
 CREATE TABLE users (
@@ -23,7 +24,7 @@ CREATE TABLE conversation_users (
     update_time     TIMESTAMP(6) NOT NULL,
     version         INT NOT NULL,
 
-    INDEX idx_conversation_users_create_time (create_time),
+    INDEX idx_conversation_users_conversation_id_create_time (conversation_id, create_time),
 
     UNIQUE KEY uq_conversation_users_conversation_id_user_id (conversation_id, user_id),
 
@@ -41,12 +42,12 @@ CREATE TABLE messages (
     id              CHAR(36) PRIMARY KEY,
     conversation_id CHAR(36) NOT NULL,
     user_id         CHAR(36),
-    content         TEXT NOT NULL,
+    content         MEDIUMTEXT NOT NULL,
     create_time     TIMESTAMP(6) NOT NULL,
     update_time     TIMESTAMP(6) NOT NULL,
     version         INT NOT NULL,
 
-    INDEX idx_messages_create_time (create_time),
+    INDEX idx_messages_conversation_id_create_time (conversation_id, create_time),
 
     CONSTRAINT fk_messages_conversation_id
         FOREIGN KEY (conversation_id)

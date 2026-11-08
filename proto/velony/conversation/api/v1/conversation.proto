@@ -58,6 +58,22 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  rpc JoinConversation(JoinConversationRequest) returns (Conversation) {
+    option (google.api.http) = {
+      post: "/v1/{name=conversations/*}:join"
+      body: "*"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc LeaveConversation(LeaveConversationRequest) returns (LeaveConversationResponse) {
+    option (google.api.http) = {
+      post: "/v1/{name=conversations/*}:leave"
+      body: "*"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
   rpc GetConversationUser(GetConversationUserRequest) returns (ConversationUser) {
     option (google.api.http) = {
       get: "/v1/{name=conversations/*/users/*}"
@@ -89,6 +105,30 @@ service ConversationService {
   rpc DeleteConversationUser(DeleteConversationUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=conversations/*/users/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc ElectConversationUser(ElectConversationUserRequest) returns (ConversationUser) {
+    option (google.api.http) = {
+      post: "/v1/{name=conversations/*/users/*}:elect"
+      body: "*"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc PromoteConversationUser(PromoteConversationUserRequest) returns (ConversationUser) {
+    option (google.api.http) = {
+      post: "/v1/{name=conversations/*/users/*}:promote"
+      body: "*"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc DemoteConversationUser(DemoteConversationUserRequest) returns (ConversationUser) {
+    option (google.api.http) = {
+      post: "/v1/{name=conversations/*/users/*}:demote"
+      body: "*"
     };
     option (google.api.method_signature) = "name";
   }
@@ -158,7 +198,7 @@ message Conversation {
   ];
 
   // The description of the conversation.
-  // Must not exceed 2000 characters.
+  // Must not exceed 1000 characters.
   string description = 3 [
     (google.api.field_behavior) = OPTIONAL
   ];
@@ -289,7 +329,7 @@ message ListConversationsRequest {
   // The maximum number of conversations to return. The service may return fewer than
   // this value.
   // If unspecified, at most 20 conversations will be returned.
-  // The maximum value is 50; values above 50 will be coerced to 50.
+  // The maximum value is 100; values above 100 will be coerced to 100.
   int32 page_size = 1 [
     (google.api.field_behavior) = OPTIONAL
   ];
@@ -363,6 +403,30 @@ message DeleteConversationRequest {
   ];
 }
 
+message JoinConversationRequest {
+  // The name of the conversation to join.
+  // Format: conversations/{conversation}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+}
+
+message LeaveConversationRequest {
+  // The name of the conversation to leave.
+  // Format: conversations/{conversation}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Conversation"
+    }
+  ];
+}
+
+message LeaveConversationResponse {}
+
 message GetConversationUserRequest {
   // The name of the conversation user to retrieve.
   // Format: conversations/{conversation}/users/{conversation_user}
@@ -386,7 +450,7 @@ message ListConversationUsersRequest {
 
   // The maximum number of conversation users to return. The service may return fewer than
   // this value.
-  // If unspecified, at most 50 conversation users will be returned.
+  // If unspecified, at most 20 conversation users will be returned.
   // The maximum value is 100; values above 100 will be coerced to 100.
   int32 page_size = 2 [
     (google.api.field_behavior) = OPTIONAL
@@ -440,7 +504,7 @@ message BatchGetConversationUsersResponse {
 }
 
 message CreateConversationUserRequest {
-  // The parent resource where this conversation user will be created.
+  // The parent resource where this conversation user will be added.
   // Format: conversations/{conversation}
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -449,14 +513,47 @@ message CreateConversationUserRequest {
     }
   ];
 
-  // The conversation user to create.
+  // The conversation user to add.
   ConversationUser conversation_user = 2 [
     (google.api.field_behavior) = REQUIRED
   ];
 }
 
 message DeleteConversationUserRequest {
-  // The name of the conversation user to delete.
+  // The name of the conversation user to kick.
+  // Format: conversations/{conversation}/users/{conversation_user}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/ConversationUser"
+    }
+  ];
+}
+
+message ElectConversationUserRequest {
+  // The name of the conversation user to elect as owner.
+  // Format: conversations/{conversation}/users/{conversation_user}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/ConversationUser"
+    }
+  ];
+}
+
+message PromoteConversationUserRequest {
+  // The name of the conversation user to promote to admin.
+  // Format: conversations/{conversation}/users/{conversation_user}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/ConversationUser"
+    }
+  ];
+}
+
+message DemoteConversationUserRequest {
+  // The name of the conversation user to demote to member.
   // Format: conversations/{conversation}/users/{conversation_user}
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -490,7 +587,7 @@ message ListMessagesRequest {
   // The maximum number of messages to return. The service may return fewer than
   // this value.
   // If unspecified, at most 50 messages will be returned.
-  // The maximum value is 200; values above 200 will be coerced to 200.
+  // The maximum value is 100; values above 100 will be coerced to 100.
   int32 page_size = 2 [
     (google.api.field_behavior) = OPTIONAL
   ];
@@ -527,7 +624,7 @@ message BatchGetMessagesRequest {
   ];
 
   // The names of the messages to retrieve.
-  // A maximum of 200 messages can be retrieved in a batch.
+  // A maximum of 100 messages can be retrieved in a batch.
   // Format: conversations/{conversation}/messages/{message}
   repeated string names = 2 [
     (google.api.field_behavior) = REQUIRED,

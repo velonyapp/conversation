@@ -6,11 +6,11 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/conversation/gen/event/v1;eventv1";
 
-message ConversationUserJoinedPayload {
+message ConversationUserAddedPayload {
   string                    conversation_user_id = 1;
   string                    conversation_id      = 2;
   string                    user_id              = 3;
   string                    role                 = 4;
-  google.protobuf.Timestamp join_time            = 5;
+  google.protobuf.Timestamp add_time             = 5;
   uint32                    version              = 6;
 }

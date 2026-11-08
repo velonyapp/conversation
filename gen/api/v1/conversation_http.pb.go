@@ -27,12 +27,17 @@ const OperationConversationServiceCreateMessage = "/velony.conversation.api.v1.C
 const OperationConversationServiceDeleteConversation = "/velony.conversation.api.v1.ConversationService/DeleteConversation"
 const OperationConversationServiceDeleteConversationUser = "/velony.conversation.api.v1.ConversationService/DeleteConversationUser"
 const OperationConversationServiceDeleteMessage = "/velony.conversation.api.v1.ConversationService/DeleteMessage"
+const OperationConversationServiceDemoteConversationUser = "/velony.conversation.api.v1.ConversationService/DemoteConversationUser"
+const OperationConversationServiceElectConversationUser = "/velony.conversation.api.v1.ConversationService/ElectConversationUser"
 const OperationConversationServiceGetConversation = "/velony.conversation.api.v1.ConversationService/GetConversation"
 const OperationConversationServiceGetConversationUser = "/velony.conversation.api.v1.ConversationService/GetConversationUser"
 const OperationConversationServiceGetMessage = "/velony.conversation.api.v1.ConversationService/GetMessage"
+const OperationConversationServiceJoinConversation = "/velony.conversation.api.v1.ConversationService/JoinConversation"
+const OperationConversationServiceLeaveConversation = "/velony.conversation.api.v1.ConversationService/LeaveConversation"
 const OperationConversationServiceListConversationUsers = "/velony.conversation.api.v1.ConversationService/ListConversationUsers"
 const OperationConversationServiceListConversations = "/velony.conversation.api.v1.ConversationService/ListConversations"
 const OperationConversationServiceListMessages = "/velony.conversation.api.v1.ConversationService/ListMessages"
+const OperationConversationServicePromoteConversationUser = "/velony.conversation.api.v1.ConversationService/PromoteConversationUser"
 const OperationConversationServiceUpdateConversation = "/velony.conversation.api.v1.ConversationService/UpdateConversation"
 const OperationConversationServiceUpdateMessage = "/velony.conversation.api.v1.ConversationService/UpdateMessage"
 
@@ -46,12 +51,17 @@ type ConversationServiceHTTPServer interface {
 	DeleteConversation(context.Context, *DeleteConversationRequest) (*emptypb.Empty, error)
 	DeleteConversationUser(context.Context, *DeleteConversationUserRequest) (*emptypb.Empty, error)
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*emptypb.Empty, error)
+	DemoteConversationUser(context.Context, *DemoteConversationUserRequest) (*ConversationUser, error)
+	ElectConversationUser(context.Context, *ElectConversationUserRequest) (*ConversationUser, error)
 	GetConversation(context.Context, *GetConversationRequest) (*Conversation, error)
 	GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error)
 	GetMessage(context.Context, *GetMessageRequest) (*Message, error)
+	JoinConversation(context.Context, *JoinConversationRequest) (*Conversation, error)
+	LeaveConversation(context.Context, *LeaveConversationRequest) (*LeaveConversationResponse, error)
 	ListConversationUsers(context.Context, *ListConversationUsersRequest) (*ListConversationUsersResponse, error)
 	ListConversations(context.Context, *ListConversationsRequest) (*ListConversationsResponse, error)
 	ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error)
+	PromoteConversationUser(context.Context, *PromoteConversationUserRequest) (*ConversationUser, error)
 	UpdateConversation(context.Context, *UpdateConversationRequest) (*Conversation, error)
 	UpdateMessage(context.Context, *UpdateMessageRequest) (*Message, error)
 }
@@ -64,11 +74,16 @@ func RegisterConversationServiceHTTPServer(s *http.Server, srv ConversationServi
 	r.Handle("POST", "/v1/conversations", _ConversationService_CreateConversation0_HTTP_Handler(srv))
 	r.Handle("PATCH", "/v1/{conversation.name:conversations/[^/]+}", _ConversationService_UpdateConversation0_HTTP_Handler(srv))
 	r.Handle("DELETE", "/v1/{name:conversations/[^/]+}", _ConversationService_DeleteConversation0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:conversations/[^/]+}:join", _ConversationService_JoinConversation0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:conversations/[^/]+}:leave", _ConversationService_LeaveConversation0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/{name:conversations/[^/]+/users/[^/]+}", _ConversationService_GetConversationUser0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/{parent:conversations/[^/]+}/users", _ConversationService_ListConversationUsers0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/{parent:conversations/[^/]+}/users:batchGet", _ConversationService_BatchGetConversationUsers0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{parent:conversations/[^/]+}/users", _ConversationService_CreateConversationUser0_HTTP_Handler(srv))
 	r.Handle("DELETE", "/v1/{name:conversations/[^/]+/users/[^/]+}", _ConversationService_DeleteConversationUser0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:conversations/[^/]+/users/[^/]+}:elect", _ConversationService_ElectConversationUser0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:conversations/[^/]+/users/[^/]+}:promote", _ConversationService_PromoteConversationUser0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:conversations/[^/]+/users/[^/]+}:demote", _ConversationService_DemoteConversationUser0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/{name:conversations/[^/]+/messages/[^/]+}", _ConversationService_GetMessage0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/{parent:conversations/[^/]+}/messages", _ConversationService_ListMessages0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/{parent:conversations/[^/]+}/messages:batchGet", _ConversationService_BatchGetMessages0_HTTP_Handler(srv))
@@ -206,6 +221,50 @@ func _ConversationService_DeleteConversation0_HTTP_Handler(srv ConversationServi
 	}
 }
 
+func _ConversationService_JoinConversation0_HTTP_Handler(srv ConversationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in JoinConversationRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConversationServiceJoinConversation)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.JoinConversation(ctx, req.(*JoinConversationRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*Conversation)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConversationService_LeaveConversation0_HTTP_Handler(srv ConversationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in LeaveConversationRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConversationServiceLeaveConversation)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.LeaveConversation(ctx, req.(*LeaveConversationRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*LeaveConversationResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _ConversationService_GetConversationUser0_HTTP_Handler(srv ConversationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetConversationUserRequest
@@ -315,6 +374,72 @@ func _ConversationService_DeleteConversationUser0_HTTP_Handler(srv ConversationS
 			return err
 		}
 		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConversationService_ElectConversationUser0_HTTP_Handler(srv ConversationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ElectConversationUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConversationServiceElectConversationUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ElectConversationUser(ctx, req.(*ElectConversationUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ConversationUser)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConversationService_PromoteConversationUser0_HTTP_Handler(srv ConversationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in PromoteConversationUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConversationServicePromoteConversationUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PromoteConversationUser(ctx, req.(*PromoteConversationUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ConversationUser)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ConversationService_DemoteConversationUser0_HTTP_Handler(srv ConversationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DemoteConversationUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationConversationServiceDemoteConversationUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DemoteConversationUser(ctx, req.(*DemoteConversationUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ConversationUser)
 		return ctx.Result(200, reply)
 	}
 }
@@ -467,12 +592,17 @@ type ConversationServiceHTTPClient interface {
 	DeleteConversation(ctx context.Context, req *DeleteConversationRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteConversationUser(ctx context.Context, req *DeleteConversationUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteMessage(ctx context.Context, req *DeleteMessageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	DemoteConversationUser(ctx context.Context, req *DemoteConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
+	ElectConversationUser(ctx context.Context, req *ElectConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
 	GetConversation(ctx context.Context, req *GetConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
 	GetConversationUser(ctx context.Context, req *GetConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
 	GetMessage(ctx context.Context, req *GetMessageRequest, opts ...http.CallOption) (rsp *Message, err error)
+	JoinConversation(ctx context.Context, req *JoinConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
+	LeaveConversation(ctx context.Context, req *LeaveConversationRequest, opts ...http.CallOption) (rsp *LeaveConversationResponse, err error)
 	ListConversationUsers(ctx context.Context, req *ListConversationUsersRequest, opts ...http.CallOption) (rsp *ListConversationUsersResponse, err error)
 	ListConversations(ctx context.Context, req *ListConversationsRequest, opts ...http.CallOption) (rsp *ListConversationsResponse, err error)
 	ListMessages(ctx context.Context, req *ListMessagesRequest, opts ...http.CallOption) (rsp *ListMessagesResponse, err error)
+	PromoteConversationUser(ctx context.Context, req *PromoteConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
 	UpdateConversation(ctx context.Context, req *UpdateConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
 	UpdateMessage(ctx context.Context, req *UpdateMessageRequest, opts ...http.CallOption) (rsp *Message, err error)
 }
@@ -632,6 +762,40 @@ func (c *ConversationServiceHTTPClientImpl) DeleteMessage(ctx context.Context, i
 	return &out, nil
 }
 
+func (c *ConversationServiceHTTPClientImpl) DemoteConversationUser(ctx context.Context, in *DemoteConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
+	var out ConversationUser
+	pattern := "/v1/{name=conversations/*/users/*}:demote"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationConversationServiceDemoteConversationUser),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ConversationServiceHTTPClientImpl) ElectConversationUser(ctx context.Context, in *ElectConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
+	var out ConversationUser
+	pattern := "/v1/{name=conversations/*/users/*}:elect"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationConversationServiceElectConversationUser),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *ConversationServiceHTTPClientImpl) GetConversation(ctx context.Context, in *GetConversationRequest, opts ...http.CallOption) (*Conversation, error) {
 	var out Conversation
 	pattern := "/v1/{name=conversations/*}"
@@ -680,6 +844,40 @@ func (c *ConversationServiceHTTPClientImpl) GetMessage(ctx context.Context, in *
 	return &out, nil
 }
 
+func (c *ConversationServiceHTTPClientImpl) JoinConversation(ctx context.Context, in *JoinConversationRequest, opts ...http.CallOption) (*Conversation, error) {
+	var out Conversation
+	pattern := "/v1/{name=conversations/*}:join"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationConversationServiceJoinConversation),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ConversationServiceHTTPClientImpl) LeaveConversation(ctx context.Context, in *LeaveConversationRequest, opts ...http.CallOption) (*LeaveConversationResponse, error) {
+	var out LeaveConversationResponse
+	pattern := "/v1/{name=conversations/*}:leave"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationConversationServiceLeaveConversation),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *ConversationServiceHTTPClientImpl) ListConversationUsers(ctx context.Context, in *ListConversationUsersRequest, opts ...http.CallOption) (*ListConversationUsersResponse, error) {
 	var out ListConversationUsersResponse
 	pattern := "/v1/{parent=conversations/*}/users"
@@ -722,6 +920,23 @@ func (c *ConversationServiceHTTPClientImpl) ListMessages(ctx context.Context, in
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ConversationServiceHTTPClientImpl) PromoteConversationUser(ctx context.Context, in *PromoteConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
+	var out ConversationUser
+	pattern := "/v1/{name=conversations/*/users/*}:promote"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationConversationServicePromoteConversationUser),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

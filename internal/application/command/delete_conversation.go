@@ -65,16 +65,16 @@ func (h *deleteConversationHandler) Handle(
 		return DeleteConversationResult{}, common.ErrConversationUserNotFound
 	}
 
+	if err := h.conversationUserPolicy.CanDeleteConversation(actor); err != nil {
+		return DeleteConversationResult{}, err
+	}
+
 	conversation, err := h.conversationRepo.FindByID(ctx, conversationID)
 	if err != nil {
 		return DeleteConversationResult{}, err
 	}
 	if conversation == nil {
 		return DeleteConversationResult{}, common.ErrConversationNotFound
-	}
-
-	if err := h.conversationUserPolicy.CanDeleteConversation(actor, conversation); err != nil {
-		return DeleteConversationResult{}, err
 	}
 
 	if err := conversation.Delete(now); err != nil {

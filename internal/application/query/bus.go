@@ -9,12 +9,26 @@ import (
 
 func NewBus(
 	getConversationHandler GetConversationHandler,
+	listConversationsHandler ListConversationsHandler,
 	batchGetConversationsHandler BatchGetConversationsHandler,
+	getConversationUserHandler GetConversationUserHandler,
+	listConversationUsersHandler ListConversationUsersHandler,
+	batchGetConversationUsersHandler BatchGetConversationUsersHandler,
+	getMessageHandler GetMessageHandler,
+	listMessagesHandler ListMessagesHandler,
+	batchGetMessagesHandler BatchGetMessagesHandler,
 ) *Bus {
 	bus := &Bus{}
 
 	Register(bus, getConversationHandler)
+	Register(bus, listConversationsHandler)
 	Register(bus, batchGetConversationsHandler)
+	Register(bus, getConversationUserHandler)
+	Register(bus, listConversationUsersHandler)
+	Register(bus, batchGetConversationUsersHandler)
+	Register(bus, getMessageHandler)
+	Register(bus, listMessagesHandler)
+	Register(bus, batchGetMessagesHandler)
 
 	return bus
 }

@@ -6,13 +6,13 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func conversationUserJoinedPayload(event integrationevent.ConversationUserJoined) *v1.ConversationUserJoinedPayload {
-	return &v1.ConversationUserJoinedPayload{
+func conversationUserAddedPayload(event integrationevent.ConversationUserAdded) *v1.ConversationUserAddedPayload {
+	return &v1.ConversationUserAddedPayload{
 		ConversationUserId: event.AggregateID(),
 		ConversationId:     event.ConversationID(),
 		UserId:             event.UserID(),
 		Role:               event.Role(),
-		JoinTime:           timestamppb.New(event.OccurTime()),
+		AddTime:            timestamppb.New(event.OccurTime()),
 		Version:            event.Version(),
 	}
 }

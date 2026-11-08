@@ -19,6 +19,7 @@ type DemoteConversationUser struct {
 }
 
 type DemoteConversationUserResult struct {
+	ConversationUser common.ConversationUserResult
 }
 
 func (DemoteConversationUser) resultType() DemoteConversationUserResult {
@@ -87,5 +88,13 @@ func (h *demoteConversationUserHandler) Handle(
 		return DemoteConversationUserResult{}, err
 	}
 
-	return DemoteConversationUserResult{}, nil
+	return DemoteConversationUserResult{
+		ConversationUser: common.ConversationUserResult{
+			ID:         target.ID().String(),
+			UserID:     target.UserID().String(),
+			Role:       target.Role().String(),
+			CreateTime: target.CreateTime(),
+			UpdateTime: target.UpdateTime(),
+		},
+	}, nil
 }

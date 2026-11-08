@@ -15,7 +15,7 @@ type ConversationUserResult struct {
 	ID         string
 	UserID     string
 	Role       string
-	JoinTime   time.Time
+	CreateTime time.Time
 	UpdateTime time.Time
 }
 

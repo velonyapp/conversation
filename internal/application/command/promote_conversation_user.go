@@ -19,6 +19,7 @@ type PromoteConversationUser struct {
 }
 
 type PromoteConversationUserResult struct {
+	ConversationUser common.ConversationUserResult
 }
 
 func (PromoteConversationUser) resultType() PromoteConversationUserResult {
@@ -87,5 +88,13 @@ func (h *promoteConversationUserHandler) Handle(
 		return PromoteConversationUserResult{}, err
 	}
 
-	return PromoteConversationUserResult{}, nil
+	return PromoteConversationUserResult{
+		ConversationUser: common.ConversationUserResult{
+			ID:         target.ID().String(),
+			UserID:     target.UserID().String(),
+			Role:       target.Role().String(),
+			CreateTime: target.CreateTime(),
+			UpdateTime: target.UpdateTime(),
+		},
+	}, nil
 }

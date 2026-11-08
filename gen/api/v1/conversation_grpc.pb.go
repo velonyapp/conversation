@@ -26,11 +26,16 @@ const (
 	ConversationService_CreateConversation_FullMethodName        = "/velony.conversation.api.v1.ConversationService/CreateConversation"
 	ConversationService_UpdateConversation_FullMethodName        = "/velony.conversation.api.v1.ConversationService/UpdateConversation"
 	ConversationService_DeleteConversation_FullMethodName        = "/velony.conversation.api.v1.ConversationService/DeleteConversation"
+	ConversationService_JoinConversation_FullMethodName          = "/velony.conversation.api.v1.ConversationService/JoinConversation"
+	ConversationService_LeaveConversation_FullMethodName         = "/velony.conversation.api.v1.ConversationService/LeaveConversation"
 	ConversationService_GetConversationUser_FullMethodName       = "/velony.conversation.api.v1.ConversationService/GetConversationUser"
 	ConversationService_ListConversationUsers_FullMethodName     = "/velony.conversation.api.v1.ConversationService/ListConversationUsers"
 	ConversationService_BatchGetConversationUsers_FullMethodName = "/velony.conversation.api.v1.ConversationService/BatchGetConversationUsers"
 	ConversationService_CreateConversationUser_FullMethodName    = "/velony.conversation.api.v1.ConversationService/CreateConversationUser"
 	ConversationService_DeleteConversationUser_FullMethodName    = "/velony.conversation.api.v1.ConversationService/DeleteConversationUser"
+	ConversationService_ElectConversationUser_FullMethodName     = "/velony.conversation.api.v1.ConversationService/ElectConversationUser"
+	ConversationService_PromoteConversationUser_FullMethodName   = "/velony.conversation.api.v1.ConversationService/PromoteConversationUser"
+	ConversationService_DemoteConversationUser_FullMethodName    = "/velony.conversation.api.v1.ConversationService/DemoteConversationUser"
 	ConversationService_GetMessage_FullMethodName                = "/velony.conversation.api.v1.ConversationService/GetMessage"
 	ConversationService_ListMessages_FullMethodName              = "/velony.conversation.api.v1.ConversationService/ListMessages"
 	ConversationService_BatchGetMessages_FullMethodName          = "/velony.conversation.api.v1.ConversationService/BatchGetMessages"
@@ -51,11 +56,16 @@ type ConversationServiceClient interface {
 	CreateConversation(ctx context.Context, in *CreateConversationRequest, opts ...grpc.CallOption) (*Conversation, error)
 	UpdateConversation(ctx context.Context, in *UpdateConversationRequest, opts ...grpc.CallOption) (*Conversation, error)
 	DeleteConversation(ctx context.Context, in *DeleteConversationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	JoinConversation(ctx context.Context, in *JoinConversationRequest, opts ...grpc.CallOption) (*Conversation, error)
+	LeaveConversation(ctx context.Context, in *LeaveConversationRequest, opts ...grpc.CallOption) (*LeaveConversationResponse, error)
 	GetConversationUser(ctx context.Context, in *GetConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
 	ListConversationUsers(ctx context.Context, in *ListConversationUsersRequest, opts ...grpc.CallOption) (*ListConversationUsersResponse, error)
 	BatchGetConversationUsers(ctx context.Context, in *BatchGetConversationUsersRequest, opts ...grpc.CallOption) (*BatchGetConversationUsersResponse, error)
 	CreateConversationUser(ctx context.Context, in *CreateConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
 	DeleteConversationUser(ctx context.Context, in *DeleteConversationUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ElectConversationUser(ctx context.Context, in *ElectConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
+	PromoteConversationUser(ctx context.Context, in *PromoteConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
+	DemoteConversationUser(ctx context.Context, in *DemoteConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
 	GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*Message, error)
 	ListMessages(ctx context.Context, in *ListMessagesRequest, opts ...grpc.CallOption) (*ListMessagesResponse, error)
 	BatchGetMessages(ctx context.Context, in *BatchGetMessagesRequest, opts ...grpc.CallOption) (*BatchGetMessagesResponse, error)
@@ -132,6 +142,26 @@ func (c *conversationServiceClient) DeleteConversation(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *conversationServiceClient) JoinConversation(ctx context.Context, in *JoinConversationRequest, opts ...grpc.CallOption) (*Conversation, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Conversation)
+	err := c.cc.Invoke(ctx, ConversationService_JoinConversation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conversationServiceClient) LeaveConversation(ctx context.Context, in *LeaveConversationRequest, opts ...grpc.CallOption) (*LeaveConversationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LeaveConversationResponse)
+	err := c.cc.Invoke(ctx, ConversationService_LeaveConversation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *conversationServiceClient) GetConversationUser(ctx context.Context, in *GetConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ConversationUser)
@@ -176,6 +206,36 @@ func (c *conversationServiceClient) DeleteConversationUser(ctx context.Context, 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, ConversationService_DeleteConversationUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conversationServiceClient) ElectConversationUser(ctx context.Context, in *ElectConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConversationUser)
+	err := c.cc.Invoke(ctx, ConversationService_ElectConversationUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conversationServiceClient) PromoteConversationUser(ctx context.Context, in *PromoteConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConversationUser)
+	err := c.cc.Invoke(ctx, ConversationService_PromoteConversationUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conversationServiceClient) DemoteConversationUser(ctx context.Context, in *DemoteConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConversationUser)
+	err := c.cc.Invoke(ctx, ConversationService_DemoteConversationUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -254,11 +314,16 @@ type ConversationServiceServer interface {
 	CreateConversation(context.Context, *CreateConversationRequest) (*Conversation, error)
 	UpdateConversation(context.Context, *UpdateConversationRequest) (*Conversation, error)
 	DeleteConversation(context.Context, *DeleteConversationRequest) (*emptypb.Empty, error)
+	JoinConversation(context.Context, *JoinConversationRequest) (*Conversation, error)
+	LeaveConversation(context.Context, *LeaveConversationRequest) (*LeaveConversationResponse, error)
 	GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error)
 	ListConversationUsers(context.Context, *ListConversationUsersRequest) (*ListConversationUsersResponse, error)
 	BatchGetConversationUsers(context.Context, *BatchGetConversationUsersRequest) (*BatchGetConversationUsersResponse, error)
 	CreateConversationUser(context.Context, *CreateConversationUserRequest) (*ConversationUser, error)
 	DeleteConversationUser(context.Context, *DeleteConversationUserRequest) (*emptypb.Empty, error)
+	ElectConversationUser(context.Context, *ElectConversationUserRequest) (*ConversationUser, error)
+	PromoteConversationUser(context.Context, *PromoteConversationUserRequest) (*ConversationUser, error)
+	DemoteConversationUser(context.Context, *DemoteConversationUserRequest) (*ConversationUser, error)
 	GetMessage(context.Context, *GetMessageRequest) (*Message, error)
 	ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error)
 	BatchGetMessages(context.Context, *BatchGetMessagesRequest) (*BatchGetMessagesResponse, error)
@@ -293,6 +358,12 @@ func (UnimplementedConversationServiceServer) UpdateConversation(context.Context
 func (UnimplementedConversationServiceServer) DeleteConversation(context.Context, *DeleteConversationRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteConversation not implemented")
 }
+func (UnimplementedConversationServiceServer) JoinConversation(context.Context, *JoinConversationRequest) (*Conversation, error) {
+	return nil, status.Error(codes.Unimplemented, "method JoinConversation not implemented")
+}
+func (UnimplementedConversationServiceServer) LeaveConversation(context.Context, *LeaveConversationRequest) (*LeaveConversationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LeaveConversation not implemented")
+}
 func (UnimplementedConversationServiceServer) GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetConversationUser not implemented")
 }
@@ -307,6 +378,15 @@ func (UnimplementedConversationServiceServer) CreateConversationUser(context.Con
 }
 func (UnimplementedConversationServiceServer) DeleteConversationUser(context.Context, *DeleteConversationUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteConversationUser not implemented")
+}
+func (UnimplementedConversationServiceServer) ElectConversationUser(context.Context, *ElectConversationUserRequest) (*ConversationUser, error) {
+	return nil, status.Error(codes.Unimplemented, "method ElectConversationUser not implemented")
+}
+func (UnimplementedConversationServiceServer) PromoteConversationUser(context.Context, *PromoteConversationUserRequest) (*ConversationUser, error) {
+	return nil, status.Error(codes.Unimplemented, "method PromoteConversationUser not implemented")
+}
+func (UnimplementedConversationServiceServer) DemoteConversationUser(context.Context, *DemoteConversationUserRequest) (*ConversationUser, error) {
+	return nil, status.Error(codes.Unimplemented, "method DemoteConversationUser not implemented")
 }
 func (UnimplementedConversationServiceServer) GetMessage(context.Context, *GetMessageRequest) (*Message, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMessage not implemented")
@@ -455,6 +535,42 @@ func _ConversationService_DeleteConversation_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConversationService_JoinConversation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(JoinConversationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConversationServiceServer).JoinConversation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConversationService_JoinConversation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConversationServiceServer).JoinConversation(ctx, req.(*JoinConversationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConversationService_LeaveConversation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeaveConversationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConversationServiceServer).LeaveConversation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConversationService_LeaveConversation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConversationServiceServer).LeaveConversation(ctx, req.(*LeaveConversationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ConversationService_GetConversationUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetConversationUserRequest)
 	if err := dec(in); err != nil {
@@ -541,6 +657,60 @@ func _ConversationService_DeleteConversationUser_Handler(srv interface{}, ctx co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConversationServiceServer).DeleteConversationUser(ctx, req.(*DeleteConversationUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConversationService_ElectConversationUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ElectConversationUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConversationServiceServer).ElectConversationUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConversationService_ElectConversationUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConversationServiceServer).ElectConversationUser(ctx, req.(*ElectConversationUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConversationService_PromoteConversationUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PromoteConversationUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConversationServiceServer).PromoteConversationUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConversationService_PromoteConversationUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConversationServiceServer).PromoteConversationUser(ctx, req.(*PromoteConversationUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConversationService_DemoteConversationUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DemoteConversationUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConversationServiceServer).DemoteConversationUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConversationService_DemoteConversationUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConversationServiceServer).DemoteConversationUser(ctx, req.(*DemoteConversationUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -685,6 +855,14 @@ var ConversationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ConversationService_DeleteConversation_Handler,
 		},
 		{
+			MethodName: "JoinConversation",
+			Handler:    _ConversationService_JoinConversation_Handler,
+		},
+		{
+			MethodName: "LeaveConversation",
+			Handler:    _ConversationService_LeaveConversation_Handler,
+		},
+		{
 			MethodName: "GetConversationUser",
 			Handler:    _ConversationService_GetConversationUser_Handler,
 		},
@@ -703,6 +881,18 @@ var ConversationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteConversationUser",
 			Handler:    _ConversationService_DeleteConversationUser_Handler,
+		},
+		{
+			MethodName: "ElectConversationUser",
+			Handler:    _ConversationService_ElectConversationUser_Handler,
+		},
+		{
+			MethodName: "PromoteConversationUser",
+			Handler:    _ConversationService_PromoteConversationUser_Handler,
+		},
+		{
+			MethodName: "DemoteConversationUser",
+			Handler:    _ConversationService_DemoteConversationUser_Handler,
 		},
 		{
 			MethodName: "GetMessage",
