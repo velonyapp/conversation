@@ -57,11 +57,11 @@ func (h *deleteConversationHandler) Handle(
 
 	conversationID, _ := vo.NewConversationID(cmd.ConversationID)
 
-	conversationUser, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
+	actor, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
 	if err != nil {
 		return DeleteConversationResult{}, err
 	}
-	if conversationUser == nil {
+	if actor == nil {
 		return DeleteConversationResult{}, common.ErrConversationUserNotFound
 	}
 
@@ -73,7 +73,7 @@ func (h *deleteConversationHandler) Handle(
 		return DeleteConversationResult{}, common.ErrConversationNotFound
 	}
 
-	if err := h.conversationUserPolicy.CanDeleteConversation(conversationUser, conversation); err != nil {
+	if err := h.conversationUserPolicy.CanDeleteConversation(actor, conversation); err != nil {
 		return DeleteConversationResult{}, err
 	}
 

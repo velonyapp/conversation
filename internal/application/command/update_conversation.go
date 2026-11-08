@@ -63,11 +63,11 @@ func (h *updateConversationHandler) Handle(
 
 	conversationID, _ := vo.NewConversationID(cmd.ConversationID)
 
-	conversationUser, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
+	actor, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
 	if err != nil {
 		return UpdateConversationResult{}, err
 	}
-	if conversationUser == nil {
+	if actor == nil {
 		return UpdateConversationResult{}, common.ErrConversationUserNotFound
 	}
 
@@ -79,7 +79,7 @@ func (h *updateConversationHandler) Handle(
 		return UpdateConversationResult{}, common.ErrConversationNotFound
 	}
 
-	if err := h.conversationUserPolicy.CanUpdateConversation(conversationUser, conversation); err != nil {
+	if err := h.conversationUserPolicy.CanUpdateConversation(actor, conversation); err != nil {
 		return UpdateConversationResult{}, err
 	}
 

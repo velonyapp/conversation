@@ -60,15 +60,15 @@ func (h *createMessageHandler) Handle(
 
 	conversationID, _ := vo.NewConversationID(cmd.ConversationID)
 
-	conversationUser, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
+	actor, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
 	if err != nil {
 		return CreateMessageResult{}, err
 	}
-	if conversationUser == nil {
+	if actor == nil {
 		return CreateMessageResult{}, common.ErrConversationUserNotFound
 	}
 
-	if err := h.conversationUserPolicy.CanSendMessage(conversationUser); err != nil {
+	if err := h.conversationUserPolicy.CanSendMessage(actor); err != nil {
 		return CreateMessageResult{}, err
 	}
 

@@ -50,20 +50,20 @@ func (h *leaveConversationHandler) Handle(
 
 	conversationID, _ := vo.NewConversationID(cmd.ConversationID)
 
-	conversationUser, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
+	actor, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
 	if err != nil {
 		return LeaveConversationResult{}, err
 	}
-	if conversationUser == nil {
+	if actor == nil {
 		return LeaveConversationResult{}, common.ErrConversationUserNotFound
 	}
 
-	if err := conversationUser.Remove(now); err != nil {
+	if err := actor.Remove(now); err != nil {
 		return LeaveConversationResult{}, err
 	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		return h.conversationUserRepo.Save(ctx, conversationUser)
+		return h.conversationUserRepo.Save(ctx, actor)
 	}); err != nil {
 		return LeaveConversationResult{}, err
 	}

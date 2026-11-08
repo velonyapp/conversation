@@ -60,11 +60,11 @@ func (h *editMessageHandler) Handle(
 
 	conversationID, _ := vo.NewConversationID(cmd.ConversationID)
 
-	conversationUser, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
+	actor, err := h.conversationUserRepo.FindByConversationIDAndUserID(ctx, conversationID, actorID)
 	if err != nil {
 		return EditMessageResult{}, err
 	}
-	if conversationUser == nil {
+	if actor == nil {
 		return EditMessageResult{}, common.ErrConversationUserNotFound
 	}
 
@@ -75,7 +75,7 @@ func (h *editMessageHandler) Handle(
 		return EditMessageResult{}, err
 	}
 
-	if err := h.conversationUserPolicy.CanEditMessage(conversationUser, message); err != nil {
+	if err := h.conversationUserPolicy.CanEditMessage(actor, message); err != nil {
 		return EditMessageResult{}, err
 	}
 
