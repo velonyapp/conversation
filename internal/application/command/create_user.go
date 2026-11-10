@@ -41,7 +41,7 @@ func (h *createUserHandler) Handle(
 
 	user := entity.NewUser(userID)
 
-	if err := h.userRepo.Create(ctx, user); err != nil {
+	if err := h.userRepo.Save(ctx, user); err != nil {
 		return CreateUserResult{}, err
 	}
 

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/velonyapp/conversation/internal/domain/entity"
 	"github.com/velonyapp/conversation/internal/domain/repo"
 	"github.com/velonyapp/conversation/internal/domain/vo"
@@ -49,7 +50,7 @@ func (r *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.User
 	return user, nil
 }
 
-func (r *userRepo) Create(ctx context.Context, user *entity.User) error {
+func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 	const query = `
 		INSERT INTO users (
 			id
@@ -60,6 +61,11 @@ func (r *userRepo) Create(ctx context.Context, user *entity.User) error {
 	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 		user.ID().String(),
 	); err != nil {
+		var mysqlErr *mysql.MySQLError
+		if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
+			return nil
+		}
+
 		return err
 	}
 

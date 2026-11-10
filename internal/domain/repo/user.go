@@ -10,6 +10,6 @@ import (
 type User interface {
 	FindByID(ctx context.Context, userID vo.UserID) (*entity.User, error)
 
-	Create(ctx context.Context, user *entity.User) error
+	Save(ctx context.Context, user *entity.User) error
 	Delete(ctx context.Context, userID vo.UserID) error
 }
