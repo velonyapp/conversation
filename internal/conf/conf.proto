@@ -64,6 +64,16 @@ message Transport {
     google.protobuf.Duration timeout = 2 [
       (buf.validate.field).duration.gt = {}
     ];
+
+    google.protobuf.Duration retry_initial_interval = 3 [
+      (buf.validate.field).duration.gt = {}
+    ];
+    google.protobuf.Duration retry_max_interval = 4 [
+      (buf.validate.field).duration.gt = {}
+    ];
+    double retry_multiplier = 5 [
+      (buf.validate.field).double.gte = 1.0
+    ];
   }
 
   HTTP http = 1 [
