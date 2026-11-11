@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/velonyapp/conversation/internal/application/domainevent"
@@ -17,15 +18,18 @@ var _ repo.Message = (*messageRepo)(nil)
 type messageRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
+	log        *slog.Logger
 }
 
 func NewMessageRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
+	log *slog.Logger,
 ) repo.Message {
 	return &messageRepo{
 		db:         db,
 		dispatcher: dispatcher,
+		log:        log,
 	}
 }
 
@@ -56,6 +60,11 @@ func (r *messageRepo) FindByID(ctx context.Context, messageID vo.MessageID) (*en
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find message",
+			slog.String("message_id", messageID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -87,6 +96,11 @@ func (r *messageRepo) FindLastByConversationID(ctx context.Context, conversation
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find last message by conversation ID",
+			slog.String("conversation_id", conversationID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -127,6 +141,12 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 				message.ConversationID().String(),
 				message.ID().String(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to update conversation last message during deletion",
+					slog.String("message_id", message.ID().String()),
+					slog.String("conversation_id", message.ConversationID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 
@@ -138,6 +158,11 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 			if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 				message.ID().String(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to delete message",
+					slog.String("message_id", message.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		}
@@ -170,6 +195,12 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 				message.UpdateTime(),
 				message.Version(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to insert message",
+					slog.String("message_id", message.ID().String()),
+					slog.String("conversation_id", message.ConversationID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 
@@ -189,6 +220,12 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 				message.CreateTime(),
 				message.ID().String(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to update conversation last message during insertion",
+					slog.String("message_id", message.ID().String()),
+					slog.String("conversation_id", message.ConversationID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		} else {
@@ -210,10 +247,20 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 				message.Version()-1,
 			)
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to update message",
+					slog.String("message_id", message.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			rowsAffected, err := result.RowsAffected()
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to get message rows affected",
+					slog.String("message_id", message.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			if rowsAffected == 0 {
@@ -224,6 +271,11 @@ func (r *messageRepo) Save(ctx context.Context, message *entity.Message) error {
 
 	for _, domainEvent := range message.PullEvents() {
 		if err := r.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			r.log.ErrorContext(ctx,
+				"failed to dispatch message domain event",
+				slog.String("message_id", message.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/velonyapp/conversation/internal/application/domainevent"
@@ -17,15 +18,18 @@ var _ repo.ConversationUser = (*conversationUserRepo)(nil)
 type conversationUserRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
+	log        *slog.Logger
 }
 
 func NewConversationUserRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
+	log *slog.Logger,
 ) repo.ConversationUser {
 	return &conversationUserRepo{
 		db:         db,
 		dispatcher: dispatcher,
+		log:        log,
 	}
 }
 
@@ -56,6 +60,11 @@ func (r *conversationUserRepo) FindByID(ctx context.Context, conversationUserID 
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find conversation user",
+			slog.String("conversation_user_id", conversationUserID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -85,6 +94,12 @@ func (r *conversationUserRepo) FindByConversationIDAndUserID(ctx context.Context
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find conversation user by conversation ID and user ID",
+			slog.String("conversation_id", conversationID.String()),
+			slog.String("user_id", userID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -105,6 +120,11 @@ func (r *conversationUserRepo) Save(ctx context.Context, conversationUser *entit
 
 			_, err := executor(ctx, r.db).ExecContext(ctx, query, conversationUser.ID().String())
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to delete conversation user",
+					slog.String("conversation_user_id", conversationUser.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		}
@@ -132,6 +152,11 @@ func (r *conversationUserRepo) Save(ctx context.Context, conversationUser *entit
 				conversationUser.UpdateTime(),
 				conversationUser.Version(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to insert conversation user",
+					slog.String("conversation_user_id", conversationUser.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		} else {
@@ -153,10 +178,20 @@ func (r *conversationUserRepo) Save(ctx context.Context, conversationUser *entit
 				conversationUser.Version()-1,
 			)
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to update conversation user",
+					slog.String("conversation_user_id", conversationUser.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			rowsAffected, err := result.RowsAffected()
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to get conversation user rows affected",
+					slog.String("conversation_user_id", conversationUser.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			if rowsAffected == 0 {
@@ -167,6 +202,11 @@ func (r *conversationUserRepo) Save(ctx context.Context, conversationUser *entit
 
 	for _, domainEvent := range conversationUser.PullEvents() {
 		if err := r.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			r.log.ErrorContext(ctx,
+				"failed to dispatch conversation user domain event",
+				slog.String("conversation_user_id", conversationUser.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 	}

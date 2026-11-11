@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -17,12 +18,17 @@ import (
 var _ query.Conversation = (*conversationQuery)(nil)
 
 type conversationQuery struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
-func NewConversationQuery(db *sql.DB) query.Conversation {
+func NewConversationQuery(
+	db *sql.DB,
+	log *slog.Logger,
+) query.Conversation {
 	return &conversationQuery{
-		db: db,
+		db:  db,
+		log: log,
 	}
 }
 
@@ -58,6 +64,12 @@ func (q *conversationQuery) Find(ctx context.Context, conversationID vo.Conversa
 			return nil, nil
 		}
 
+		q.log.ErrorContext(ctx,
+			"failed to find conversation",
+			slog.String("conversation_id", conversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -97,6 +109,12 @@ func (q *conversationQuery) BatchFind(ctx context.Context, conversationIDs []vo.
 
 	rows, err := executor(ctx, q.db).QueryContext(ctx, query, args...)
 	if err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to batch find conversations",
+			slog.Int("conversation_count", len(conversationIDs)),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 	defer rows.Close()
@@ -105,6 +123,10 @@ func (q *conversationQuery) BatchFind(ctx context.Context, conversationIDs []vo.
 	for rows.Next() {
 		conversation, err := scanQueryConversation(rows)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to scan conversation during batch find",
+				slog.Any("error", err),
+			)
 			return nil, err
 		}
 
@@ -112,6 +134,10 @@ func (q *conversationQuery) BatchFind(ctx context.Context, conversationIDs []vo.
 	}
 
 	if err := rows.Err(); err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to iterate conversations during batch find",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -134,10 +160,20 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 	if pageToken != "" {
 		data, err := base64.RawURLEncoding.DecodeString(pageToken)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to decode conversation page token",
+				slog.String("user_id", scope.UserID.String()),
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 
 		if err := json.Unmarshal(data, &cursor); err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to unmarshal conversation page token",
+				slog.String("user_id", scope.UserID.String()),
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 	}
@@ -170,6 +206,12 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 		int64(pageSize)+1,
 	)
 	if err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to list conversations",
+			slog.String("user_id", scope.UserID.String()),
+			slog.Int("page_size", int(pageSize)),
+			slog.Any("error", err),
+		)
 		return nil, "", err
 	}
 	defer rows.Close()
@@ -181,6 +223,11 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 		if len(conversations) == int(pageSize) {
 			data, err := json.Marshal(nextCursor)
 			if err != nil {
+				q.log.ErrorContext(ctx,
+					"failed to marshal conversation page token",
+					slog.String("user_id", scope.UserID.String()),
+					slog.Any("error", err),
+				)
 				return nil, "", err
 			}
 
@@ -190,6 +237,10 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 		var lastMessageCreateTime sql.NullTime
 		conversation, err := scanQueryConversation(rows, &lastMessageCreateTime)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to scan conversation during list",
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 
@@ -202,6 +253,10 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 		conversations = append(conversations, conversation)
 	}
 	if err := rows.Err(); err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to iterate conversations during list",
+			slog.Any("error", err),
+		)
 		return nil, "", err
 	}
 

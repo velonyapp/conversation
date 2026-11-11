@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -17,12 +18,17 @@ import (
 var _ query.ConversationUser = (*conversationUserQuery)(nil)
 
 type conversationUserQuery struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
-func NewConversationUserQuery(db *sql.DB) query.ConversationUser {
+func NewConversationUserQuery(
+	db *sql.DB,
+	log *slog.Logger,
+) query.ConversationUser {
 	return &conversationUserQuery{
-		db: db,
+		db:  db,
+		log: log,
 	}
 }
 
@@ -59,6 +65,13 @@ func (q *conversationUserQuery) Find(ctx context.Context, conversationUserID vo.
 			return nil, nil
 		}
 
+		q.log.ErrorContext(ctx,
+			"failed to find conversation user",
+			slog.String("conversation_user_id", conversationUserID.String()),
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -99,6 +112,13 @@ func (q *conversationUserQuery) BatchFind(ctx context.Context, conversationUserI
 
 	rows, err := executor(ctx, q.db).QueryContext(ctx, query, args...)
 	if err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to batch find conversation users",
+			slog.Int("conversation_user_count", len(conversationUserIDs)),
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 	defer rows.Close()
@@ -107,6 +127,10 @@ func (q *conversationUserQuery) BatchFind(ctx context.Context, conversationUserI
 	for rows.Next() {
 		conversationUser, err := scanQueryConversationUser(rows)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to scan conversation user during batch find",
+				slog.Any("error", err),
+			)
 			return nil, err
 		}
 
@@ -114,6 +138,10 @@ func (q *conversationUserQuery) BatchFind(ctx context.Context, conversationUserI
 	}
 
 	if err := rows.Err(); err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to iterate conversation users during batch find",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -136,10 +164,22 @@ func (q *conversationUserQuery) List(ctx context.Context, scope query.Conversati
 	if pageToken != "" {
 		data, err := base64.RawURLEncoding.DecodeString(pageToken)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to decode conversation user page token",
+				slog.String("conversation_id", scope.ConversationID.String()),
+				slog.String("user_id", scope.UserID.String()),
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 
 		if err := json.Unmarshal(data, &cursor); err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to unmarshal conversation user page token",
+				slog.String("conversation_id", scope.ConversationID.String()),
+				slog.String("user_id", scope.UserID.String()),
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 	}
@@ -172,6 +212,13 @@ func (q *conversationUserQuery) List(ctx context.Context, scope query.Conversati
 		int64(pageSize)+1,
 	)
 	if err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to list conversation users",
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Int("page_size", int(pageSize)),
+			slog.Any("error", err),
+		)
 		return nil, "", err
 	}
 	defer rows.Close()
@@ -186,6 +233,12 @@ func (q *conversationUserQuery) List(ctx context.Context, scope query.Conversati
 
 			data, err := json.Marshal(nextCursor)
 			if err != nil {
+				q.log.ErrorContext(ctx,
+					"failed to marshal conversation user page token",
+					slog.String("conversation_id", scope.ConversationID.String()),
+					slog.String("user_id", scope.UserID.String()),
+					slog.Any("error", err),
+				)
 				return nil, "", err
 			}
 
@@ -194,12 +247,20 @@ func (q *conversationUserQuery) List(ctx context.Context, scope query.Conversati
 
 		conversationUser, err := scanQueryConversationUser(rows)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to scan conversation user during list",
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 
 		conversationUsers = append(conversationUsers, conversationUser)
 	}
 	if err := rows.Err(); err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to iterate conversation users during list",
+			slog.Any("error", err),
+		)
 		return nil, "", err
 	}
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/velonyapp/conversation/internal/domain/entity"
@@ -14,12 +15,17 @@ import (
 var _ repo.User = (*userRepo)(nil)
 
 type userRepo struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
-func NewUserRepo(db *sql.DB) repo.User {
+func NewUserRepo(
+	db *sql.DB,
+	log *slog.Logger,
+) repo.User {
 	return &userRepo{
-		db: db,
+		db:  db,
+		log: log,
 	}
 }
 
@@ -44,6 +50,11 @@ func (r *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.User
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find user",
+			slog.String("user_id", userID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -66,6 +77,11 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 			return nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to insert user",
+			slog.String("user_id", user.ID().String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -81,6 +97,11 @@ func (r *userRepo) Delete(ctx context.Context, userID vo.UserID) error {
 	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 		userID.String(),
 	); err != nil {
+		r.log.ErrorContext(ctx,
+			"failed to delete user",
+			slog.String("user_id", userID.String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 

@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -17,12 +18,17 @@ import (
 var _ query.Message = (*messageQuery)(nil)
 
 type messageQuery struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
-func NewMessageQuery(db *sql.DB) query.Message {
+func NewMessageQuery(
+	db *sql.DB,
+	log *slog.Logger,
+) query.Message {
 	return &messageQuery{
-		db: db,
+		db:  db,
+		log: log,
 	}
 }
 
@@ -59,6 +65,13 @@ func (q *messageQuery) Find(ctx context.Context, messageID vo.MessageID, scope q
 			return nil, nil
 		}
 
+		q.log.ErrorContext(ctx,
+			"failed to find message",
+			slog.String("message_id", messageID.String()),
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -99,6 +112,13 @@ func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID,
 
 	rows, err := executor(ctx, q.db).QueryContext(ctx, query, args...)
 	if err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to batch find messages",
+			slog.Int("message_count", len(messageIDs)),
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 	defer rows.Close()
@@ -107,6 +127,10 @@ func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID,
 	for rows.Next() {
 		message, err := scanQueryMessage(rows)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to scan message during batch find",
+				slog.Any("error", err),
+			)
 			return nil, err
 		}
 
@@ -114,6 +138,10 @@ func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID,
 	}
 
 	if err := rows.Err(); err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to iterate messages during batch find",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -136,10 +164,22 @@ func (q *messageQuery) List(ctx context.Context, scope query.MessageScope, pageS
 	if pageToken != "" {
 		data, err := base64.RawURLEncoding.DecodeString(pageToken)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to decode message page token",
+				slog.String("conversation_id", scope.ConversationID.String()),
+				slog.String("user_id", scope.UserID.String()),
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 
 		if err := json.Unmarshal(data, &cursor); err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to unmarshal message page token",
+				slog.String("conversation_id", scope.ConversationID.String()),
+				slog.String("user_id", scope.UserID.String()),
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 	}
@@ -172,6 +212,13 @@ func (q *messageQuery) List(ctx context.Context, scope query.MessageScope, pageS
 		int64(pageSize)+1,
 	)
 	if err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to list messages",
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Int("page_size", int(pageSize)),
+			slog.Any("error", err),
+		)
 		return nil, "", err
 	}
 	defer rows.Close()
@@ -186,6 +233,12 @@ func (q *messageQuery) List(ctx context.Context, scope query.MessageScope, pageS
 
 			data, err := json.Marshal(nextCursor)
 			if err != nil {
+				q.log.ErrorContext(ctx,
+					"failed to marshal message page token",
+					slog.String("conversation_id", scope.ConversationID.String()),
+					slog.String("user_id", scope.UserID.String()),
+					slog.Any("error", err),
+				)
 				return nil, "", err
 			}
 
@@ -194,12 +247,20 @@ func (q *messageQuery) List(ctx context.Context, scope query.MessageScope, pageS
 
 		message, err := scanQueryMessage(rows)
 		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to scan message during list",
+				slog.Any("error", err),
+			)
 			return nil, "", err
 		}
 
 		messages = append(messages, message)
 	}
 	if err := rows.Err(); err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to iterate messages during list",
+			slog.Any("error", err),
+		)
 		return nil, "", err
 	}
 

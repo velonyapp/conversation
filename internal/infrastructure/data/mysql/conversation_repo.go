@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/velonyapp/conversation/internal/application/domainevent"
@@ -17,15 +18,18 @@ var _ repo.Conversation = (*conversationRepo)(nil)
 type conversationRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
+	log        *slog.Logger
 }
 
 func NewConversationRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
+	log *slog.Logger,
 ) repo.Conversation {
 	return &conversationRepo{
 		db:         db,
 		dispatcher: dispatcher,
+		log:        log,
 	}
 }
 
@@ -55,6 +59,11 @@ func (r *conversationRepo) FindByID(ctx context.Context, conversationID vo.Conve
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find conversation",
+			slog.String("conversation_id", conversationID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -75,6 +84,11 @@ func (r *conversationRepo) Save(ctx context.Context, conversation *entity.Conver
 
 			_, err := executor(ctx, r.db).ExecContext(ctx, query, conversation.ID().String())
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to delete conversation",
+					slog.String("conversation_id", conversation.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		}
@@ -100,6 +114,11 @@ func (r *conversationRepo) Save(ctx context.Context, conversation *entity.Conver
 				conversation.UpdateTime(),
 				conversation.Version(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to insert conversation",
+					slog.String("conversation_id", conversation.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		} else {
@@ -123,10 +142,20 @@ func (r *conversationRepo) Save(ctx context.Context, conversation *entity.Conver
 				conversation.Version()-1,
 			)
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to update conversation",
+					slog.String("conversation_id", conversation.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			rowsAffected, err := result.RowsAffected()
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to get conversation rows affected",
+					slog.String("conversation_id", conversation.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			if rowsAffected == 0 {
@@ -137,6 +166,11 @@ func (r *conversationRepo) Save(ctx context.Context, conversation *entity.Conver
 
 	for _, domainEvent := range conversation.PullEvents() {
 		if err := r.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			r.log.ErrorContext(ctx,
+				"failed to dispatch conversation domain event",
+				slog.String("conversation_id", conversation.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 	}
