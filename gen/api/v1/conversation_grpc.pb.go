@@ -48,29 +48,51 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// The Conversation Service provides APIs for managing conversations, participants, and messages.
+// Provides conversation, participant, and message management operations.
 type ConversationServiceClient interface {
+	// Retrieves a conversation by resource name.
 	GetConversation(ctx context.Context, in *GetConversationRequest, opts ...grpc.CallOption) (*Conversation, error)
+	// Lists conversations for the currently authenticated user.
 	ListConversations(ctx context.Context, in *ListConversationsRequest, opts ...grpc.CallOption) (*ListConversationsResponse, error)
+	// Retrieves multiple conversations by their resource names.
 	BatchGetConversations(ctx context.Context, in *BatchGetConversationsRequest, opts ...grpc.CallOption) (*BatchGetConversationsResponse, error)
+	// Creates a conversation.
 	CreateConversation(ctx context.Context, in *CreateConversationRequest, opts ...grpc.CallOption) (*Conversation, error)
+	// Updates a conversation.
 	UpdateConversation(ctx context.Context, in *UpdateConversationRequest, opts ...grpc.CallOption) (*Conversation, error)
+	// Deletes a conversation.
 	DeleteConversation(ctx context.Context, in *DeleteConversationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Joins a conversation.
 	JoinConversation(ctx context.Context, in *JoinConversationRequest, opts ...grpc.CallOption) (*Conversation, error)
+	// Leaves a conversation.
 	LeaveConversation(ctx context.Context, in *LeaveConversationRequest, opts ...grpc.CallOption) (*LeaveConversationResponse, error)
+	// Retrieves a conversation user by resource name.
 	GetConversationUser(ctx context.Context, in *GetConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
+	// Lists users in a conversation.
 	ListConversationUsers(ctx context.Context, in *ListConversationUsersRequest, opts ...grpc.CallOption) (*ListConversationUsersResponse, error)
+	// Retrieves multiple conversation users by their resource names.
 	BatchGetConversationUsers(ctx context.Context, in *BatchGetConversationUsersRequest, opts ...grpc.CallOption) (*BatchGetConversationUsersResponse, error)
+	// Adds a user to a conversation.
 	CreateConversationUser(ctx context.Context, in *CreateConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
+	// Removes a user from a conversation.
 	DeleteConversationUser(ctx context.Context, in *DeleteConversationUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Transfers conversation ownership to a user.
 	ElectConversationUser(ctx context.Context, in *ElectConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
+	// Promotes a conversation user to admin.
 	PromoteConversationUser(ctx context.Context, in *PromoteConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
+	// Demotes a conversation user to member.
 	DemoteConversationUser(ctx context.Context, in *DemoteConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
+	// Retrieves a message by resource name.
 	GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*Message, error)
+	// Lists messages in a conversation.
 	ListMessages(ctx context.Context, in *ListMessagesRequest, opts ...grpc.CallOption) (*ListMessagesResponse, error)
+	// Retrieves multiple messages by their resource names.
 	BatchGetMessages(ctx context.Context, in *BatchGetMessagesRequest, opts ...grpc.CallOption) (*BatchGetMessagesResponse, error)
+	// Creates a message in a conversation.
 	CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*Message, error)
+	// Updates a message.
 	UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*Message, error)
+	// Deletes a message.
 	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -306,29 +328,51 @@ func (c *conversationServiceClient) DeleteMessage(ctx context.Context, in *Delet
 // All implementations must embed UnimplementedConversationServiceServer
 // for forward compatibility.
 //
-// The Conversation Service provides APIs for managing conversations, participants, and messages.
+// Provides conversation, participant, and message management operations.
 type ConversationServiceServer interface {
+	// Retrieves a conversation by resource name.
 	GetConversation(context.Context, *GetConversationRequest) (*Conversation, error)
+	// Lists conversations for the currently authenticated user.
 	ListConversations(context.Context, *ListConversationsRequest) (*ListConversationsResponse, error)
+	// Retrieves multiple conversations by their resource names.
 	BatchGetConversations(context.Context, *BatchGetConversationsRequest) (*BatchGetConversationsResponse, error)
+	// Creates a conversation.
 	CreateConversation(context.Context, *CreateConversationRequest) (*Conversation, error)
+	// Updates a conversation.
 	UpdateConversation(context.Context, *UpdateConversationRequest) (*Conversation, error)
+	// Deletes a conversation.
 	DeleteConversation(context.Context, *DeleteConversationRequest) (*emptypb.Empty, error)
+	// Joins a conversation.
 	JoinConversation(context.Context, *JoinConversationRequest) (*Conversation, error)
+	// Leaves a conversation.
 	LeaveConversation(context.Context, *LeaveConversationRequest) (*LeaveConversationResponse, error)
+	// Retrieves a conversation user by resource name.
 	GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error)
+	// Lists users in a conversation.
 	ListConversationUsers(context.Context, *ListConversationUsersRequest) (*ListConversationUsersResponse, error)
+	// Retrieves multiple conversation users by their resource names.
 	BatchGetConversationUsers(context.Context, *BatchGetConversationUsersRequest) (*BatchGetConversationUsersResponse, error)
+	// Adds a user to a conversation.
 	CreateConversationUser(context.Context, *CreateConversationUserRequest) (*ConversationUser, error)
+	// Removes a user from a conversation.
 	DeleteConversationUser(context.Context, *DeleteConversationUserRequest) (*emptypb.Empty, error)
+	// Transfers conversation ownership to a user.
 	ElectConversationUser(context.Context, *ElectConversationUserRequest) (*ConversationUser, error)
+	// Promotes a conversation user to admin.
 	PromoteConversationUser(context.Context, *PromoteConversationUserRequest) (*ConversationUser, error)
+	// Demotes a conversation user to member.
 	DemoteConversationUser(context.Context, *DemoteConversationUserRequest) (*ConversationUser, error)
+	// Retrieves a message by resource name.
 	GetMessage(context.Context, *GetMessageRequest) (*Message, error)
+	// Lists messages in a conversation.
 	ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error)
+	// Retrieves multiple messages by their resource names.
 	BatchGetMessages(context.Context, *BatchGetMessagesRequest) (*BatchGetMessagesResponse, error)
+	// Creates a message in a conversation.
 	CreateMessage(context.Context, *CreateMessageRequest) (*Message, error)
+	// Updates a message.
 	UpdateMessage(context.Context, *UpdateMessageRequest) (*Message, error)
+	// Deletes a message.
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedConversationServiceServer()
 }

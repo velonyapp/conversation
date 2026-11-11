@@ -42,27 +42,49 @@ const OperationConversationServiceUpdateConversation = "/velony.conversation.api
 const OperationConversationServiceUpdateMessage = "/velony.conversation.api.v1.ConversationService/UpdateMessage"
 
 type ConversationServiceHTTPServer interface {
+	// BatchGetConversationUsers Retrieves multiple conversation users by their resource names.
 	BatchGetConversationUsers(context.Context, *BatchGetConversationUsersRequest) (*BatchGetConversationUsersResponse, error)
+	// BatchGetConversations Retrieves multiple conversations by their resource names.
 	BatchGetConversations(context.Context, *BatchGetConversationsRequest) (*BatchGetConversationsResponse, error)
+	// BatchGetMessages Retrieves multiple messages by their resource names.
 	BatchGetMessages(context.Context, *BatchGetMessagesRequest) (*BatchGetMessagesResponse, error)
+	// CreateConversation Creates a conversation.
 	CreateConversation(context.Context, *CreateConversationRequest) (*Conversation, error)
+	// CreateConversationUser Adds a user to a conversation.
 	CreateConversationUser(context.Context, *CreateConversationUserRequest) (*ConversationUser, error)
+	// CreateMessage Creates a message in a conversation.
 	CreateMessage(context.Context, *CreateMessageRequest) (*Message, error)
+	// DeleteConversation Deletes a conversation.
 	DeleteConversation(context.Context, *DeleteConversationRequest) (*emptypb.Empty, error)
+	// DeleteConversationUser Removes a user from a conversation.
 	DeleteConversationUser(context.Context, *DeleteConversationUserRequest) (*emptypb.Empty, error)
+	// DeleteMessage Deletes a message.
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*emptypb.Empty, error)
+	// DemoteConversationUser Demotes a conversation user to member.
 	DemoteConversationUser(context.Context, *DemoteConversationUserRequest) (*ConversationUser, error)
+	// ElectConversationUser Transfers conversation ownership to a user.
 	ElectConversationUser(context.Context, *ElectConversationUserRequest) (*ConversationUser, error)
+	// GetConversation Retrieves a conversation by resource name.
 	GetConversation(context.Context, *GetConversationRequest) (*Conversation, error)
+	// GetConversationUser Retrieves a conversation user by resource name.
 	GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error)
+	// GetMessage Retrieves a message by resource name.
 	GetMessage(context.Context, *GetMessageRequest) (*Message, error)
+	// JoinConversation Joins a conversation.
 	JoinConversation(context.Context, *JoinConversationRequest) (*Conversation, error)
+	// LeaveConversation Leaves a conversation.
 	LeaveConversation(context.Context, *LeaveConversationRequest) (*LeaveConversationResponse, error)
+	// ListConversationUsers Lists users in a conversation.
 	ListConversationUsers(context.Context, *ListConversationUsersRequest) (*ListConversationUsersResponse, error)
+	// ListConversations Lists conversations for the currently authenticated user.
 	ListConversations(context.Context, *ListConversationsRequest) (*ListConversationsResponse, error)
+	// ListMessages Lists messages in a conversation.
 	ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error)
+	// PromoteConversationUser Promotes a conversation user to admin.
 	PromoteConversationUser(context.Context, *PromoteConversationUserRequest) (*ConversationUser, error)
+	// UpdateConversation Updates a conversation.
 	UpdateConversation(context.Context, *UpdateConversationRequest) (*Conversation, error)
+	// UpdateMessage Updates a message.
 	UpdateMessage(context.Context, *UpdateMessageRequest) (*Message, error)
 }
 
@@ -583,27 +605,49 @@ func _ConversationService_DeleteMessage0_HTTP_Handler(srv ConversationServiceHTT
 }
 
 type ConversationServiceHTTPClient interface {
+	// BatchGetConversationUsers Retrieves multiple conversation users by their resource names.
 	BatchGetConversationUsers(ctx context.Context, req *BatchGetConversationUsersRequest, opts ...http.CallOption) (rsp *BatchGetConversationUsersResponse, err error)
+	// BatchGetConversations Retrieves multiple conversations by their resource names.
 	BatchGetConversations(ctx context.Context, req *BatchGetConversationsRequest, opts ...http.CallOption) (rsp *BatchGetConversationsResponse, err error)
+	// BatchGetMessages Retrieves multiple messages by their resource names.
 	BatchGetMessages(ctx context.Context, req *BatchGetMessagesRequest, opts ...http.CallOption) (rsp *BatchGetMessagesResponse, err error)
+	// CreateConversation Creates a conversation.
 	CreateConversation(ctx context.Context, req *CreateConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
+	// CreateConversationUser Adds a user to a conversation.
 	CreateConversationUser(ctx context.Context, req *CreateConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
+	// CreateMessage Creates a message in a conversation.
 	CreateMessage(ctx context.Context, req *CreateMessageRequest, opts ...http.CallOption) (rsp *Message, err error)
+	// DeleteConversation Deletes a conversation.
 	DeleteConversation(ctx context.Context, req *DeleteConversationRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// DeleteConversationUser Removes a user from a conversation.
 	DeleteConversationUser(ctx context.Context, req *DeleteConversationUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// DeleteMessage Deletes a message.
 	DeleteMessage(ctx context.Context, req *DeleteMessageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// DemoteConversationUser Demotes a conversation user to member.
 	DemoteConversationUser(ctx context.Context, req *DemoteConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
+	// ElectConversationUser Transfers conversation ownership to a user.
 	ElectConversationUser(ctx context.Context, req *ElectConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
+	// GetConversation Retrieves a conversation by resource name.
 	GetConversation(ctx context.Context, req *GetConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
+	// GetConversationUser Retrieves a conversation user by resource name.
 	GetConversationUser(ctx context.Context, req *GetConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
+	// GetMessage Retrieves a message by resource name.
 	GetMessage(ctx context.Context, req *GetMessageRequest, opts ...http.CallOption) (rsp *Message, err error)
+	// JoinConversation Joins a conversation.
 	JoinConversation(ctx context.Context, req *JoinConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
+	// LeaveConversation Leaves a conversation.
 	LeaveConversation(ctx context.Context, req *LeaveConversationRequest, opts ...http.CallOption) (rsp *LeaveConversationResponse, err error)
+	// ListConversationUsers Lists users in a conversation.
 	ListConversationUsers(ctx context.Context, req *ListConversationUsersRequest, opts ...http.CallOption) (rsp *ListConversationUsersResponse, err error)
+	// ListConversations Lists conversations for the currently authenticated user.
 	ListConversations(ctx context.Context, req *ListConversationsRequest, opts ...http.CallOption) (rsp *ListConversationsResponse, err error)
+	// ListMessages Lists messages in a conversation.
 	ListMessages(ctx context.Context, req *ListMessagesRequest, opts ...http.CallOption) (rsp *ListMessagesResponse, err error)
+	// PromoteConversationUser Promotes a conversation user to admin.
 	PromoteConversationUser(ctx context.Context, req *PromoteConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
+	// UpdateConversation Updates a conversation.
 	UpdateConversation(ctx context.Context, req *UpdateConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
+	// UpdateMessage Updates a message.
 	UpdateMessage(ctx context.Context, req *UpdateMessageRequest, opts ...http.CallOption) (rsp *Message, err error)
 }
 
@@ -615,6 +659,7 @@ func NewConversationServiceHTTPClient(client *http.Client) ConversationServiceHT
 	return &ConversationServiceHTTPClientImpl{client}
 }
 
+// BatchGetConversationUsers Retrieves multiple conversation users by their resource names.
 func (c *ConversationServiceHTTPClientImpl) BatchGetConversationUsers(ctx context.Context, in *BatchGetConversationUsersRequest, opts ...http.CallOption) (*BatchGetConversationUsersResponse, error) {
 	var out BatchGetConversationUsersResponse
 	pattern := "/v1/{parent=conversations/*}/users:batchGet"
@@ -631,6 +676,7 @@ func (c *ConversationServiceHTTPClientImpl) BatchGetConversationUsers(ctx contex
 	return &out, nil
 }
 
+// BatchGetConversations Retrieves multiple conversations by their resource names.
 func (c *ConversationServiceHTTPClientImpl) BatchGetConversations(ctx context.Context, in *BatchGetConversationsRequest, opts ...http.CallOption) (*BatchGetConversationsResponse, error) {
 	var out BatchGetConversationsResponse
 	pattern := "/v1/conversations:batchGet"
@@ -647,6 +693,7 @@ func (c *ConversationServiceHTTPClientImpl) BatchGetConversations(ctx context.Co
 	return &out, nil
 }
 
+// BatchGetMessages Retrieves multiple messages by their resource names.
 func (c *ConversationServiceHTTPClientImpl) BatchGetMessages(ctx context.Context, in *BatchGetMessagesRequest, opts ...http.CallOption) (*BatchGetMessagesResponse, error) {
 	var out BatchGetMessagesResponse
 	pattern := "/v1/{parent=conversations/*}/messages:batchGet"
@@ -663,6 +710,7 @@ func (c *ConversationServiceHTTPClientImpl) BatchGetMessages(ctx context.Context
 	return &out, nil
 }
 
+// CreateConversation Creates a conversation.
 func (c *ConversationServiceHTTPClientImpl) CreateConversation(ctx context.Context, in *CreateConversationRequest, opts ...http.CallOption) (*Conversation, error) {
 	var out Conversation
 	pattern := "/v1/conversations"
@@ -680,6 +728,7 @@ func (c *ConversationServiceHTTPClientImpl) CreateConversation(ctx context.Conte
 	return &out, nil
 }
 
+// CreateConversationUser Adds a user to a conversation.
 func (c *ConversationServiceHTTPClientImpl) CreateConversationUser(ctx context.Context, in *CreateConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
 	var out ConversationUser
 	pattern := "/v1/{parent=conversations/*}/users"
@@ -697,6 +746,7 @@ func (c *ConversationServiceHTTPClientImpl) CreateConversationUser(ctx context.C
 	return &out, nil
 }
 
+// CreateMessage Creates a message in a conversation.
 func (c *ConversationServiceHTTPClientImpl) CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...http.CallOption) (*Message, error) {
 	var out Message
 	pattern := "/v1/{parent=conversations/*}/messages"
@@ -714,6 +764,7 @@ func (c *ConversationServiceHTTPClientImpl) CreateMessage(ctx context.Context, i
 	return &out, nil
 }
 
+// DeleteConversation Deletes a conversation.
 func (c *ConversationServiceHTTPClientImpl) DeleteConversation(ctx context.Context, in *DeleteConversationRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/v1/{name=conversations/*}"
@@ -730,6 +781,7 @@ func (c *ConversationServiceHTTPClientImpl) DeleteConversation(ctx context.Conte
 	return &out, nil
 }
 
+// DeleteConversationUser Removes a user from a conversation.
 func (c *ConversationServiceHTTPClientImpl) DeleteConversationUser(ctx context.Context, in *DeleteConversationUserRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/v1/{name=conversations/*/users/*}"
@@ -746,6 +798,7 @@ func (c *ConversationServiceHTTPClientImpl) DeleteConversationUser(ctx context.C
 	return &out, nil
 }
 
+// DeleteMessage Deletes a message.
 func (c *ConversationServiceHTTPClientImpl) DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/v1/{name=conversations/*/messages/*}"
@@ -762,6 +815,7 @@ func (c *ConversationServiceHTTPClientImpl) DeleteMessage(ctx context.Context, i
 	return &out, nil
 }
 
+// DemoteConversationUser Demotes a conversation user to member.
 func (c *ConversationServiceHTTPClientImpl) DemoteConversationUser(ctx context.Context, in *DemoteConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
 	var out ConversationUser
 	pattern := "/v1/{name=conversations/*/users/*}:demote"
@@ -779,6 +833,7 @@ func (c *ConversationServiceHTTPClientImpl) DemoteConversationUser(ctx context.C
 	return &out, nil
 }
 
+// ElectConversationUser Transfers conversation ownership to a user.
 func (c *ConversationServiceHTTPClientImpl) ElectConversationUser(ctx context.Context, in *ElectConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
 	var out ConversationUser
 	pattern := "/v1/{name=conversations/*/users/*}:elect"
@@ -796,6 +851,7 @@ func (c *ConversationServiceHTTPClientImpl) ElectConversationUser(ctx context.Co
 	return &out, nil
 }
 
+// GetConversation Retrieves a conversation by resource name.
 func (c *ConversationServiceHTTPClientImpl) GetConversation(ctx context.Context, in *GetConversationRequest, opts ...http.CallOption) (*Conversation, error) {
 	var out Conversation
 	pattern := "/v1/{name=conversations/*}"
@@ -812,6 +868,7 @@ func (c *ConversationServiceHTTPClientImpl) GetConversation(ctx context.Context,
 	return &out, nil
 }
 
+// GetConversationUser Retrieves a conversation user by resource name.
 func (c *ConversationServiceHTTPClientImpl) GetConversationUser(ctx context.Context, in *GetConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
 	var out ConversationUser
 	pattern := "/v1/{name=conversations/*/users/*}"
@@ -828,6 +885,7 @@ func (c *ConversationServiceHTTPClientImpl) GetConversationUser(ctx context.Cont
 	return &out, nil
 }
 
+// GetMessage Retrieves a message by resource name.
 func (c *ConversationServiceHTTPClientImpl) GetMessage(ctx context.Context, in *GetMessageRequest, opts ...http.CallOption) (*Message, error) {
 	var out Message
 	pattern := "/v1/{name=conversations/*/messages/*}"
@@ -844,6 +902,7 @@ func (c *ConversationServiceHTTPClientImpl) GetMessage(ctx context.Context, in *
 	return &out, nil
 }
 
+// JoinConversation Joins a conversation.
 func (c *ConversationServiceHTTPClientImpl) JoinConversation(ctx context.Context, in *JoinConversationRequest, opts ...http.CallOption) (*Conversation, error) {
 	var out Conversation
 	pattern := "/v1/{name=conversations/*}:join"
@@ -861,6 +920,7 @@ func (c *ConversationServiceHTTPClientImpl) JoinConversation(ctx context.Context
 	return &out, nil
 }
 
+// LeaveConversation Leaves a conversation.
 func (c *ConversationServiceHTTPClientImpl) LeaveConversation(ctx context.Context, in *LeaveConversationRequest, opts ...http.CallOption) (*LeaveConversationResponse, error) {
 	var out LeaveConversationResponse
 	pattern := "/v1/{name=conversations/*}:leave"
@@ -878,6 +938,7 @@ func (c *ConversationServiceHTTPClientImpl) LeaveConversation(ctx context.Contex
 	return &out, nil
 }
 
+// ListConversationUsers Lists users in a conversation.
 func (c *ConversationServiceHTTPClientImpl) ListConversationUsers(ctx context.Context, in *ListConversationUsersRequest, opts ...http.CallOption) (*ListConversationUsersResponse, error) {
 	var out ListConversationUsersResponse
 	pattern := "/v1/{parent=conversations/*}/users"
@@ -894,6 +955,7 @@ func (c *ConversationServiceHTTPClientImpl) ListConversationUsers(ctx context.Co
 	return &out, nil
 }
 
+// ListConversations Lists conversations for the currently authenticated user.
 func (c *ConversationServiceHTTPClientImpl) ListConversations(ctx context.Context, in *ListConversationsRequest, opts ...http.CallOption) (*ListConversationsResponse, error) {
 	var out ListConversationsResponse
 	pattern := "/v1/conversations"
@@ -910,6 +972,7 @@ func (c *ConversationServiceHTTPClientImpl) ListConversations(ctx context.Contex
 	return &out, nil
 }
 
+// ListMessages Lists messages in a conversation.
 func (c *ConversationServiceHTTPClientImpl) ListMessages(ctx context.Context, in *ListMessagesRequest, opts ...http.CallOption) (*ListMessagesResponse, error) {
 	var out ListMessagesResponse
 	pattern := "/v1/{parent=conversations/*}/messages"
@@ -926,6 +989,7 @@ func (c *ConversationServiceHTTPClientImpl) ListMessages(ctx context.Context, in
 	return &out, nil
 }
 
+// PromoteConversationUser Promotes a conversation user to admin.
 func (c *ConversationServiceHTTPClientImpl) PromoteConversationUser(ctx context.Context, in *PromoteConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
 	var out ConversationUser
 	pattern := "/v1/{name=conversations/*/users/*}:promote"
@@ -943,6 +1007,7 @@ func (c *ConversationServiceHTTPClientImpl) PromoteConversationUser(ctx context.
 	return &out, nil
 }
 
+// UpdateConversation Updates a conversation.
 func (c *ConversationServiceHTTPClientImpl) UpdateConversation(ctx context.Context, in *UpdateConversationRequest, opts ...http.CallOption) (*Conversation, error) {
 	var out Conversation
 	pattern := "/v1/{conversation.name=conversations/*}"
@@ -960,6 +1025,7 @@ func (c *ConversationServiceHTTPClientImpl) UpdateConversation(ctx context.Conte
 	return &out, nil
 }
 
+// UpdateMessage Updates a message.
 func (c *ConversationServiceHTTPClientImpl) UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...http.CallOption) (*Message, error) {
 	var out Message
 	pattern := "/v1/{message.name=conversations/*/messages/*}"

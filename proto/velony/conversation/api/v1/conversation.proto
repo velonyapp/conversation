@@ -12,10 +12,11 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/conversation/gen/api/v1;apiv1";
 
-// The Conversation Service provides APIs for managing conversations, participants, and messages.
+// Provides conversation, participant, and message management operations.
 service ConversationService {
   option (google.api.default_host) = "api.velony.app";
 
+  // Retrieves a conversation by resource name.
   rpc GetConversation(GetConversationRequest) returns (Conversation) {
     option (google.api.http) = {
       get: "/v1/{name=conversations/*}"
@@ -23,18 +24,21 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Lists conversations for the currently authenticated user.
   rpc ListConversations(ListConversationsRequest) returns (ListConversationsResponse) {
     option (google.api.http) = {
       get: "/v1/conversations"
     };
   }
 
+  // Retrieves multiple conversations by their resource names.
   rpc BatchGetConversations(BatchGetConversationsRequest) returns (BatchGetConversationsResponse) {
     option (google.api.http) = {
       get: "/v1/conversations:batchGet"
     };
   }
 
+  // Creates a conversation.
   rpc CreateConversation(CreateConversationRequest) returns (Conversation) {
     option (google.api.http) = {
       post: "/v1/conversations"
@@ -43,6 +47,7 @@ service ConversationService {
     option (google.api.method_signature) = "conversation";
   }
 
+  // Updates a conversation.
   rpc UpdateConversation(UpdateConversationRequest) returns (Conversation) {
     option (google.api.http) = {
       patch: "/v1/{conversation.name=conversations/*}"
@@ -51,6 +56,7 @@ service ConversationService {
     option (google.api.method_signature) = "conversation,update_mask";
   }
 
+  // Deletes a conversation.
   rpc DeleteConversation(DeleteConversationRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=conversations/*}"
@@ -58,6 +64,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Joins a conversation.
   rpc JoinConversation(JoinConversationRequest) returns (Conversation) {
     option (google.api.http) = {
       post: "/v1/{name=conversations/*}:join"
@@ -66,6 +73,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Leaves a conversation.
   rpc LeaveConversation(LeaveConversationRequest) returns (LeaveConversationResponse) {
     option (google.api.http) = {
       post: "/v1/{name=conversations/*}:leave"
@@ -74,6 +82,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Retrieves a conversation user by resource name.
   rpc GetConversationUser(GetConversationUserRequest) returns (ConversationUser) {
     option (google.api.http) = {
       get: "/v1/{name=conversations/*/users/*}"
@@ -81,6 +90,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Lists users in a conversation.
   rpc ListConversationUsers(ListConversationUsersRequest) returns (ListConversationUsersResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=conversations/*}/users"
@@ -88,12 +98,14 @@ service ConversationService {
     option (google.api.method_signature) = "parent";
   }
 
+  // Retrieves multiple conversation users by their resource names.
   rpc BatchGetConversationUsers(BatchGetConversationUsersRequest) returns (BatchGetConversationUsersResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=conversations/*}/users:batchGet"
     };
   }
 
+  // Adds a user to a conversation.
   rpc CreateConversationUser(CreateConversationUserRequest) returns (ConversationUser) {
     option (google.api.http) = {
       post: "/v1/{parent=conversations/*}/users"
@@ -102,6 +114,7 @@ service ConversationService {
     option (google.api.method_signature) = "parent,conversation_user";
   }
 
+  // Removes a user from a conversation.
   rpc DeleteConversationUser(DeleteConversationUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=conversations/*/users/*}"
@@ -109,6 +122,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Transfers conversation ownership to a user.
   rpc ElectConversationUser(ElectConversationUserRequest) returns (ConversationUser) {
     option (google.api.http) = {
       post: "/v1/{name=conversations/*/users/*}:elect"
@@ -117,6 +131,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Promotes a conversation user to admin.
   rpc PromoteConversationUser(PromoteConversationUserRequest) returns (ConversationUser) {
     option (google.api.http) = {
       post: "/v1/{name=conversations/*/users/*}:promote"
@@ -125,6 +140,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Demotes a conversation user to member.
   rpc DemoteConversationUser(DemoteConversationUserRequest) returns (ConversationUser) {
     option (google.api.http) = {
       post: "/v1/{name=conversations/*/users/*}:demote"
@@ -133,6 +149,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Retrieves a message by resource name.
   rpc GetMessage(GetMessageRequest) returns (Message) {
     option (google.api.http) = {
       get: "/v1/{name=conversations/*/messages/*}"
@@ -140,6 +157,7 @@ service ConversationService {
     option (google.api.method_signature) = "name";
   }
 
+  // Lists messages in a conversation.
   rpc ListMessages(ListMessagesRequest) returns (ListMessagesResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=conversations/*}/messages"
@@ -147,12 +165,14 @@ service ConversationService {
     option (google.api.method_signature) = "parent";
   }
 
+  // Retrieves multiple messages by their resource names.
   rpc BatchGetMessages(BatchGetMessagesRequest) returns (BatchGetMessagesResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=conversations/*}/messages:batchGet"
     };
   }
 
+  // Creates a message in a conversation.
   rpc CreateMessage(CreateMessageRequest) returns (Message) {
     option (google.api.http) = {
       post: "/v1/{parent=conversations/*}/messages"
@@ -161,6 +181,7 @@ service ConversationService {
     option (google.api.method_signature) = "parent,message";
   }
 
+  // Updates a message.
   rpc UpdateMessage(UpdateMessageRequest) returns (Message) {
     option (google.api.http) = {
       patch: "/v1/{message.name=conversations/*/messages/*}"
@@ -169,6 +190,7 @@ service ConversationService {
     option (google.api.method_signature) = "message,update_mask";
   }
 
+  // Deletes a message.
   rpc DeleteMessage(DeleteMessageRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=conversations/*/messages/*}"
@@ -186,25 +208,25 @@ message Conversation {
   };
 
   // The resource name of the conversation.
-  // Format: conversations/{conversation}
+  //
+  // Format: `conversations/{conversation}`
   string name = 1 [
     (google.api.field_behavior) = IDENTIFIER
   ];
 
-  // The title of the conversation.
-  // Must contain between 1 and 100 characters.
+  // The conversation title, 1–100 characters long.
   string title = 2 [
     (google.api.field_behavior) = REQUIRED
   ];
 
-  // The description of the conversation.
-  // Must not exceed 1000 characters.
+  // The conversation description, up to 1000 characters.
   string description = 3 [
     (google.api.field_behavior) = OPTIONAL
   ];
 
   // The most recent message in the conversation, if any.
-  // Format: conversations/{conversation}/messages/{message}
+  //
+  // Format: `conversations/{conversation}/messages/{message}`
   optional string last_message = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (google.api.resource_reference) = {
@@ -241,13 +263,15 @@ message ConversationUser {
   };
 
   // The resource name of the conversation user.
-  // Format: conversations/{conversation}/users/{conversation_user}
+  //
+  // Format: `conversations/{conversation}/users/{conversation_user}`
   string name = 1 [
     (google.api.field_behavior) = IDENTIFIER
   ];
 
   // The user associated with the conversation.
-  // Format: users/{user}
+  //
+  // Format: `users/{user}`
   string user = 2 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE,
@@ -267,7 +291,7 @@ message ConversationUser {
     (google.api.field_behavior) = IMMUTABLE
   ];
 
-  // The time when the user's role in the conversation was last changed.
+  // The time when the user's role was last changed.
   google.protobuf.Timestamp update_time = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
@@ -282,13 +306,15 @@ message Message {
   };
 
   // The resource name of the message.
-  // Format: conversations/{conversation}/messages/{message}
+  //
+  // Format: `conversations/{conversation}/messages/{message}`
   string name = 1 [
     (google.api.field_behavior) = IDENTIFIER
   ];
 
   // The author of the message, if they still exist.
-  // Format: users/{user}
+  //
+  // Format: `users/{user}`
   optional string user = 2 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (google.api.resource_reference) = {
@@ -296,8 +322,7 @@ message Message {
     }
   ];
 
-  // The content of the message.
-  // Must not exceed 65536 characters.
+  // The message content, up to 65536 characters.
   string content = 3 [
     (google.api.field_behavior) = REQUIRED
   ];
@@ -315,8 +340,9 @@ message Message {
 }
 
 message GetConversationRequest {
-  // The name of the conversation to retrieve.
-  // Format: conversations/{conversation}
+  // The conversation to retrieve.
+  //
+  // Format: `conversations/{conversation}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -326,37 +352,32 @@ message GetConversationRequest {
 }
 
 message ListConversationsRequest {
-  // The maximum number of conversations to return. The service may return fewer than
-  // this value.
-  // If unspecified, at most 20 conversations will be returned.
-  // The maximum value is 100; values above 100 will be coerced to 100.
+  // The maximum number of conversations to return.
+  // Defaults to 20; values above 100 are treated as 100.
   int32 page_size = 1 [
     (google.api.field_behavior) = OPTIONAL
   ];
 
-  // A page token, received from a previous `ListConversations` call.
-  // Provide this to retrieve the subsequent page.
-  //
-  // When paginating, all other parameters provided to `ListConversations` must match
-  // the call that provided the page token.
+  // A page token from a previous `ListConversations` call.
+  // All other request parameters must match that call.
   string page_token = 2 [
     (google.api.field_behavior) = OPTIONAL
   ];
 }
 
 message ListConversationsResponse {
-  // The conversation users from the currently authenticated user.
+  // The conversations of the currently authenticated user.
   repeated Conversation conversations = 1;
 
-  // A token, which can be sent as `page_token` to retrieve the next page.
-  // If this field is omitted, there are no subsequent pages.
+  // The token for the next page, if any.
   string next_page_token = 2;
 }
 
 message BatchGetConversationsRequest {
-  // The names of the conversation to retrieve.
-  // A maximum of 100 conversation can be retrieved in a batch.
-  // Format: conversations/{conversation}
+  // The conversations to retrieve.
+  // A maximum of `100` conversations can be retrieved in a batch.
+  //
+  // Format: `conversations/{conversation}`
   repeated string names = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -366,7 +387,7 @@ message BatchGetConversationsRequest {
 }
 
 message BatchGetConversationsResponse {
-  // Conversations requested.
+  // The requested conversations.
   repeated Conversation conversations = 1;
 }
 
@@ -378,23 +399,23 @@ message CreateConversationRequest {
 }
 
 message UpdateConversationRequest {
-  // The conversation to update.
+  // The conversation to update, identified by its `name`.
   //
-  // The conversation's `name` field is used to identify the conversation to be updated.
-  // Format: conversations/{conversation}
+  // Format: `conversations/{conversation}`
   Conversation conversation = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
 
-  // The list of fields to be updated.
+  // The fields to update.
   google.protobuf.FieldMask update_mask = 2 [
     (google.api.field_behavior) = OPTIONAL
   ];
 }
 
 message DeleteConversationRequest {
-  // The name of the conversation to delete.
-  // Format: conversations/{conversation}
+  // The conversation to delete.
+  //
+  // Format: `conversations/{conversation}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -404,8 +425,9 @@ message DeleteConversationRequest {
 }
 
 message JoinConversationRequest {
-  // The name of the conversation to join.
-  // Format: conversations/{conversation}
+  // The conversation to join.
+  //
+  // Format: `conversations/{conversation}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -415,8 +437,9 @@ message JoinConversationRequest {
 }
 
 message LeaveConversationRequest {
-  // The name of the conversation to leave.
-  // Format: conversations/{conversation}
+  // The conversation to leave.
+  //
+  // Format: `conversations/{conversation}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -428,8 +451,9 @@ message LeaveConversationRequest {
 message LeaveConversationResponse {}
 
 message GetConversationUserRequest {
-  // The name of the conversation user to retrieve.
-  // Format: conversations/{conversation}/users/{conversation_user}
+  // The conversation user to retrieve.
+  //
+  // Format: `conversations/{conversation}/users/{conversation_user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -439,8 +463,9 @@ message GetConversationUserRequest {
 }
 
 message ListConversationUsersRequest {
-  // The parent, which owns this collection of conversation users.
-  // Format: conversations/{conversation}
+  // The conversation whose users are being listed.
+  //
+  // Format: `conversations/{conversation}`
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -448,38 +473,32 @@ message ListConversationUsersRequest {
     }
   ];
 
-  // The maximum number of conversation users to return. The service may return fewer than
-  // this value.
-  // If unspecified, at most 20 conversation users will be returned.
-  // The maximum value is 100; values above 100 will be coerced to 100.
+  // The maximum number of conversation users to return.
+  // Defaults to 20; values above 100 are treated as 100.
   int32 page_size = 2 [
     (google.api.field_behavior) = OPTIONAL
   ];
 
-  // A page token, received from a previous `ListConversationUsers` call.
-  // Provide this to retrieve the subsequent page.
-  //
-  // When paginating, all other parameters provided to `ListConversationUsers` must match
-  // the call that provided the page token.
+  // A page token from a previous `ListConversationUsers` call.
+  // All other request parameters must match that call.
   string page_token = 3 [
     (google.api.field_behavior) = OPTIONAL
   ];
 }
 
 message ListConversationUsersResponse {
-  // The conversation users from the specified conversation.
+  // The conversation users in the specified conversation.
   repeated ConversationUser conversation_users = 1;
 
-  // A token, which can be sent as `page_token` to retrieve the next page.
-  // If this field is omitted, there are no subsequent pages.
+  // The token for the next page, if any.
   string next_page_token = 2;
 }
 
 message BatchGetConversationUsersRequest {
-  // The parent resource shared by all conversation users being retrieved.
-  // Format: conversations/{conversation}
-  // If this is set, the parent of all of the conversation users specified in `names`
-  // must match this field.
+  // The conversation containing the users to retrieve.
+  // All `names` must belong to this conversation.
+  //
+  // Format: `conversations/{conversation}`
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -487,9 +506,10 @@ message BatchGetConversationUsersRequest {
     }
   ];
 
-  // The names of the conversation users to retrieve.
-  // A maximum of 100 conversation users can be retrieved in a batch.
-  // Format: conversations/{conversation}/users/{conversation_user}
+  // The conversation users to retrieve.
+  // A maximum of `100` conversation users can be retrieved in a batch.
+  //
+  // Format: `conversations/{conversation}/users/{conversation_user}`
   repeated string names = 2 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -499,13 +519,14 @@ message BatchGetConversationUsersRequest {
 }
 
 message BatchGetConversationUsersResponse {
-  // Conversation users requested.
+  // The requested conversation users.
   repeated ConversationUser conversation_users = 1;
 }
 
 message CreateConversationUserRequest {
-  // The parent resource where this conversation user will be added.
-  // Format: conversations/{conversation}
+  // The conversation to add a user to.
+  //
+  // Format: `conversations/{conversation}`
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -520,8 +541,9 @@ message CreateConversationUserRequest {
 }
 
 message DeleteConversationUserRequest {
-  // The name of the conversation user to kick.
-  // Format: conversations/{conversation}/users/{conversation_user}
+  // The conversation user to remove.
+  //
+  // Format: `conversations/{conversation}/users/{conversation_user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -531,8 +553,9 @@ message DeleteConversationUserRequest {
 }
 
 message ElectConversationUserRequest {
-  // The name of the conversation user to elect as owner.
-  // Format: conversations/{conversation}/users/{conversation_user}
+  // The conversation user to elect as owner.
+  //
+  // Format: `conversations/{conversation}/users/{conversation_user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -542,8 +565,9 @@ message ElectConversationUserRequest {
 }
 
 message PromoteConversationUserRequest {
-  // The name of the conversation user to promote to admin.
-  // Format: conversations/{conversation}/users/{conversation_user}
+  // The conversation user to promote to admin.
+  //
+  // Format: `conversations/{conversation}/users/{conversation_user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -553,8 +577,9 @@ message PromoteConversationUserRequest {
 }
 
 message DemoteConversationUserRequest {
-  // The name of the conversation user to demote to member.
-  // Format: conversations/{conversation}/users/{conversation_user}
+  // The conversation user to demote to member.
+  //
+  // Format: `conversations/{conversation}/users/{conversation_user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -564,8 +589,9 @@ message DemoteConversationUserRequest {
 }
 
 message GetMessageRequest {
-  // The name of the message to retrieve.
-  // Format: conversations/{conversation}/messages/{message}
+  // The message to retrieve.
+  //
+  // Format: `conversations/{conversation}/messages/{message}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -575,8 +601,9 @@ message GetMessageRequest {
 }
 
 message ListMessagesRequest {
-  // The parent, which owns this collection of messages.
-  // Format: conversations/{conversation}
+  // The conversation whose messages are being listed.
+  //
+  // Format: `conversations/{conversation}`
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -584,38 +611,32 @@ message ListMessagesRequest {
     }
   ];
 
-  // The maximum number of messages to return. The service may return fewer than
-  // this value.
-  // If unspecified, at most 50 messages will be returned.
-  // The maximum value is 100; values above 100 will be coerced to 100.
+  // The maximum number of messages to return.
+  // Defaults to 50; values above 100 are treated as 100.
   int32 page_size = 2 [
     (google.api.field_behavior) = OPTIONAL
   ];
 
-  // A page token, received from a previous `ListMessages` call.
-  // Provide this to retrieve the subsequent page.
-  //
-  // When paginating, all other parameters provided to `ListMessages` must match
-  // the call that provided the page token.
+  // A page token from a previous `ListMessages` call.
+  // All other request parameters must match that call.
   string page_token = 3 [
     (google.api.field_behavior) = OPTIONAL
   ];
 }
 
 message ListMessagesResponse {
-  // The messages from the specified conversation.
+  // The messages in the specified conversation.
   repeated Message messages = 1;
 
-  // A token, which can be sent as `page_token` to retrieve the next page.
-  // If this field is omitted, there are no subsequent pages.
+  // The token for the next page, if any.
   string next_page_token = 2;
 }
 
 message BatchGetMessagesRequest {
-  // The parent resource shared by all messages being retrieved.
-  // Format: conversations/{conversation}
-  // If this is set, the parent of all of the messages specified in `names`
-  // must match this field.
+  // The conversation containing the messages to retrieve.
+  // All `names` must belong to this conversation.
+  //
+  // Format: `conversations/{conversation}`
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -623,9 +644,10 @@ message BatchGetMessagesRequest {
     }
   ];
 
-  // The names of the messages to retrieve.
-  // A maximum of 100 messages can be retrieved in a batch.
-  // Format: conversations/{conversation}/messages/{message}
+  // The messages to retrieve.
+  // A maximum of `100` messages can be retrieved in a batch.
+  //
+  // Format: `conversations/{conversation}/messages/{message}`
   repeated string names = 2 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -635,13 +657,14 @@ message BatchGetMessagesRequest {
 }
 
 message BatchGetMessagesResponse {
-  // Messages requested.
+  // The requested messages.
   repeated Message messages = 1;
 }
 
 message CreateMessageRequest {
-  // The parent resource where this message will be created.
-  // Format: conversations/{conversation}
+  // The conversation to create the message in.
+  //
+  // Format: `conversations/{conversation}`
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -656,23 +679,23 @@ message CreateMessageRequest {
 }
 
 message UpdateMessageRequest {
-  // The message to update.
+  // The message to update, identified by its `name`.
   //
-  // The message's `name` field is used to identify the message to be updated.
-  // Format: conversations/{conversation}/messages/{message}
+  // Format: `conversations/{conversation}/messages/{message}`
   Message message = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
 
-  // The list of fields to be updated.
+  // The fields to update.
   google.protobuf.FieldMask update_mask = 2 [
     (google.api.field_behavior) = OPTIONAL
   ];
 }
 
 message DeleteMessageRequest {
-  // The name of the message to delete.
-  // Format: messages/{message}/messages/{message}
+  // The message to delete.
+  //
+  // Format: `conversations/{conversation}/messages/{message}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {

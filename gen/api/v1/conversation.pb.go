@@ -80,16 +80,16 @@ func (ConversationUser_Role) EnumDescriptor() ([]byte, []int) {
 type Conversation struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The resource name of the conversation.
-	// Format: conversations/{conversation}
+	//
+	// Format: `conversations/{conversation}`
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The title of the conversation.
-	// Must contain between 1 and 100 characters.
+	// The conversation title, 1–100 characters long.
 	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	// The description of the conversation.
-	// Must not exceed 1000 characters.
+	// The conversation description, up to 1000 characters.
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	// The most recent message in the conversation, if any.
-	// Format: conversations/{conversation}/messages/{message}
+	//
+	// Format: `conversations/{conversation}/messages/{message}`
 	LastMessage *string `protobuf:"bytes,4,opt,name=last_message,json=lastMessage,proto3,oneof" json:"last_message,omitempty"`
 	// The time when the conversation was created.
 	CreateTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
@@ -174,16 +174,18 @@ func (x *Conversation) GetUpdateTime() *timestamppb.Timestamp {
 type ConversationUser struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The resource name of the conversation user.
-	// Format: conversations/{conversation}/users/{conversation_user}
+	//
+	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The user associated with the conversation.
-	// Format: users/{user}
+	//
+	// Format: `users/{user}`
 	User string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
 	// The user's role in the conversation.
 	Role ConversationUser_Role `protobuf:"varint,3,opt,name=role,proto3,enum=velony.conversation.api.v1.ConversationUser_Role" json:"role,omitempty"`
 	// The time when the user joined the conversation.
 	CreateTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	// The time when the user's role in the conversation was last changed.
+	// The time when the user's role was last changed.
 	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -257,13 +259,14 @@ func (x *ConversationUser) GetUpdateTime() *timestamppb.Timestamp {
 type Message struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The resource name of the message.
-	// Format: conversations/{conversation}/messages/{message}
+	//
+	// Format: `conversations/{conversation}/messages/{message}`
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The author of the message, if they still exist.
-	// Format: users/{user}
+	//
+	// Format: `users/{user}`
 	User *string `protobuf:"bytes,2,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	// The content of the message.
-	// Must not exceed 65536 characters.
+	// The message content, up to 65536 characters.
 	Content string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
 	// The time when the message was sent.
 	CreateTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
@@ -340,8 +343,9 @@ func (x *Message) GetUpdateTime() *timestamppb.Timestamp {
 
 type GetConversationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation to retrieve.
-	// Format: conversations/{conversation}
+	// The conversation to retrieve.
+	//
+	// Format: `conversations/{conversation}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -386,16 +390,11 @@ func (x *GetConversationRequest) GetName() string {
 
 type ListConversationsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The maximum number of conversations to return. The service may return fewer than
-	// this value.
-	// If unspecified, at most 20 conversations will be returned.
-	// The maximum value is 100; values above 100 will be coerced to 100.
+	// The maximum number of conversations to return.
+	// Defaults to 20; values above 100 are treated as 100.
 	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	// A page token, received from a previous `ListConversations` call.
-	// Provide this to retrieve the subsequent page.
-	//
-	// When paginating, all other parameters provided to `ListConversations` must match
-	// the call that provided the page token.
+	// A page token from a previous `ListConversations` call.
+	// All other request parameters must match that call.
 	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -447,10 +446,9 @@ func (x *ListConversationsRequest) GetPageToken() string {
 
 type ListConversationsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The conversation users from the currently authenticated user.
+	// The conversations of the currently authenticated user.
 	Conversations []*Conversation `protobuf:"bytes,1,rep,name=conversations,proto3" json:"conversations,omitempty"`
-	// A token, which can be sent as `page_token` to retrieve the next page.
-	// If this field is omitted, there are no subsequent pages.
+	// The token for the next page, if any.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -502,9 +500,10 @@ func (x *ListConversationsResponse) GetNextPageToken() string {
 
 type BatchGetConversationsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The names of the conversation to retrieve.
-	// A maximum of 100 conversation can be retrieved in a batch.
-	// Format: conversations/{conversation}
+	// The conversations to retrieve.
+	// A maximum of `100` conversations can be retrieved in a batch.
+	//
+	// Format: `conversations/{conversation}`
 	Names         []string `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -549,7 +548,7 @@ func (x *BatchGetConversationsRequest) GetNames() []string {
 
 type BatchGetConversationsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Conversations requested.
+	// The requested conversations.
 	Conversations []*Conversation `protobuf:"bytes,1,rep,name=conversations,proto3" json:"conversations,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -639,12 +638,11 @@ func (x *CreateConversationRequest) GetConversation() *Conversation {
 
 type UpdateConversationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The conversation to update.
+	// The conversation to update, identified by its `name`.
 	//
-	// The conversation's `name` field is used to identify the conversation to be updated.
-	// Format: conversations/{conversation}
+	// Format: `conversations/{conversation}`
 	Conversation *Conversation `protobuf:"bytes,1,opt,name=conversation,proto3" json:"conversation,omitempty"`
-	// The list of fields to be updated.
+	// The fields to update.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -696,8 +694,9 @@ func (x *UpdateConversationRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteConversationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation to delete.
-	// Format: conversations/{conversation}
+	// The conversation to delete.
+	//
+	// Format: `conversations/{conversation}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -742,8 +741,9 @@ func (x *DeleteConversationRequest) GetName() string {
 
 type JoinConversationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation to join.
-	// Format: conversations/{conversation}
+	// The conversation to join.
+	//
+	// Format: `conversations/{conversation}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -788,8 +788,9 @@ func (x *JoinConversationRequest) GetName() string {
 
 type LeaveConversationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation to leave.
-	// Format: conversations/{conversation}
+	// The conversation to leave.
+	//
+	// Format: `conversations/{conversation}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -870,8 +871,9 @@ func (*LeaveConversationResponse) Descriptor() ([]byte, []int) {
 
 type GetConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation user to retrieve.
-	// Format: conversations/{conversation}/users/{conversation_user}
+	// The conversation user to retrieve.
+	//
+	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -916,19 +918,15 @@ func (x *GetConversationUserRequest) GetName() string {
 
 type ListConversationUsersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The parent, which owns this collection of conversation users.
-	// Format: conversations/{conversation}
-	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
-	// The maximum number of conversation users to return. The service may return fewer than
-	// this value.
-	// If unspecified, at most 20 conversation users will be returned.
-	// The maximum value is 100; values above 100 will be coerced to 100.
-	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	// A page token, received from a previous `ListConversationUsers` call.
-	// Provide this to retrieve the subsequent page.
+	// The conversation whose users are being listed.
 	//
-	// When paginating, all other parameters provided to `ListConversationUsers` must match
-	// the call that provided the page token.
+	// Format: `conversations/{conversation}`
+	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
+	// The maximum number of conversation users to return.
+	// Defaults to 20; values above 100 are treated as 100.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// A page token from a previous `ListConversationUsers` call.
+	// All other request parameters must match that call.
 	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -987,10 +985,9 @@ func (x *ListConversationUsersRequest) GetPageToken() string {
 
 type ListConversationUsersResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The conversation users from the specified conversation.
+	// The conversation users in the specified conversation.
 	ConversationUsers []*ConversationUser `protobuf:"bytes,1,rep,name=conversation_users,json=conversationUsers,proto3" json:"conversation_users,omitempty"`
-	// A token, which can be sent as `page_token` to retrieve the next page.
-	// If this field is omitted, there are no subsequent pages.
+	// The token for the next page, if any.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1042,14 +1039,15 @@ func (x *ListConversationUsersResponse) GetNextPageToken() string {
 
 type BatchGetConversationUsersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The parent resource shared by all conversation users being retrieved.
-	// Format: conversations/{conversation}
-	// If this is set, the parent of all of the conversation users specified in `names`
-	// must match this field.
+	// The conversation containing the users to retrieve.
+	// All `names` must belong to this conversation.
+	//
+	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
-	// The names of the conversation users to retrieve.
-	// A maximum of 100 conversation users can be retrieved in a batch.
-	// Format: conversations/{conversation}/users/{conversation_user}
+	// The conversation users to retrieve.
+	// A maximum of `100` conversation users can be retrieved in a batch.
+	//
+	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Names         []string `protobuf:"bytes,2,rep,name=names,proto3" json:"names,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1101,7 +1099,7 @@ func (x *BatchGetConversationUsersRequest) GetNames() []string {
 
 type BatchGetConversationUsersResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Conversation users requested.
+	// The requested conversation users.
 	ConversationUsers []*ConversationUser `protobuf:"bytes,1,rep,name=conversation_users,json=conversationUsers,proto3" json:"conversation_users,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
@@ -1146,8 +1144,9 @@ func (x *BatchGetConversationUsersResponse) GetConversationUsers() []*Conversati
 
 type CreateConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The parent resource where this conversation user will be added.
-	// Format: conversations/{conversation}
+	// The conversation to add a user to.
+	//
+	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
 	// The conversation user to add.
 	ConversationUser *ConversationUser `protobuf:"bytes,2,opt,name=conversation_user,json=conversationUser,proto3" json:"conversation_user,omitempty"`
@@ -1201,8 +1200,9 @@ func (x *CreateConversationUserRequest) GetConversationUser() *ConversationUser 
 
 type DeleteConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation user to kick.
-	// Format: conversations/{conversation}/users/{conversation_user}
+	// The conversation user to remove.
+	//
+	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1247,8 +1247,9 @@ func (x *DeleteConversationUserRequest) GetName() string {
 
 type ElectConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation user to elect as owner.
-	// Format: conversations/{conversation}/users/{conversation_user}
+	// The conversation user to elect as owner.
+	//
+	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1293,8 +1294,9 @@ func (x *ElectConversationUserRequest) GetName() string {
 
 type PromoteConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation user to promote to admin.
-	// Format: conversations/{conversation}/users/{conversation_user}
+	// The conversation user to promote to admin.
+	//
+	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1339,8 +1341,9 @@ func (x *PromoteConversationUserRequest) GetName() string {
 
 type DemoteConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the conversation user to demote to member.
-	// Format: conversations/{conversation}/users/{conversation_user}
+	// The conversation user to demote to member.
+	//
+	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1385,8 +1388,9 @@ func (x *DemoteConversationUserRequest) GetName() string {
 
 type GetMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the message to retrieve.
-	// Format: conversations/{conversation}/messages/{message}
+	// The message to retrieve.
+	//
+	// Format: `conversations/{conversation}/messages/{message}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1431,19 +1435,15 @@ func (x *GetMessageRequest) GetName() string {
 
 type ListMessagesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The parent, which owns this collection of messages.
-	// Format: conversations/{conversation}
-	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
-	// The maximum number of messages to return. The service may return fewer than
-	// this value.
-	// If unspecified, at most 50 messages will be returned.
-	// The maximum value is 100; values above 100 will be coerced to 100.
-	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	// A page token, received from a previous `ListMessages` call.
-	// Provide this to retrieve the subsequent page.
+	// The conversation whose messages are being listed.
 	//
-	// When paginating, all other parameters provided to `ListMessages` must match
-	// the call that provided the page token.
+	// Format: `conversations/{conversation}`
+	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
+	// The maximum number of messages to return.
+	// Defaults to 50; values above 100 are treated as 100.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// A page token from a previous `ListMessages` call.
+	// All other request parameters must match that call.
 	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1502,10 +1502,9 @@ func (x *ListMessagesRequest) GetPageToken() string {
 
 type ListMessagesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The messages from the specified conversation.
+	// The messages in the specified conversation.
 	Messages []*Message `protobuf:"bytes,1,rep,name=messages,proto3" json:"messages,omitempty"`
-	// A token, which can be sent as `page_token` to retrieve the next page.
-	// If this field is omitted, there are no subsequent pages.
+	// The token for the next page, if any.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1557,14 +1556,15 @@ func (x *ListMessagesResponse) GetNextPageToken() string {
 
 type BatchGetMessagesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The parent resource shared by all messages being retrieved.
-	// Format: conversations/{conversation}
-	// If this is set, the parent of all of the messages specified in `names`
-	// must match this field.
+	// The conversation containing the messages to retrieve.
+	// All `names` must belong to this conversation.
+	//
+	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
-	// The names of the messages to retrieve.
-	// A maximum of 100 messages can be retrieved in a batch.
-	// Format: conversations/{conversation}/messages/{message}
+	// The messages to retrieve.
+	// A maximum of `100` messages can be retrieved in a batch.
+	//
+	// Format: `conversations/{conversation}/messages/{message}`
 	Names         []string `protobuf:"bytes,2,rep,name=names,proto3" json:"names,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1616,7 +1616,7 @@ func (x *BatchGetMessagesRequest) GetNames() []string {
 
 type BatchGetMessagesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Messages requested.
+	// The requested messages.
 	Messages      []*Message `protobuf:"bytes,1,rep,name=messages,proto3" json:"messages,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1661,8 +1661,9 @@ func (x *BatchGetMessagesResponse) GetMessages() []*Message {
 
 type CreateMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The parent resource where this message will be created.
-	// Format: conversations/{conversation}
+	// The conversation to create the message in.
+	//
+	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
 	// The message to create.
 	Message       *Message `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
@@ -1716,12 +1717,11 @@ func (x *CreateMessageRequest) GetMessage() *Message {
 
 type UpdateMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The message to update.
+	// The message to update, identified by its `name`.
 	//
-	// The message's `name` field is used to identify the message to be updated.
-	// Format: conversations/{conversation}/messages/{message}
+	// Format: `conversations/{conversation}/messages/{message}`
 	Message *Message `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
-	// The list of fields to be updated.
+	// The fields to update.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1773,8 +1773,9 @@ func (x *UpdateMessageRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the message to delete.
-	// Format: messages/{message}/messages/{message}
+	// The message to delete.
+	//
+	// Format: `conversations/{conversation}/messages/{message}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

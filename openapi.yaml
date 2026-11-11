@@ -4,7 +4,7 @@
 openapi: 3.0.3
 info:
     title: ConversationService API
-    description: The Conversation Service provides APIs for managing conversations, participants, and messages.
+    description: Provides conversation, participant, and message management operations.
     version: 0.0.1
 servers:
     - url: https://api.velony.app
@@ -13,17 +13,18 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Lists conversations for the currently authenticated user.
             operationId: ConversationService_ListConversations
             parameters:
                 - name: pageSize
                   in: query
-                  description: "The maximum number of conversations to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 20 conversations will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
+                  description: "The maximum number of conversations to return.\r\n Defaults to 20; values above 100 are treated as 100."
                   schema:
                     type: integer
                     format: int32
                 - name: pageToken
                   in: query
-                  description: "A page token, received from a previous `ListConversations` call.\r\n Provide this to retrieve the subsequent page.\r\n\r\n When paginating, all other parameters provided to `ListConversations` must match\r\n the call that provided the page token."
+                  description: "A page token from a previous `ListConversations` call.\r\n All other request parameters must match that call."
                   schema:
                     type: string
             responses:
@@ -36,6 +37,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Creates a conversation.
             operationId: ConversationService_CreateConversation
             requestBody:
                 content:
@@ -54,6 +56,7 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Retrieves a conversation by resource name.
             operationId: ConversationService_GetConversation
             parameters:
                 - name: conversation
@@ -72,6 +75,7 @@ paths:
         delete:
             tags:
                 - ConversationService
+            description: Deletes a conversation.
             operationId: ConversationService_DeleteConversation
             parameters:
                 - name: conversation
@@ -87,6 +91,7 @@ paths:
         patch:
             tags:
                 - ConversationService
+            description: Updates a conversation.
             operationId: ConversationService_UpdateConversation
             parameters:
                 - name: conversation
@@ -97,7 +102,7 @@ paths:
                     type: string
                 - name: updateMask
                   in: query
-                  description: The list of fields to be updated.
+                  description: The fields to update.
                   schema:
                     type: string
                     format: field-mask
@@ -118,6 +123,7 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Lists messages in a conversation.
             operationId: ConversationService_ListMessages
             parameters:
                 - name: conversation
@@ -128,13 +134,13 @@ paths:
                     type: string
                 - name: pageSize
                   in: query
-                  description: "The maximum number of messages to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 50 messages will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
+                  description: "The maximum number of messages to return.\r\n Defaults to 50; values above 100 are treated as 100."
                   schema:
                     type: integer
                     format: int32
                 - name: pageToken
                   in: query
-                  description: "A page token, received from a previous `ListMessages` call.\r\n Provide this to retrieve the subsequent page.\r\n\r\n When paginating, all other parameters provided to `ListMessages` must match\r\n the call that provided the page token."
+                  description: "A page token from a previous `ListMessages` call.\r\n All other request parameters must match that call."
                   schema:
                     type: string
             responses:
@@ -147,6 +153,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Creates a message in a conversation.
             operationId: ConversationService_CreateMessage
             parameters:
                 - name: conversation
@@ -172,6 +179,7 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Retrieves a message by resource name.
             operationId: ConversationService_GetMessage
             parameters:
                 - name: conversation
@@ -196,6 +204,7 @@ paths:
         delete:
             tags:
                 - ConversationService
+            description: Deletes a message.
             operationId: ConversationService_DeleteMessage
             parameters:
                 - name: conversation
@@ -217,6 +226,7 @@ paths:
         patch:
             tags:
                 - ConversationService
+            description: Updates a message.
             operationId: ConversationService_UpdateMessage
             parameters:
                 - name: conversation
@@ -233,7 +243,7 @@ paths:
                     type: string
                 - name: updateMask
                   in: query
-                  description: The list of fields to be updated.
+                  description: The fields to update.
                   schema:
                     type: string
                     format: field-mask
@@ -254,6 +264,7 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Retrieves multiple messages by their resource names.
             operationId: ConversationService_BatchGetMessages
             parameters:
                 - name: conversation
@@ -264,7 +275,7 @@ paths:
                     type: string
                 - name: names
                   in: query
-                  description: "The names of the messages to retrieve.\r\n A maximum of 100 messages can be retrieved in a batch.\r\n Format: conversations/{conversation}/messages/{message}"
+                  description: "The messages to retrieve.\r\n A maximum of `100` messages can be retrieved in a batch.\r\n\r\n Format: `conversations/{conversation}/messages/{message}`"
                   schema:
                     type: array
                     items:
@@ -280,6 +291,7 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Lists users in a conversation.
             operationId: ConversationService_ListConversationUsers
             parameters:
                 - name: conversation
@@ -290,13 +302,13 @@ paths:
                     type: string
                 - name: pageSize
                   in: query
-                  description: "The maximum number of conversation users to return. The service may return fewer than\r\n this value.\r\n If unspecified, at most 20 conversation users will be returned.\r\n The maximum value is 100; values above 100 will be coerced to 100."
+                  description: "The maximum number of conversation users to return.\r\n Defaults to 20; values above 100 are treated as 100."
                   schema:
                     type: integer
                     format: int32
                 - name: pageToken
                   in: query
-                  description: "A page token, received from a previous `ListConversationUsers` call.\r\n Provide this to retrieve the subsequent page.\r\n\r\n When paginating, all other parameters provided to `ListConversationUsers` must match\r\n the call that provided the page token."
+                  description: "A page token from a previous `ListConversationUsers` call.\r\n All other request parameters must match that call."
                   schema:
                     type: string
             responses:
@@ -309,6 +321,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Adds a user to a conversation.
             operationId: ConversationService_CreateConversationUser
             parameters:
                 - name: conversation
@@ -334,6 +347,7 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Retrieves a conversation user by resource name.
             operationId: ConversationService_GetConversationUser
             parameters:
                 - name: conversation
@@ -358,6 +372,7 @@ paths:
         delete:
             tags:
                 - ConversationService
+            description: Removes a user from a conversation.
             operationId: ConversationService_DeleteConversationUser
             parameters:
                 - name: conversation
@@ -380,6 +395,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Demotes a conversation user to member.
             operationId: ConversationService_DemoteConversationUser
             parameters:
                 - name: conversation
@@ -411,6 +427,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Transfers conversation ownership to a user.
             operationId: ConversationService_ElectConversationUser
             parameters:
                 - name: conversation
@@ -442,6 +459,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Promotes a conversation user to admin.
             operationId: ConversationService_PromoteConversationUser
             parameters:
                 - name: conversation
@@ -473,6 +491,7 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Retrieves multiple conversation users by their resource names.
             operationId: ConversationService_BatchGetConversationUsers
             parameters:
                 - name: conversation
@@ -483,7 +502,7 @@ paths:
                     type: string
                 - name: names
                   in: query
-                  description: "The names of the conversation users to retrieve.\r\n A maximum of 100 conversation users can be retrieved in a batch.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+                  description: "The conversation users to retrieve.\r\n A maximum of `100` conversation users can be retrieved in a batch.\r\n\r\n Format: `conversations/{conversation}/users/{conversation_user}`"
                   schema:
                     type: array
                     items:
@@ -499,6 +518,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Joins a conversation.
             operationId: ConversationService_JoinConversation
             parameters:
                 - name: conversation
@@ -524,6 +544,7 @@ paths:
         post:
             tags:
                 - ConversationService
+            description: Leaves a conversation.
             operationId: ConversationService_LeaveConversation
             parameters:
                 - name: conversation
@@ -549,11 +570,12 @@ paths:
         get:
             tags:
                 - ConversationService
+            description: Retrieves multiple conversations by their resource names.
             operationId: ConversationService_BatchGetConversations
             parameters:
                 - name: names
                   in: query
-                  description: "The names of the conversation to retrieve.\r\n A maximum of 100 conversation can be retrieved in a batch.\r\n Format: conversations/{conversation}"
+                  description: "The conversations to retrieve.\r\n A maximum of `100` conversations can be retrieved in a batch.\r\n\r\n Format: `conversations/{conversation}`"
                   schema:
                     type: array
                     items:
@@ -574,7 +596,7 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
-                    description: Conversation users requested.
+                    description: The requested conversation users.
         velony.conversation.api.v1.BatchGetConversationsResponse:
             type: object
             properties:
@@ -582,7 +604,7 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
-                    description: Conversations requested.
+                    description: The requested conversations.
         velony.conversation.api.v1.BatchGetMessagesResponse:
             type: object
             properties:
@@ -590,7 +612,7 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/velony.conversation.api.v1.Message'
-                    description: Messages requested.
+                    description: The requested messages.
         velony.conversation.api.v1.Conversation:
             required:
                 - title
@@ -598,17 +620,17 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The resource name of the conversation.\r\n Format: conversations/{conversation}"
+                    description: "The resource name of the conversation.\r\n\r\n Format: `conversations/{conversation}`"
                 title:
                     type: string
-                    description: "The title of the conversation.\r\n Must contain between 1 and 100 characters."
+                    description: The conversation title, 1–100 characters long.
                 description:
                     type: string
-                    description: "The description of the conversation.\r\n Must not exceed 1000 characters."
+                    description: The conversation description, up to 1000 characters.
                 lastMessage:
                     readOnly: true
                     type: string
-                    description: "The most recent message in the conversation, if any.\r\n Format: conversations/{conversation}/messages/{message}"
+                    description: "The most recent message in the conversation, if any.\r\n\r\n Format: `conversations/{conversation}/messages/{message}`"
                 createTime:
                     readOnly: true
                     type: string
@@ -626,10 +648,10 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The resource name of the conversation user.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+                    description: "The resource name of the conversation user.\r\n\r\n Format: `conversations/{conversation}/users/{conversation_user}`"
                 user:
                     type: string
-                    description: "The user associated with the conversation.\r\n Format: users/{user}"
+                    description: "The user associated with the conversation.\r\n\r\n Format: `users/{user}`"
                 role:
                     readOnly: true
                     type: integer
@@ -643,7 +665,7 @@ components:
                 updateTime:
                     readOnly: true
                     type: string
-                    description: The time when the user's role in the conversation was last changed.
+                    description: The time when the user's role was last changed.
                     format: date-time
         velony.conversation.api.v1.DemoteConversationUserRequest:
             required:
@@ -652,7 +674,7 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The name of the conversation user to demote to member.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+                    description: "The conversation user to demote to member.\r\n\r\n Format: `conversations/{conversation}/users/{conversation_user}`"
         velony.conversation.api.v1.ElectConversationUserRequest:
             required:
                 - name
@@ -660,7 +682,7 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The name of the conversation user to elect as owner.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+                    description: "The conversation user to elect as owner.\r\n\r\n Format: `conversations/{conversation}/users/{conversation_user}`"
         velony.conversation.api.v1.JoinConversationRequest:
             required:
                 - name
@@ -668,7 +690,7 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The name of the conversation to join.\r\n Format: conversations/{conversation}"
+                    description: "The conversation to join.\r\n\r\n Format: `conversations/{conversation}`"
         velony.conversation.api.v1.LeaveConversationRequest:
             required:
                 - name
@@ -676,7 +698,7 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The name of the conversation to leave.\r\n Format: conversations/{conversation}"
+                    description: "The conversation to leave.\r\n\r\n Format: `conversations/{conversation}`"
         velony.conversation.api.v1.LeaveConversationResponse:
             type: object
             properties: {}
@@ -687,10 +709,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/velony.conversation.api.v1.ConversationUser'
-                    description: The conversation users from the specified conversation.
+                    description: The conversation users in the specified conversation.
                 nextPageToken:
                     type: string
-                    description: "A token, which can be sent as `page_token` to retrieve the next page.\r\n If this field is omitted, there are no subsequent pages."
+                    description: The token for the next page, if any.
         velony.conversation.api.v1.ListConversationsResponse:
             type: object
             properties:
@@ -698,10 +720,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/velony.conversation.api.v1.Conversation'
-                    description: The conversation users from the currently authenticated user.
+                    description: The conversations of the currently authenticated user.
                 nextPageToken:
                     type: string
-                    description: "A token, which can be sent as `page_token` to retrieve the next page.\r\n If this field is omitted, there are no subsequent pages."
+                    description: The token for the next page, if any.
         velony.conversation.api.v1.ListMessagesResponse:
             type: object
             properties:
@@ -709,10 +731,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/velony.conversation.api.v1.Message'
-                    description: The messages from the specified conversation.
+                    description: The messages in the specified conversation.
                 nextPageToken:
                     type: string
-                    description: "A token, which can be sent as `page_token` to retrieve the next page.\r\n If this field is omitted, there are no subsequent pages."
+                    description: The token for the next page, if any.
         velony.conversation.api.v1.Message:
             required:
                 - content
@@ -720,14 +742,14 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The resource name of the message.\r\n Format: conversations/{conversation}/messages/{message}"
+                    description: "The resource name of the message.\r\n\r\n Format: `conversations/{conversation}/messages/{message}`"
                 user:
                     readOnly: true
                     type: string
-                    description: "The author of the message, if they still exist.\r\n Format: users/{user}"
+                    description: "The author of the message, if they still exist.\r\n\r\n Format: `users/{user}`"
                 content:
                     type: string
-                    description: "The content of the message.\r\n Must not exceed 65536 characters."
+                    description: The message content, up to 65536 characters.
                 createTime:
                     readOnly: true
                     type: string
@@ -745,6 +767,6 @@ components:
             properties:
                 name:
                     type: string
-                    description: "The name of the conversation user to promote to admin.\r\n Format: conversations/{conversation}/users/{conversation_user}"
+                    description: "The conversation user to promote to admin.\r\n\r\n Format: `conversations/{conversation}/users/{conversation_user}`"
 tags:
     - name: ConversationService
