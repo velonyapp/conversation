@@ -7,8 +7,6 @@ CREATE TABLE conversations (
     last_message_id          CHAR(36),
     last_message_create_time TIMESTAMP(6),
     version                  INT NOT NULL,
-
-    INDEX idx_conversations_last_activity_time ((COALESCE(last_message_create_time, update_time)))
 ) ENGINE = InnoDB;
 
 CREATE TABLE users (
@@ -26,7 +24,7 @@ CREATE TABLE conversation_users (
 
     INDEX idx_conversation_users_conversation_id_create_time (conversation_id, create_time),
 
-    UNIQUE KEY uq_conversation_users_conversation_id_user_id (conversation_id, user_id),
+    UNIQUE KEY uq_conversation_users_user_id_conversation_id (user_id, conversation_id),
 
     CONSTRAINT fk_conversation_users_conversation_id
         FOREIGN KEY (conversation_id)
