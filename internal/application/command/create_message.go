@@ -16,6 +16,7 @@ type CreateMessage struct {
 	ActorID string
 
 	ConversationID string
+	MessageID      string
 	Content        string
 }
 
@@ -72,12 +73,18 @@ func (h *createMessageHandler) Handle(
 		return CreateMessageResult{}, err
 	}
 
+	messageID, err := vo.NewMessageID(cmd.MessageID)
+	if err != nil {
+		return CreateMessageResult{}, err
+	}
+
 	content, err := vo.NewMessageContent(cmd.Content)
 	if err != nil {
 		return CreateMessageResult{}, err
 	}
 
 	message := entity.NewMessage(
+		messageID,
 		conversationID,
 		&actorID,
 		content,

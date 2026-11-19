@@ -162,6 +162,11 @@ paths:
                   required: true
                   schema:
                     type: string
+                - name: messageId
+                  in: query
+                  description: "The ID for the new message.\r\n Must be a UUID."
+                  schema:
+                    type: string
             requestBody:
                 content:
                     application/json:

@@ -29,13 +29,14 @@ type Message struct {
 }
 
 func NewMessage(
+	id vo.MessageID,
 	conversationID vo.ConversationID,
 	userID *vo.UserID,
 	content vo.MessageContent,
 	now time.Time,
 ) *Message {
 	m := &Message{
-		id:             vo.GenerateMessageID(),
+		id:             id,
 		conversationID: conversationID,
 		content:        content,
 		createTime:     now,

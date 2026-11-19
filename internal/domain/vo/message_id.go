@@ -23,12 +23,6 @@ func NewMessageID(value string) (MessageID, error) {
 	return MessageID{value: id.String()}, nil
 }
 
-func GenerateMessageID() MessageID {
-	return MessageID{
-		value: uuid.Must(uuid.NewV7()).String(),
-	}
-}
-
 func (id MessageID) String() string {
 	return id.value
 }

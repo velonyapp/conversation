@@ -187,6 +187,10 @@ func NewErrorMapper() ErrorMapper {
 					return reply, kerrors.BadRequest("",
 						domainvo.ErrConversationDescriptionInvalidCharacter.Error(),
 					)
+				case errors.Is(err, domainvo.ErrMessageIDInvalid):
+					return reply, kerrors.BadRequest("",
+						domainvo.ErrMessageIDInvalid.Error(),
+					)
 				case errors.Is(err, domainvo.ErrMessageContentTooLong):
 					return reply, kerrors.BadRequest("",
 						domainvo.ErrMessageContentTooLong.Error(),

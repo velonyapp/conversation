@@ -183,7 +183,7 @@ service ConversationService {
       post: "/v1/{parent=conversations/*}/messages"
       body: "message"
     };
-    option (google.api.method_signature) = "parent,message";
+    option (google.api.method_signature) = "parent,message,message_id";
   }
 
   // Updates a message.
@@ -676,10 +676,17 @@ message CreateMessageRequest {
     }
   ];
 
-  // The message to create.
-  Message message = 2 [
+  // The ID for the new message.
+  // Must be a UUID.
+  string message_id = 2 [
     (google.api.field_behavior) = REQUIRED
   ];
+
+  // The message to create. The `name` field is ignored.
+  Message message = 3 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+
 }
 
 message UpdateMessageRequest {

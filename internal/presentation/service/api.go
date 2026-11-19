@@ -763,6 +763,7 @@ func (s *API) CreateMessage(ctx context.Context, req *v1.CreateMessageRequest) (
 	result, err := command.Send(ctx, s.commandBus, command.CreateMessage{
 		ActorID:        subject,
 		ConversationID: conversationID,
+		MessageID:      req.MessageId,
 		Content:        req.Message.Content,
 	})
 	if err != nil {

@@ -1663,8 +1663,11 @@ type CreateMessageRequest struct {
 	//
 	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
-	// The message to create.
-	Message       *Message `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// The ID for the new message.
+	// Must be a UUID.
+	MessageId string `protobuf:"bytes,2,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	// The message to create. The `name` field is ignored.
+	Message       *Message `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1702,6 +1705,13 @@ func (*CreateMessageRequest) Descriptor() ([]byte, []int) {
 func (x *CreateMessageRequest) GetParent() string {
 	if x != nil {
 		return x.Parent
+	}
+	return ""
+}
+
+func (x *CreateMessageRequest) GetMessageId() string {
+	if x != nil {
+		return x.MessageId
 	}
 	return ""
 }
@@ -1941,18 +1951,20 @@ const file_velony_conversation_api_v1_conversation_proto_rawDesc = "" +
 	"\x05names\x18\x02 \x03(\tB\x1e\xe0A\x02\xfaA\x18\n" +
 	"\x16api.velony.app/MessageR\x05names\"[\n" +
 	"\x18BatchGetMessagesResponse\x12?\n" +
-	"\bmessages\x18\x01 \x03(\v2#.velony.conversation.api.v1.MessageR\bmessages\"\x97\x01\n" +
+	"\bmessages\x18\x01 \x03(\v2#.velony.conversation.api.v1.MessageR\bmessages\"\xbb\x01\n" +
 	"\x14CreateMessageRequest\x12;\n" +
 	"\x06parent\x18\x01 \x01(\tB#\xe0A\x02\xfaA\x1d\n" +
-	"\x1bapi.velony.app/ConversationR\x06parent\x12B\n" +
-	"\amessage\x18\x02 \x01(\v2#.velony.conversation.api.v1.MessageB\x03\xe0A\x02R\amessage\"\x9c\x01\n" +
+	"\x1bapi.velony.app/ConversationR\x06parent\x12\"\n" +
+	"\n" +
+	"message_id\x18\x02 \x01(\tB\x03\xe0A\x02R\tmessageId\x12B\n" +
+	"\amessage\x18\x03 \x01(\v2#.velony.conversation.api.v1.MessageB\x03\xe0A\x02R\amessage\"\x9c\x01\n" +
 	"\x14UpdateMessageRequest\x12B\n" +
 	"\amessage\x18\x01 \x01(\v2#.velony.conversation.api.v1.MessageB\x03\xe0A\x02R\amessage\x12@\n" +
 	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskB\x03\xe0A\x01R\n" +
 	"updateMask\"J\n" +
 	"\x14DeleteMessageRequest\x122\n" +
 	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16api.velony.app/MessageR\x04name2\x8e\x1f\n" +
+	"\x16api.velony.app/MessageR\x04name2\x99\x1f\n" +
 	"\x13ConversationService\x12\x9a\x01\n" +
 	"\x0fGetConversation\x122.velony.conversation.api.v1.GetConversationRequest\x1a(.velony.conversation.api.v1.Conversation\")\xdaA\x04name\x82\xd3\xe4\x93\x02\x1c\x12\x1a/v1/{name=conversations/*}\x12\x9b\x01\n" +
 	"\x11ListConversations\x124.velony.conversation.api.v1.ListConversationsRequest\x1a5.velony.conversation.api.v1.ListConversationsResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/conversations\x12\xb0\x01\n" +
@@ -1973,8 +1985,8 @@ const file_velony_conversation_api_v1_conversation_proto_rawDesc = "" +
 	"\n" +
 	"GetMessage\x12-.velony.conversation.api.v1.GetMessageRequest\x1a#.velony.conversation.api.v1.Message\"4\xdaA\x04name\x82\xd3\xe4\x93\x02'\x12%/v1/{name=conversations/*/messages/*}\x12\xa9\x01\n" +
 	"\fListMessages\x12/.velony.conversation.api.v1.ListMessagesRequest\x1a0.velony.conversation.api.v1.ListMessagesResponse\"6\xdaA\x06parent\x82\xd3\xe4\x93\x02'\x12%/v1/{parent=conversations/*}/messages\x12\xb5\x01\n" +
-	"\x10BatchGetMessages\x123.velony.conversation.api.v1.BatchGetMessagesRequest\x1a4.velony.conversation.api.v1.BatchGetMessagesResponse\"6\x82\xd3\xe4\x93\x020\x12./v1/{parent=conversations/*}/messages:batchGet\x12\xaf\x01\n" +
-	"\rCreateMessage\x120.velony.conversation.api.v1.CreateMessageRequest\x1a#.velony.conversation.api.v1.Message\"G\xdaA\x0eparent,message\x82\xd3\xe4\x93\x020:\amessage\"%/v1/{parent=conversations/*}/messages\x12\xbc\x01\n" +
+	"\x10BatchGetMessages\x123.velony.conversation.api.v1.BatchGetMessagesRequest\x1a4.velony.conversation.api.v1.BatchGetMessagesResponse\"6\x82\xd3\xe4\x93\x020\x12./v1/{parent=conversations/*}/messages:batchGet\x12\xba\x01\n" +
+	"\rCreateMessage\x120.velony.conversation.api.v1.CreateMessageRequest\x1a#.velony.conversation.api.v1.Message\"R\xdaA\x19parent,message,message_id\x82\xd3\xe4\x93\x020:\amessage\"%/v1/{parent=conversations/*}/messages\x12\xbc\x01\n" +
 	"\rUpdateMessage\x120.velony.conversation.api.v1.UpdateMessageRequest\x1a#.velony.conversation.api.v1.Message\"T\xdaA\x13message,update_mask\x82\xd3\xe4\x93\x028:\amessage2-/v1/{message.name=conversations/*/messages/*}\x12\x8f\x01\n" +
 	"\rDeleteMessage\x120.velony.conversation.api.v1.DeleteMessageRequest\x1a\x16.google.protobuf.Empty\"4\xdaA\x04name\x82\xd3\xe4\x93\x02'*%/v1/{name=conversations/*/messages/*}\x1a\x11\xcaA\x0eapi.velony.appB4Z2github.com/velonyapp/conversation/gen/api/v1;apiv1b\x06proto3"
 
