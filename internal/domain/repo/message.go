@@ -14,7 +14,6 @@ var (
 
 type Message interface {
 	FindByID(ctx context.Context, messageID vo.MessageID) (*entity.Message, error)
-	FindLastByConversationID(ctx context.Context, conversationID vo.ConversationID) (*entity.Message, error)
 
 	Save(ctx context.Context, message *entity.Message) error
 }

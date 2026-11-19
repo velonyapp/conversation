@@ -225,24 +225,14 @@ message Conversation {
     (google.api.field_behavior) = OPTIONAL
   ];
 
-  // The most recent message in the conversation, if any.
-  //
-  // Format: `conversations/{conversation}/messages/{message}`
-  optional string last_message = 4 [
-    (google.api.field_behavior) = OUTPUT_ONLY,
-    (google.api.resource_reference) = {
-    type: "api.velony.app/Message"
-    }
-  ];
-
   // The time when the conversation was created.
-  google.protobuf.Timestamp create_time = 5 [
+  google.protobuf.Timestamp create_time = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY,
     (google.api.field_behavior) = IMMUTABLE
   ];
 
   // The time when the conversation was last updated.
-  google.protobuf.Timestamp update_time = 6 [
+  google.protobuf.Timestamp update_time = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 }

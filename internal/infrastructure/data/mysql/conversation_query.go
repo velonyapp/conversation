@@ -42,7 +42,6 @@ func (q *conversationQuery) Find(ctx context.Context, conversationID vo.Conversa
 			c.id,
 			c.title,
 			c.description,
-			c.last_message_id,
 			c.create_time,
 			c.update_time
 		FROM conversations c
@@ -97,7 +96,6 @@ func (q *conversationQuery) BatchFind(ctx context.Context, conversationIDs []vo.
 			c.id,
 			c.title,
 			c.description,
-			c.last_message_id,
 			c.create_time,
 			c.update_time
 		FROM conversations c
@@ -183,17 +181,15 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 			c.id,
 			c.title,
 			c.description,
-			c.last_message_id,
 			c.create_time,
-			c.update_time,
-			c.last_message_create_time
+			c.update_time
 		FROM conversations c
 		INNER JOIN conversation_users cu
 			ON c.id = cu.conversation_id
 		WHERE cu.user_id = ?
-			AND (? = '' OR (COALESCE(c.last_message_create_time, c.update_time), c.id) < (?, ?))
+			AND (? = '' OR (c.update_time, c.id) < (?, ?))
 		ORDER BY
-			COALESCE(c.last_message_create_time, c.update_time) DESC,
+			c.update_time DESC,
 			c.id DESC
 		LIMIT ?
 	`
@@ -217,10 +213,13 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 	defer rows.Close()
 
 	conversations := make([]common.ConversationResult, 0, pageSize)
-	var nextCursor conversationCursor
-
 	for rows.Next() {
 		if len(conversations) == int(pageSize) {
+			nextCursor := conversationCursor{
+				Time: conversations[len(conversations)-1].UpdateTime,
+				ID:   conversations[len(conversations)-1].ID,
+			}
+
 			data, err := json.Marshal(nextCursor)
 			if err != nil {
 				q.log.ErrorContext(ctx,
@@ -234,20 +233,13 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 			return conversations, base64.RawURLEncoding.EncodeToString(data), nil
 		}
 
-		var lastMessageCreateTime sql.NullTime
-		conversation, err := scanQueryConversation(rows, &lastMessageCreateTime)
+		conversation, err := scanQueryConversation(rows)
 		if err != nil {
 			q.log.ErrorContext(ctx,
 				"failed to scan conversation during list",
 				slog.Any("error", err),
 			)
 			return nil, "", err
-		}
-
-		nextCursor.ID = conversation.ID
-		nextCursor.Time = conversation.UpdateTime
-		if lastMessageCreateTime.Valid {
-			nextCursor.Time = lastMessageCreateTime.Time
 		}
 
 		conversations = append(conversations, conversation)
@@ -263,44 +255,30 @@ func (q *conversationQuery) List(ctx context.Context, scope query.ConversationSc
 	return conversations, "", nil
 }
 
-func scanQueryConversation(scanner queryConversationScanner, lastMessageCreateTime ...*sql.NullTime) (common.ConversationResult, error) {
+func scanQueryConversation(scanner queryConversationScanner) (common.ConversationResult, error) {
 	var (
-		id               string
-		title            string
-		description      string
-		lastMessageIDRaw sql.NullString
-		createTime       time.Time
-		updateTime       time.Time
+		id          string
+		title       string
+		description string
+		createTime  time.Time
+		updateTime  time.Time
 	)
 
-	dest := []any{
+	if err := scanner.Scan(
 		&id,
 		&title,
 		&description,
-		&lastMessageIDRaw,
 		&createTime,
 		&updateTime,
-	}
-	if len(lastMessageCreateTime) > 0 {
-		dest = append(dest, lastMessageCreateTime[0])
-	}
-
-	if err := scanner.Scan(dest...); err != nil {
+	); err != nil {
 		return common.ConversationResult{}, err
 	}
 
-	var lastMessageID *string
-	if lastMessageIDRaw.Valid {
-		value := lastMessageIDRaw.String
-		lastMessageID = &value
-	}
-
 	return common.ConversationResult{
-		ID:            id,
-		Title:         title,
-		Description:   description,
-		LastMessageID: lastMessageID,
-		CreateTime:    createTime,
-		UpdateTime:    updateTime,
+		ID:          id,
+		Title:       title,
+		Description: description,
+		CreateTime:  createTime,
+		UpdateTime:  updateTime,
 	}, nil
 }

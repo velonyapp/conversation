@@ -87,14 +87,10 @@ type Conversation struct {
 	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	// The conversation description, up to 1000 characters.
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	// The most recent message in the conversation, if any.
-	//
-	// Format: `conversations/{conversation}/messages/{message}`
-	LastMessage *string `protobuf:"bytes,4,opt,name=last_message,json=lastMessage,proto3,oneof" json:"last_message,omitempty"`
 	// The time when the conversation was created.
-	CreateTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	CreateTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	// The time when the conversation was last updated.
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -146,13 +142,6 @@ func (x *Conversation) GetTitle() string {
 func (x *Conversation) GetDescription() string {
 	if x != nil {
 		return x.Description
-	}
-	return ""
-}
-
-func (x *Conversation) GetLastMessage() string {
-	if x != nil && x.LastMessage != nil {
-		return *x.LastMessage
 	}
 	return ""
 }
@@ -1823,19 +1812,16 @@ var File_velony_conversation_api_v1_conversation_proto protoreflect.FileDescript
 
 const file_velony_conversation_api_v1_conversation_proto_rawDesc = "" +
 	"\n" +
-	"-velony/conversation/api/v1/conversation.proto\x12\x1avelony.conversation.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa6\x03\n" +
+	"-velony/conversation/api/v1/conversation.proto\x12\x1avelony.conversation.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcd\x02\n" +
 	"\fConversation\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tB\x03\xe0A\x02R\x05title\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tB\x03\xe0A\x01R\vdescription\x12F\n" +
-	"\flast_message\x18\x04 \x01(\tB\x1e\xe0A\x03\xfaA\x18\n" +
-	"\x16api.velony.app/MessageH\x00R\vlastMessage\x88\x01\x01\x12C\n" +
-	"\vcreate_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xe0A\x03\xe0A\x05R\n" +
+	"\vdescription\x18\x03 \x01(\tB\x03\xe0A\x01R\vdescription\x12C\n" +
+	"\vcreate_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xe0A\x03\xe0A\x05R\n" +
 	"createTime\x12@\n" +
-	"\vupdate_time\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
+	"\vupdate_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
 	"updateTime:[\xeaAX\n" +
-	"\x1bapi.velony.app/Conversation\x12\x1cconversations/{conversation}*\rconversations2\fconversationB\x0f\n" +
-	"\r_last_message\"\xf6\x03\n" +
+	"\x1bapi.velony.app/Conversation\x12\x1cconversations/{conversation}*\rconversations2\fconversation\"\xf6\x03\n" +
 	"\x10ConversationUser\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x122\n" +
 	"\x04user\x18\x02 \x01(\tB\x1e\xe0A\x02\xe0A\x05\xfaA\x15\n" +
@@ -2113,7 +2099,6 @@ func file_velony_conversation_api_v1_conversation_proto_init() {
 	if File_velony_conversation_api_v1_conversation_proto != nil {
 		return
 	}
-	file_velony_conversation_api_v1_conversation_proto_msgTypes[0].OneofWrappers = []any{}
 	file_velony_conversation_api_v1_conversation_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

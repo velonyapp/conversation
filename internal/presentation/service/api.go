@@ -94,10 +94,6 @@ func (s *API) GetConversation(ctx context.Context, req *v1.GetConversationReques
 		CreateTime:  timestamppb.New(result.Conversation.CreateTime),
 		UpdateTime:  timestamppb.New(result.Conversation.UpdateTime),
 	}
-	if lastMessageID := result.Conversation.LastMessageID; lastMessageID != nil {
-		value := formatMessageName(result.Conversation.ID, *lastMessageID)
-		c.LastMessage = &value
-	}
 
 	return c, nil
 }
@@ -130,10 +126,6 @@ func (s *API) ListConversations(ctx context.Context, req *v1.ListConversationsRe
 			Description: conversation.Description,
 			CreateTime:  timestamppb.New(conversation.CreateTime),
 			UpdateTime:  timestamppb.New(conversation.UpdateTime),
-		}
-		if lastMessageID := conversation.LastMessageID; lastMessageID != nil {
-			value := formatMessageName(conversation.ID, *lastMessageID)
-			conversations[i].LastMessage = &value
 		}
 	}
 
@@ -179,10 +171,6 @@ func (s *API) BatchGetConversations(ctx context.Context, req *v1.BatchGetConvers
 			Description: conversation.Description,
 			CreateTime:  timestamppb.New(conversation.CreateTime),
 			UpdateTime:  timestamppb.New(conversation.UpdateTime),
-		}
-		if lastMessageID := conversation.LastMessageID; lastMessageID != nil {
-			value := formatMessageName(conversation.ID, *lastMessageID)
-			conversations[i].LastMessage = &value
 		}
 	}
 
@@ -277,10 +265,6 @@ func (s *API) UpdateConversation(ctx context.Context, req *v1.UpdateConversation
 		CreateTime:  timestamppb.New(result.Conversation.CreateTime),
 		UpdateTime:  timestamppb.New(result.Conversation.UpdateTime),
 	}
-	if lastMessageID := result.Conversation.LastMessageID; lastMessageID != nil {
-		value := formatMessageName(result.Conversation.ID, *lastMessageID)
-		c.LastMessage = &value
-	}
 
 	return c, nil
 }
@@ -331,10 +315,6 @@ func (s *API) JoinConversation(ctx context.Context, req *v1.JoinConversationRequ
 		Description: result.Conversation.Description,
 		CreateTime:  timestamppb.New(result.Conversation.CreateTime),
 		UpdateTime:  timestamppb.New(result.Conversation.UpdateTime),
-	}
-	if lastMessageID := result.Conversation.LastMessageID; lastMessageID != nil {
-		value := formatMessageName(result.Conversation.ID, *lastMessageID)
-		c.LastMessage = &value
 	}
 
 	return c, nil

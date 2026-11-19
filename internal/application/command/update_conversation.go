@@ -32,7 +32,6 @@ type UpdateConversationHandler Handler[UpdateConversation, UpdateConversationRes
 type updateConversationHandler struct {
 	conversationRepo       repo.Conversation
 	conversationUserRepo   repo.ConversationUser
-	messageRepo            repo.Message
 	conversationUserPolicy *service.ConversationUserPolicy
 	unitOfWork             port.UnitOfWork
 }
@@ -40,14 +39,12 @@ type updateConversationHandler struct {
 func NewUpdateConversationHandler(
 	conversationRepo repo.Conversation,
 	conversationUserRepo repo.ConversationUser,
-	messageRepo repo.Message,
 	conversationUserPolicy *service.ConversationUserPolicy,
 	unitOfWork port.UnitOfWork,
 ) UpdateConversationHandler {
 	return &updateConversationHandler{
 		conversationRepo:       conversationRepo,
 		conversationUserRepo:   conversationUserRepo,
-		messageRepo:            messageRepo,
 		conversationUserPolicy: conversationUserPolicy,
 		unitOfWork:             unitOfWork,
 	}
@@ -116,14 +113,6 @@ func (h *updateConversationHandler) Handle(
 		Description: conversation.Description().String(),
 		CreateTime:  conversation.CreateTime(),
 		UpdateTime:  conversation.UpdateTime(),
-	}
-	lastMessage, err := h.messageRepo.FindLastByConversationID(ctx, conversationID)
-	if err != nil {
-		return UpdateConversationResult{}, err
-	}
-	if lastMessage != nil {
-		value := lastMessage.ID().String()
-		conversationResult.LastMessageID = &value
 	}
 
 	return UpdateConversationResult{

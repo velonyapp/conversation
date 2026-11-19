@@ -627,10 +627,6 @@ components:
                 description:
                     type: string
                     description: The conversation description, up to 1000 characters.
-                lastMessage:
-                    readOnly: true
-                    type: string
-                    description: "The most recent message in the conversation, if any.\r\n\r\n Format: `conversations/{conversation}/messages/{message}`"
                 createTime:
                     readOnly: true
                     type: string

@@ -3,12 +3,11 @@ package common
 import "time"
 
 type ConversationResult struct {
-	ID            string
-	Title         string
-	Description   string
-	LastMessageID *string
-	CreateTime    time.Time
-	UpdateTime    time.Time
+	ID          string
+	Title       string
+	Description string
+	CreateTime  time.Time
+	UpdateTime  time.Time
 }
 
 type ConversationUserResult struct {

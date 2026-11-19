@@ -1,12 +1,10 @@
 CREATE TABLE conversations (
-    id                       CHAR(36) PRIMARY KEY,
-    title                    TEXT NOT NULL,
-    description              TEXT NOT NULL,
-    create_time              TIMESTAMP(6) NOT NULL,
-    update_time              TIMESTAMP(6) NOT NULL,
-    last_message_id          CHAR(36),
-    last_message_create_time TIMESTAMP(6),
-    version                  INT NOT NULL,
+    id          CHAR(36) PRIMARY KEY,
+    title       TEXT NOT NULL,
+    description TEXT NOT NULL,
+    create_time TIMESTAMP(6) NOT NULL,
+    update_time TIMESTAMP(6) NOT NULL,
+    version     INT NOT NULL
 ) ENGINE = InnoDB;
 
 CREATE TABLE users (
@@ -56,12 +54,6 @@ CREATE TABLE messages (
         REFERENCES users (id)
         ON DELETE SET NULL
 ) ENGINE = InnoDB;
-
-ALTER TABLE conversations
-    ADD CONSTRAINT fk_conversations_last_message_id
-        FOREIGN KEY (last_message_id)
-        REFERENCES messages (id)
-        ON DELETE SET NULL;
 
 CREATE TABLE outbox_events (
     id             CHAR(36) PRIMARY KEY,
