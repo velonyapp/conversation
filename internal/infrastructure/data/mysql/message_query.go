@@ -40,6 +40,7 @@ func (q *messageQuery) Find(ctx context.Context, messageID vo.MessageID, scope q
 	const query = `
 		SELECT
 		    m.id,
+		    m.conversation_id,
 		    m.user_id,
 		    m.content,
 		    m.create_time,
@@ -78,7 +79,7 @@ func (q *messageQuery) Find(ctx context.Context, messageID vo.MessageID, scope q
 	return &message, nil
 }
 
-func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID, scope query.MessageScope) (map[vo.MessageID]common.MessageResult, error) {
+func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID, scope query.MessageBatchScope) (map[vo.MessageID]common.MessageResult, error) {
 	results := make(map[vo.MessageID]common.MessageResult, len(messageIDs))
 	if len(messageIDs) == 0 {
 		return results, nil
@@ -92,30 +93,53 @@ func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID,
 		args[i] = messageID.String()
 	}
 
-	args = append(args, scope.ConversationID.String())
 	args = append(args, scope.UserID.String())
 
-	query := `
-		SELECT
-			m.id,
-			m.user_id,
-			m.content,
-			m.create_time,
-			m.update_time
-		FROM messages m
-		INNER JOIN conversation_users cu
-			ON m.conversation_id = cu.conversation_id
-		WHERE m.id IN (` + strings.Join(placeholders, ", ") + `)
-			AND cu.conversation_id = ?
-			AND cu.user_id = ?
-	`
+	var (
+		query          string
+		conversationID string
+	)
+	if scope.ConversationID != nil {
+		conversationID = scope.ConversationID.String()
+		query = `
+			SELECT
+				m.id,
+				m.conversation_id,
+				m.user_id,
+				m.content,
+				m.create_time,
+				m.update_time
+			FROM messages m
+			INNER JOIN conversation_users cu
+				ON m.conversation_id = cu.conversation_id
+			WHERE m.id IN (` + strings.Join(placeholders, ", ") + `)
+				AND cu.user_id = ?
+				AND cu.conversation_id = ?
+		`
+		args = append(args, conversationID)
+	} else {
+		query = `
+			SELECT
+				m.id,
+				m.conversation_id,
+				m.user_id,
+				m.content,
+				m.create_time,
+				m.update_time
+			FROM messages m
+			INNER JOIN conversation_users cu
+				ON m.conversation_id = cu.conversation_id
+			WHERE m.id IN (` + strings.Join(placeholders, ", ") + `)
+				AND cu.user_id = ?
+		`
+	}
 
 	rows, err := executor(ctx, q.db).QueryContext(ctx, query, args...)
 	if err != nil {
 		q.log.ErrorContext(ctx,
 			"failed to batch find messages",
 			slog.Int("message_count", len(messageIDs)),
-			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("conversation_id", conversationID),
 			slog.String("user_id", scope.UserID.String()),
 			slog.Any("error", err),
 		)
@@ -187,6 +211,7 @@ func (q *messageQuery) List(ctx context.Context, scope query.MessageScope, pageS
 	const query = `
 		SELECT
 			m.id,
+			m.conversation_id,
 			m.user_id,
 			m.content,
 			m.create_time,
@@ -269,15 +294,17 @@ func (q *messageQuery) List(ctx context.Context, scope query.MessageScope, pageS
 
 func scanQueryMessage(scanner queryMessageScanner) (common.MessageResult, error) {
 	var (
-		id         string
-		userIDRaw  sql.NullString
-		content    string
-		createTime time.Time
-		updateTime time.Time
+		id             string
+		conversationID string
+		userIDRaw      sql.NullString
+		content        string
+		createTime     time.Time
+		updateTime     time.Time
 	)
 
 	if err := scanner.Scan(
 		&id,
+		&conversationID,
 		&userIDRaw,
 		&content,
 		&createTime,
@@ -293,10 +320,11 @@ func scanQueryMessage(scanner queryMessageScanner) (common.MessageResult, error)
 	}
 
 	return common.MessageResult{
-		ID:         id,
-		UserID:     userID,
-		Content:    content,
-		CreateTime: createTime,
-		UpdateTime: updateTime,
+		ID:             id,
+		ConversationID: conversationID,
+		UserID:         userID,
+		Content:        content,
+		CreateTime:     createTime,
+		UpdateTime:     updateTime,
 	}, nil
 }

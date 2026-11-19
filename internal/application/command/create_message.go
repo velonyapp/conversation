@@ -91,10 +91,11 @@ func (h *createMessageHandler) Handle(
 	}
 
 	messageResult := common.MessageResult{
-		ID:         message.ID().String(),
-		Content:    message.Content().String(),
-		CreateTime: message.CreateTime(),
-		UpdateTime: message.UpdateTime(),
+		ID:             message.ID().String(),
+		ConversationID: message.ConversationID().String(),
+		Content:        message.Content().String(),
+		CreateTime:     message.CreateTime(),
+		UpdateTime:     message.UpdateTime(),
 	}
 	if message.HasUser() {
 		value := message.UserID().String()

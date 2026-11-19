@@ -42,7 +42,12 @@ func (h *batchGetMessagesHandler) Handle(
 ) (BatchGetMessagesResult, error) {
 	actorID := vo.NewUserID(qry.ActorID)
 
-	conversationID, _ := vo.NewConversationID(qry.ConversationID)
+	var conversationID *vo.ConversationID
+	if qry.ConversationID != "-" {
+		value, _ := vo.NewConversationID(qry.ConversationID)
+		conversationID = &value
+	}
+
 	messageIDs := make([]vo.MessageID, len(qry.MessageIDs))
 	for i, messageID := range qry.MessageIDs {
 		messageIDs[i], _ = vo.NewMessageID(messageID)
@@ -50,7 +55,7 @@ func (h *batchGetMessagesHandler) Handle(
 
 	messages, err := h.messageQuery.BatchFind(ctx,
 		messageIDs,
-		MessageScope{
+		MessageBatchScope{
 			ConversationID: conversationID,
 			UserID:         actorID,
 		},

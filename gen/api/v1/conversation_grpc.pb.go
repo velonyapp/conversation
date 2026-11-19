@@ -87,6 +87,7 @@ type ConversationServiceClient interface {
 	// Lists messages in a conversation.
 	ListMessages(ctx context.Context, in *ListMessagesRequest, opts ...grpc.CallOption) (*ListMessagesResponse, error)
 	// Retrieves multiple messages by their resource names.
+	// Use `conversations/-` to retrieve messages across conversations.
 	BatchGetMessages(ctx context.Context, in *BatchGetMessagesRequest, opts ...grpc.CallOption) (*BatchGetMessagesResponse, error)
 	// Creates a message in a conversation.
 	CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*Message, error)
@@ -367,6 +368,7 @@ type ConversationServiceServer interface {
 	// Lists messages in a conversation.
 	ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error)
 	// Retrieves multiple messages by their resource names.
+	// Use `conversations/-` to retrieve messages across conversations.
 	BatchGetMessages(context.Context, *BatchGetMessagesRequest) (*BatchGetMessagesResponse, error)
 	// Creates a message in a conversation.
 	CreateMessage(context.Context, *CreateMessageRequest) (*Message, error)

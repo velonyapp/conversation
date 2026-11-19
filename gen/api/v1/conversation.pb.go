@@ -1557,7 +1557,8 @@ func (x *ListMessagesResponse) GetNextPageToken() string {
 type BatchGetMessagesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The conversation containing the messages to retrieve.
-	// All `names` must belong to this conversation.
+	// Use `conversations/-` to retrieve messages across conversations.
+	// Otherwise, all `names` must belong to this conversation.
 	//
 	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`

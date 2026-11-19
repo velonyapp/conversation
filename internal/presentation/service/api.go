@@ -6,6 +6,7 @@ import (
 
 	v1 "github.com/velonyapp/conversation/gen/api/v1"
 	"github.com/velonyapp/conversation/internal/application/command"
+	"github.com/velonyapp/conversation/internal/application/common"
 	"github.com/velonyapp/conversation/internal/application/query"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -717,13 +718,18 @@ func (s *API) BatchGetMessages(ctx context.Context, req *v1.BatchGetMessagesRequ
 	if err != nil {
 		return nil, err
 	}
+	conversationIDs := make([]string, len(req.Names))
 	messageIDs := make([]string, len(req.Names))
 	for i, name := range req.Names {
-		_, messageID, err := parseMessageName(name)
+		nameConversationID, messageID, err := parseMessageName(name)
 		if err != nil {
 			return nil, err
 		}
+		if nameConversationID == "-" || (conversationID != "-" && nameConversationID != conversationID) {
+			return nil, ErrInvalidMessageResourceName
+		}
 
+		conversationIDs[i] = nameConversationID
 		messageIDs[i] = messageID
 	}
 
@@ -738,8 +744,12 @@ func (s *API) BatchGetMessages(ctx context.Context, req *v1.BatchGetMessagesRequ
 
 	messages := make([]*v1.Message, len(result.Messages))
 	for i, message := range result.Messages {
+		if message.ConversationID != conversationIDs[i] {
+			return nil, common.ErrMessageNotFound
+		}
+
 		messages[i] = &v1.Message{
-			Name:       formatMessageName(conversationID, message.ID),
+			Name:       formatMessageName(message.ConversationID, message.ID),
 			Content:    message.Content,
 			CreateTime: timestamppb.New(message.CreateTime),
 			UpdateTime: timestamppb.New(message.UpdateTime),

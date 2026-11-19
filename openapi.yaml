@@ -264,7 +264,7 @@ paths:
         get:
             tags:
                 - ConversationService
-            description: Retrieves multiple messages by their resource names.
+            description: "Retrieves multiple messages by their resource names.\r\n Use `conversations/-` to retrieve messages across conversations."
             operationId: ConversationService_BatchGetMessages
             parameters:
                 - name: conversation

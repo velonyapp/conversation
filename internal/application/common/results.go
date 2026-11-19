@@ -20,9 +20,10 @@ type ConversationUserResult struct {
 }
 
 type MessageResult struct {
-	ID         string
-	UserID     *string
-	Content    string
-	CreateTime time.Time
-	UpdateTime time.Time
+	ID             string
+	ConversationID string
+	UserID         *string
+	Content        string
+	CreateTime     time.Time
+	UpdateTime     time.Time
 }

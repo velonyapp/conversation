@@ -12,8 +12,13 @@ type MessageScope struct {
 	UserID         vo.UserID
 }
 
+type MessageBatchScope struct {
+	ConversationID *vo.ConversationID
+	UserID         vo.UserID
+}
+
 type Message interface {
 	Find(ctx context.Context, messageID vo.MessageID, scope MessageScope) (*common.MessageResult, error)
-	BatchFind(ctx context.Context, messageIDs []vo.MessageID, scope MessageScope) (map[vo.MessageID]common.MessageResult, error)
+	BatchFind(ctx context.Context, messageIDs []vo.MessageID, scope MessageBatchScope) (map[vo.MessageID]common.MessageResult, error)
 	List(ctx context.Context, scope MessageScope, pageSize int32, pageToken string) ([]common.MessageResult, string, error)
 }
