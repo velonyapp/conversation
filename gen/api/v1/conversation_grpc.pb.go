@@ -67,10 +67,12 @@ type ConversationServiceClient interface {
 	// Leaves a conversation.
 	LeaveConversation(ctx context.Context, in *LeaveConversationRequest, opts ...grpc.CallOption) (*LeaveConversationResponse, error)
 	// Retrieves a conversation user by resource name.
+	// Use `me` as the conversation user ID for the authenticated user.
 	GetConversationUser(ctx context.Context, in *GetConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
 	// Lists users in a conversation.
 	ListConversationUsers(ctx context.Context, in *ListConversationUsersRequest, opts ...grpc.CallOption) (*ListConversationUsersResponse, error)
 	// Retrieves multiple conversation users by their resource names.
+	// Names may use `me` as the conversation user ID for the authenticated user.
 	BatchGetConversationUsers(ctx context.Context, in *BatchGetConversationUsersRequest, opts ...grpc.CallOption) (*BatchGetConversationUsersResponse, error)
 	// Adds a user to a conversation.
 	CreateConversationUser(ctx context.Context, in *CreateConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
@@ -350,10 +352,12 @@ type ConversationServiceServer interface {
 	// Leaves a conversation.
 	LeaveConversation(context.Context, *LeaveConversationRequest) (*LeaveConversationResponse, error)
 	// Retrieves a conversation user by resource name.
+	// Use `me` as the conversation user ID for the authenticated user.
 	GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error)
 	// Lists users in a conversation.
 	ListConversationUsers(context.Context, *ListConversationUsersRequest) (*ListConversationUsersResponse, error)
 	// Retrieves multiple conversation users by their resource names.
+	// Names may use `me` as the conversation user ID for the authenticated user.
 	BatchGetConversationUsers(context.Context, *BatchGetConversationUsersRequest) (*BatchGetConversationUsersResponse, error)
 	// Adds a user to a conversation.
 	CreateConversationUser(context.Context, *CreateConversationUserRequest) (*ConversationUser, error)

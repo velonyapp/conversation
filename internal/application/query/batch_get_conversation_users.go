@@ -43,30 +43,51 @@ func (h *batchGetConversationUsersHandler) Handle(
 	actorID := vo.NewUserID(qry.ActorID)
 
 	conversationID, _ := vo.NewConversationID(qry.ConversationID)
-	conversationUserIDs := make([]vo.ConversationUserID, len(qry.ConversationUserIDs))
-	for i, conversationUserID := range qry.ConversationUserIDs {
-		conversationUserIDs[i], _ = vo.NewConversationUserID(conversationUserID)
+	conversationUserIDs := make([]vo.ConversationUserID, 0, len(qry.ConversationUserIDs))
+	hasMe := false
+	for _, conversationUserID := range qry.ConversationUserIDs {
+		if conversationUserID == conversationUserAliasMe {
+			hasMe = true
+		} else {
+			id, _ := vo.NewConversationUserID(conversationUserID)
+			conversationUserIDs = append(conversationUserIDs, id)
+		}
 	}
 
-	conversationUsers, err := h.conversationUserQuery.BatchFind(ctx,
-		conversationUserIDs,
-		ConversationUserScope{
-			ConversationID: conversationID,
-			UserID:         actorID,
-		},
-	)
+	scope := ConversationUserScope{
+		ConversationID: conversationID,
+		UserID:         actorID,
+	}
+
+	conversationUsers, err := h.conversationUserQuery.BatchFind(ctx, conversationUserIDs, scope)
 	if err != nil {
 		return BatchGetConversationUsersResult{}, err
 	}
 
-	conversationUserResults := make([]common.ConversationUserResult, len(conversationUserIDs))
-	for i, conversationUserID := range conversationUserIDs {
-		conversationUser, ok := conversationUsers[conversationUserID]
-		if !ok {
+	var me *common.ConversationUserResult
+	if hasMe {
+		me, err = h.conversationUserQuery.FindMe(ctx, scope)
+		if err != nil {
+			return BatchGetConversationUsersResult{}, err
+		}
+		if me == nil {
 			return BatchGetConversationUsersResult{}, common.ErrConversationUserNotFound
 		}
+	}
 
-		conversationUserResults[i] = conversationUser
+	conversationUserResults := make([]common.ConversationUserResult, len(qry.ConversationUserIDs))
+	for i, conversationUserID := range qry.ConversationUserIDs {
+		if conversationUserID == conversationUserAliasMe {
+			conversationUserResults[i] = *me
+		} else {
+			id, _ := vo.NewConversationUserID(conversationUserID)
+			conversationUser, ok := conversationUsers[id]
+			if !ok {
+				return BatchGetConversationUsersResult{}, common.ErrConversationUserNotFound
+			}
+
+			conversationUserResults[i] = conversationUser
+		}
 	}
 
 	return BatchGetConversationUsersResult{

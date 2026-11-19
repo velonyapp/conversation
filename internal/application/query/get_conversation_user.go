@@ -43,15 +43,21 @@ func (h *getConversationUserHandler) Handle(
 	actorID := vo.NewUserID(qry.ActorID)
 
 	conversationID, _ := vo.NewConversationID(qry.ConversationID)
-	conversationUserID, _ := vo.NewConversationUserID(qry.ConversationUserID)
+	scope := ConversationUserScope{
+		ConversationID: conversationID,
+		UserID:         actorID,
+	}
 
-	conversationUser, err := h.conversationUserQuery.Find(ctx,
-		conversationUserID,
-		ConversationUserScope{
-			ConversationID: conversationID,
-			UserID:         actorID,
-		},
+	var (
+		conversationUser *common.ConversationUserResult
+		err              error
 	)
+	if qry.ConversationUserID == conversationUserAliasMe {
+		conversationUser, err = h.conversationUserQuery.FindMe(ctx, scope)
+	} else {
+		conversationUserID, _ := vo.NewConversationUserID(qry.ConversationUserID)
+		conversationUser, err = h.conversationUserQuery.Find(ctx, conversationUserID, scope)
+	}
 	if err != nil {
 		return GetConversationUserResult{}, err
 	}

@@ -347,7 +347,7 @@ paths:
         get:
             tags:
                 - ConversationService
-            description: Retrieves a conversation user by resource name.
+            description: "Retrieves a conversation user by resource name.\r\n Use `me` as the conversation user ID for the authenticated user."
             operationId: ConversationService_GetConversationUser
             parameters:
                 - name: conversation
@@ -491,7 +491,7 @@ paths:
         get:
             tags:
                 - ConversationService
-            description: Retrieves multiple conversation users by their resource names.
+            description: "Retrieves multiple conversation users by their resource names.\r\n Names may use `me` as the conversation user ID for the authenticated user."
             operationId: ConversationService_BatchGetConversationUsers
             parameters:
                 - name: conversation
@@ -502,7 +502,7 @@ paths:
                     type: string
                 - name: names
                   in: query
-                  description: "The conversation users to retrieve.\r\n A maximum of `100` conversation users can be retrieved in a batch.\r\n\r\n Format: `conversations/{conversation}/users/{conversation_user}`"
+                  description: "The conversation users to retrieve.\r\n Use `me` as the conversation user ID for the authenticated user.\r\n Returned conversation users use their canonical resource names.\r\n A maximum of `100` conversation users can be retrieved in a batch.\r\n\r\n Format: `conversations/{conversation}/users/{conversation_user}`"
                   schema:
                     type: array
                     items:

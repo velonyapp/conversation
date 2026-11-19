@@ -83,6 +83,7 @@ service ConversationService {
   }
 
   // Retrieves a conversation user by resource name.
+  // Use `me` as the conversation user ID for the authenticated user.
   rpc GetConversationUser(GetConversationUserRequest) returns (ConversationUser) {
     option (google.api.http) = {
       get: "/v1/{name=conversations/*/users/*}"
@@ -99,6 +100,7 @@ service ConversationService {
   }
 
   // Retrieves multiple conversation users by their resource names.
+  // Names may use `me` as the conversation user ID for the authenticated user.
   rpc BatchGetConversationUsers(BatchGetConversationUsersRequest) returns (BatchGetConversationUsersResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=conversations/*}/users:batchGet"
@@ -445,6 +447,8 @@ message LeaveConversationResponse {}
 
 message GetConversationUserRequest {
   // The conversation user to retrieve.
+  // Use `me` as the conversation user ID for the authenticated user.
+  // The returned conversation user uses its canonical resource name.
   //
   // Format: `conversations/{conversation}/users/{conversation_user}`
   string name = 1 [
@@ -500,6 +504,8 @@ message BatchGetConversationUsersRequest {
   ];
 
   // The conversation users to retrieve.
+  // Use `me` as the conversation user ID for the authenticated user.
+  // Returned conversation users use their canonical resource names.
   // A maximum of `100` conversation users can be retrieved in a batch.
   //
   // Format: `conversations/{conversation}/users/{conversation_user}`

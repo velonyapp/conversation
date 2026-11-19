@@ -861,6 +861,8 @@ func (*LeaveConversationResponse) Descriptor() ([]byte, []int) {
 type GetConversationUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The conversation user to retrieve.
+	// Use `me` as the conversation user ID for the authenticated user.
+	// The returned conversation user uses its canonical resource name.
 	//
 	// Format: `conversations/{conversation}/users/{conversation_user}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -1034,6 +1036,8 @@ type BatchGetConversationUsersRequest struct {
 	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
 	// The conversation users to retrieve.
+	// Use `me` as the conversation user ID for the authenticated user.
+	// Returned conversation users use their canonical resource names.
 	// A maximum of `100` conversation users can be retrieved in a batch.
 	//
 	// Format: `conversations/{conversation}/users/{conversation_user}`

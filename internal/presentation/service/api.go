@@ -429,9 +429,12 @@ func (s *API) BatchGetConversationUsers(ctx context.Context, req *v1.BatchGetCon
 	}
 	conversationUserIDs := make([]string, len(req.Names))
 	for i, name := range req.Names {
-		_, conversationUserID, err := parseConversationUserName(name)
+		nameConversationID, conversationUserID, err := parseConversationUserName(name)
 		if err != nil {
 			return nil, err
+		}
+		if nameConversationID != conversationID {
+			return nil, ErrInvalidConversationUserResourceName
 		}
 
 		conversationUserIDs[i] = conversationUserID

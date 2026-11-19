@@ -7,6 +7,8 @@ import (
 	"github.com/velonyapp/conversation/internal/domain/vo"
 )
 
+const conversationUserAliasMe = "me"
+
 type ConversationUserScope struct {
 	ConversationID vo.ConversationID
 	UserID         vo.UserID
@@ -14,6 +16,7 @@ type ConversationUserScope struct {
 
 type ConversationUser interface {
 	Find(ctx context.Context, conversationUserID vo.ConversationUserID, scope ConversationUserScope) (*common.ConversationUserResult, error)
+	FindMe(ctx context.Context, scope ConversationUserScope) (*common.ConversationUserResult, error)
 	BatchFind(ctx context.Context, conversationUserIDs []vo.ConversationUserID, scope ConversationUserScope) (map[vo.ConversationUserID]common.ConversationUserResult, error)
 	List(ctx context.Context, scope ConversationUserScope, pageSize int32, pageToken string) ([]common.ConversationUserResult, string, error)
 }

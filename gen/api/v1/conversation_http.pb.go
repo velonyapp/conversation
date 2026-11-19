@@ -43,6 +43,7 @@ const OperationConversationServiceUpdateMessage = "/velony.conversation.api.v1.C
 
 type ConversationServiceHTTPServer interface {
 	// BatchGetConversationUsers Retrieves multiple conversation users by their resource names.
+	// Names may use `me` as the conversation user ID for the authenticated user.
 	BatchGetConversationUsers(context.Context, *BatchGetConversationUsersRequest) (*BatchGetConversationUsersResponse, error)
 	// BatchGetConversations Retrieves multiple conversations by their resource names.
 	BatchGetConversations(context.Context, *BatchGetConversationsRequest) (*BatchGetConversationsResponse, error)
@@ -69,6 +70,7 @@ type ConversationServiceHTTPServer interface {
 	// GetConversation Retrieves a conversation by resource name.
 	GetConversation(context.Context, *GetConversationRequest) (*Conversation, error)
 	// GetConversationUser Retrieves a conversation user by resource name.
+	// Use `me` as the conversation user ID for the authenticated user.
 	GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error)
 	// GetMessage Retrieves a message by resource name.
 	// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
@@ -609,6 +611,7 @@ func _ConversationService_DeleteMessage0_HTTP_Handler(srv ConversationServiceHTT
 
 type ConversationServiceHTTPClient interface {
 	// BatchGetConversationUsers Retrieves multiple conversation users by their resource names.
+	// Names may use `me` as the conversation user ID for the authenticated user.
 	BatchGetConversationUsers(ctx context.Context, req *BatchGetConversationUsersRequest, opts ...http.CallOption) (rsp *BatchGetConversationUsersResponse, err error)
 	// BatchGetConversations Retrieves multiple conversations by their resource names.
 	BatchGetConversations(ctx context.Context, req *BatchGetConversationsRequest, opts ...http.CallOption) (rsp *BatchGetConversationsResponse, err error)
@@ -635,6 +638,7 @@ type ConversationServiceHTTPClient interface {
 	// GetConversation Retrieves a conversation by resource name.
 	GetConversation(ctx context.Context, req *GetConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
 	// GetConversationUser Retrieves a conversation user by resource name.
+	// Use `me` as the conversation user ID for the authenticated user.
 	GetConversationUser(ctx context.Context, req *GetConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
 	// GetMessage Retrieves a message by resource name.
 	// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
@@ -666,6 +670,7 @@ func NewConversationServiceHTTPClient(client *http.Client) ConversationServiceHT
 }
 
 // BatchGetConversationUsers Retrieves multiple conversation users by their resource names.
+// Names may use `me` as the conversation user ID for the authenticated user.
 func (c *ConversationServiceHTTPClientImpl) BatchGetConversationUsers(ctx context.Context, in *BatchGetConversationUsersRequest, opts ...http.CallOption) (*BatchGetConversationUsersResponse, error) {
 	var out BatchGetConversationUsersResponse
 	pattern := "/v1/{parent=conversations/*}/users:batchGet"
@@ -877,6 +882,7 @@ func (c *ConversationServiceHTTPClientImpl) GetConversation(ctx context.Context,
 }
 
 // GetConversationUser Retrieves a conversation user by resource name.
+// Use `me` as the conversation user ID for the authenticated user.
 func (c *ConversationServiceHTTPClientImpl) GetConversationUser(ctx context.Context, in *GetConversationUserRequest, opts ...http.CallOption) (*ConversationUser, error) {
 	var out ConversationUser
 	pattern := "/v1/{name=conversations/*/users/*}"

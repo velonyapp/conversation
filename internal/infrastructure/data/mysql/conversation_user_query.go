@@ -78,6 +78,43 @@ func (q *conversationUserQuery) Find(ctx context.Context, conversationUserID vo.
 	return &conversationUser, nil
 }
 
+func (q *conversationUserQuery) FindMe(ctx context.Context, scope query.ConversationUserScope) (*common.ConversationUserResult, error) {
+	const query = `
+		SELECT
+			cu.id,
+			cu.user_id,
+			cu.role,
+			cu.create_time,
+			cu.update_time
+		FROM conversation_users cu
+		WHERE cu.conversation_id = ?
+			AND cu.user_id = ?
+		LIMIT 1
+	`
+
+	row := executor(ctx, q.db).QueryRowContext(ctx, query,
+		scope.ConversationID.String(),
+		scope.UserID.String(),
+	)
+
+	conversationUser, err := scanQueryConversationUser(row)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		q.log.ErrorContext(ctx,
+			"failed to find own conversation user",
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
+		return nil, err
+	}
+
+	return &conversationUser, nil
+}
+
 func (q *conversationUserQuery) BatchFind(ctx context.Context, conversationUserIDs []vo.ConversationUserID, scope query.ConversationUserScope) (map[vo.ConversationUserID]common.ConversationUserResult, error) {
 	results := make(map[vo.ConversationUserID]common.ConversationUserResult, len(conversationUserIDs))
 	if len(conversationUserIDs) == 0 {
