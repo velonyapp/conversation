@@ -147,7 +147,7 @@ func (r *conversationUserRepo) Save(ctx context.Context, conversationUser *entit
 				conversationUser.ID().String(),
 				conversationUser.ConversationID().String(),
 				conversationUser.UserID().String(),
-				conversationUser.Role().String(),
+				formatConversationUserRole(conversationUser.Role().String()),
 				conversationUser.CreateTime(),
 				conversationUser.UpdateTime(),
 				conversationUser.Version(),
@@ -171,7 +171,7 @@ func (r *conversationUserRepo) Save(ctx context.Context, conversationUser *entit
 			`
 
 			result, err := executor(ctx, r.db).ExecContext(ctx, query,
-				conversationUser.Role().String(),
+				formatConversationUserRole(conversationUser.Role().String()),
 				conversationUser.UpdateTime(),
 				conversationUser.Version(),
 				conversationUser.ID().String(),
@@ -221,7 +221,7 @@ func scanRepoConversationUser(scanner repoConversationUserScanner) (*entity.Conv
 		idRaw             string
 		conversationIDRaw string
 		userIDRaw         string
-		roleRaw           string
+		roleRaw           uint8
 		createTime        time.Time
 		updateTime        time.Time
 		version           uint32
@@ -242,7 +242,7 @@ func scanRepoConversationUser(scanner repoConversationUserScanner) (*entity.Conv
 	id, _ := vo.NewConversationUserID(idRaw)
 	conversationID, _ := vo.NewConversationID(conversationIDRaw)
 	userID := vo.NewUserID(userIDRaw)
-	role, _ := vo.NewConversationUserRole(roleRaw)
+	role, _ := vo.NewConversationUserRole(parseConversationUserRole(roleRaw))
 
 	return entity.ReconstituteConversationUser(
 		id,

@@ -192,6 +192,7 @@ func (q *conversationUserQuery) BatchFind(ctx context.Context, conversationUserI
 }
 
 type conversationUserCursor struct {
+	Role uint8     `json:"role"`
 	Time time.Time `json:"time"`
 	ID   string    `json:"id"`
 }
@@ -233,10 +234,11 @@ func (q *conversationUserQuery) List(ctx context.Context, scope query.Conversati
 	        ON me.conversation_id = cu.conversation_id
 	    WHERE me.conversation_id = ?
 	        AND me.user_id = ?
-	        AND (? = '' OR (cu.create_time, cu.id) < (?, ?))
+	        AND (? = '' OR (cu.role, cu.update_time, cu.id) > (?, ?, ?))
 	    ORDER BY
-	        cu.create_time DESC,
-	        cu.id DESC
+	        cu.role ASC,
+	        cu.update_time ASC,
+	        cu.id ASC
 	    LIMIT ?
 	`
 
@@ -244,6 +246,7 @@ func (q *conversationUserQuery) List(ctx context.Context, scope query.Conversati
 		scope.ConversationID.String(),
 		scope.UserID.String(),
 		pageToken,
+		cursor.Role,
 		cursor.Time,
 		cursor.ID,
 		int64(pageSize)+1,
@@ -264,7 +267,8 @@ func (q *conversationUserQuery) List(ctx context.Context, scope query.Conversati
 	for rows.Next() {
 		if len(conversationUsers) == int(pageSize) {
 			nextCursor := conversationUserCursor{
-				Time: conversationUsers[len(conversationUsers)-1].CreateTime,
+				Role: formatConversationUserRole(conversationUsers[len(conversationUsers)-1].Role),
+				Time: conversationUsers[len(conversationUsers)-1].UpdateTime,
 				ID:   conversationUsers[len(conversationUsers)-1].ID,
 			}
 
@@ -308,7 +312,7 @@ func scanQueryConversationUser(scanner queryConversationUserScanner) (common.Con
 	var (
 		id         string
 		userID     string
-		role       string
+		role       uint8
 		createTime time.Time
 		updateTime time.Time
 	)
@@ -326,7 +330,7 @@ func scanQueryConversationUser(scanner queryConversationUserScanner) (common.Con
 	return common.ConversationUserResult{
 		ID:         id,
 		UserID:     userID,
-		Role:       role,
+		Role:       parseConversationUserRole(role),
 		CreateTime: createTime,
 		UpdateTime: updateTime,
 	}, nil

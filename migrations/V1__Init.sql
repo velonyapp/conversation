@@ -15,12 +15,12 @@ CREATE TABLE conversation_users (
     id              CHAR(36) PRIMARY KEY,
     conversation_id CHAR(36) NOT NULL,
     user_id         CHAR(36) NOT NULL,
-    role            VARCHAR(16) NOT NULL,
+    role            TINYINT UNSIGNED NOT NULL,
     create_time     TIMESTAMP(6) NOT NULL,
     update_time     TIMESTAMP(6) NOT NULL,
     version         INT NOT NULL,
 
-    INDEX idx_conversation_users_conversation_id_create_time (conversation_id, create_time),
+    INDEX idx_conversation_users_conversation_id_role_update_time (conversation_id, role, update_time),
 
     UNIQUE KEY uq_conversation_users_user_id_conversation_id (user_id, conversation_id),
 
