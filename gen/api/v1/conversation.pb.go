@@ -1378,6 +1378,8 @@ func (x *DemoteConversationUserRequest) GetName() string {
 type GetMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The message to retrieve.
+	// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
+	// The returned message uses its canonical resource name.
 	//
 	// Format: `conversations/{conversation}/messages/{message}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -1552,6 +1554,8 @@ type BatchGetMessagesRequest struct {
 	// Format: `conversations/{conversation}`
 	Parent string `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
 	// The messages to retrieve.
+	// Use `latest` as the message ID for the greatest `(create_time, id)` in each conversation.
+	// Returned messages use their canonical resource names.
 	// A maximum of `100` messages can be retrieved in a batch.
 	//
 	// Format: `conversations/{conversation}/messages/{message}`

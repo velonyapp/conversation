@@ -150,6 +150,7 @@ service ConversationService {
   }
 
   // Retrieves a message by resource name.
+  // Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
   rpc GetMessage(GetMessageRequest) returns (Message) {
     option (google.api.http) = {
       get: "/v1/{name=conversations/*/messages/*}"
@@ -167,6 +168,7 @@ service ConversationService {
 
   // Retrieves multiple messages by their resource names.
   // Use `conversations/-` to retrieve messages across conversations.
+  // Names may use `latest` as the message ID within each conversation.
   rpc BatchGetMessages(BatchGetMessagesRequest) returns (BatchGetMessagesResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=conversations/*}/messages:batchGet"
@@ -581,6 +583,8 @@ message DemoteConversationUserRequest {
 
 message GetMessageRequest {
   // The message to retrieve.
+  // Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
+  // The returned message uses its canonical resource name.
   //
   // Format: `conversations/{conversation}/messages/{message}`
   string name = 1 [
@@ -637,6 +641,8 @@ message BatchGetMessagesRequest {
   ];
 
   // The messages to retrieve.
+  // Use `latest` as the message ID for the greatest `(create_time, id)` in each conversation.
+  // Returned messages use their canonical resource names.
   // A maximum of `100` messages can be retrieved in a batch.
   //
   // Format: `conversations/{conversation}/messages/{message}`

@@ -83,11 +83,13 @@ type ConversationServiceClient interface {
 	// Demotes a conversation user to member.
 	DemoteConversationUser(ctx context.Context, in *DemoteConversationUserRequest, opts ...grpc.CallOption) (*ConversationUser, error)
 	// Retrieves a message by resource name.
+	// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
 	GetMessage(ctx context.Context, in *GetMessageRequest, opts ...grpc.CallOption) (*Message, error)
 	// Lists messages in a conversation.
 	ListMessages(ctx context.Context, in *ListMessagesRequest, opts ...grpc.CallOption) (*ListMessagesResponse, error)
 	// Retrieves multiple messages by their resource names.
 	// Use `conversations/-` to retrieve messages across conversations.
+	// Names may use `latest` as the message ID within each conversation.
 	BatchGetMessages(ctx context.Context, in *BatchGetMessagesRequest, opts ...grpc.CallOption) (*BatchGetMessagesResponse, error)
 	// Creates a message in a conversation.
 	CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*Message, error)
@@ -364,11 +366,13 @@ type ConversationServiceServer interface {
 	// Demotes a conversation user to member.
 	DemoteConversationUser(context.Context, *DemoteConversationUserRequest) (*ConversationUser, error)
 	// Retrieves a message by resource name.
+	// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
 	GetMessage(context.Context, *GetMessageRequest) (*Message, error)
 	// Lists messages in a conversation.
 	ListMessages(context.Context, *ListMessagesRequest) (*ListMessagesResponse, error)
 	// Retrieves multiple messages by their resource names.
 	// Use `conversations/-` to retrieve messages across conversations.
+	// Names may use `latest` as the message ID within each conversation.
 	BatchGetMessages(context.Context, *BatchGetMessagesRequest) (*BatchGetMessagesResponse, error)
 	// Creates a message in a conversation.
 	CreateMessage(context.Context, *CreateMessageRequest) (*Message, error)

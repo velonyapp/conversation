@@ -179,7 +179,7 @@ paths:
         get:
             tags:
                 - ConversationService
-            description: Retrieves a message by resource name.
+            description: "Retrieves a message by resource name.\r\n Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation."
             operationId: ConversationService_GetMessage
             parameters:
                 - name: conversation
@@ -264,7 +264,7 @@ paths:
         get:
             tags:
                 - ConversationService
-            description: "Retrieves multiple messages by their resource names.\r\n Use `conversations/-` to retrieve messages across conversations."
+            description: "Retrieves multiple messages by their resource names.\r\n Use `conversations/-` to retrieve messages across conversations.\r\n Names may use `latest` as the message ID within each conversation."
             operationId: ConversationService_BatchGetMessages
             parameters:
                 - name: conversation
@@ -275,7 +275,7 @@ paths:
                     type: string
                 - name: names
                   in: query
-                  description: "The messages to retrieve.\r\n A maximum of `100` messages can be retrieved in a batch.\r\n\r\n Format: `conversations/{conversation}/messages/{message}`"
+                  description: "The messages to retrieve.\r\n Use `latest` as the message ID for the greatest `(create_time, id)` in each conversation.\r\n Returned messages use their canonical resource names.\r\n A maximum of `100` messages can be retrieved in a batch.\r\n\r\n Format: `conversations/{conversation}/messages/{message}`"
                   schema:
                     type: array
                     items:

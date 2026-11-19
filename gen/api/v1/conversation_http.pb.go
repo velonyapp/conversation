@@ -48,6 +48,7 @@ type ConversationServiceHTTPServer interface {
 	BatchGetConversations(context.Context, *BatchGetConversationsRequest) (*BatchGetConversationsResponse, error)
 	// BatchGetMessages Retrieves multiple messages by their resource names.
 	// Use `conversations/-` to retrieve messages across conversations.
+	// Names may use `latest` as the message ID within each conversation.
 	BatchGetMessages(context.Context, *BatchGetMessagesRequest) (*BatchGetMessagesResponse, error)
 	// CreateConversation Creates a conversation.
 	CreateConversation(context.Context, *CreateConversationRequest) (*Conversation, error)
@@ -70,6 +71,7 @@ type ConversationServiceHTTPServer interface {
 	// GetConversationUser Retrieves a conversation user by resource name.
 	GetConversationUser(context.Context, *GetConversationUserRequest) (*ConversationUser, error)
 	// GetMessage Retrieves a message by resource name.
+	// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
 	GetMessage(context.Context, *GetMessageRequest) (*Message, error)
 	// JoinConversation Joins a conversation.
 	JoinConversation(context.Context, *JoinConversationRequest) (*Conversation, error)
@@ -612,6 +614,7 @@ type ConversationServiceHTTPClient interface {
 	BatchGetConversations(ctx context.Context, req *BatchGetConversationsRequest, opts ...http.CallOption) (rsp *BatchGetConversationsResponse, err error)
 	// BatchGetMessages Retrieves multiple messages by their resource names.
 	// Use `conversations/-` to retrieve messages across conversations.
+	// Names may use `latest` as the message ID within each conversation.
 	BatchGetMessages(ctx context.Context, req *BatchGetMessagesRequest, opts ...http.CallOption) (rsp *BatchGetMessagesResponse, err error)
 	// CreateConversation Creates a conversation.
 	CreateConversation(ctx context.Context, req *CreateConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
@@ -634,6 +637,7 @@ type ConversationServiceHTTPClient interface {
 	// GetConversationUser Retrieves a conversation user by resource name.
 	GetConversationUser(ctx context.Context, req *GetConversationUserRequest, opts ...http.CallOption) (rsp *ConversationUser, err error)
 	// GetMessage Retrieves a message by resource name.
+	// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
 	GetMessage(ctx context.Context, req *GetMessageRequest, opts ...http.CallOption) (rsp *Message, err error)
 	// JoinConversation Joins a conversation.
 	JoinConversation(ctx context.Context, req *JoinConversationRequest, opts ...http.CallOption) (rsp *Conversation, err error)
@@ -697,6 +701,7 @@ func (c *ConversationServiceHTTPClientImpl) BatchGetConversations(ctx context.Co
 
 // BatchGetMessages Retrieves multiple messages by their resource names.
 // Use `conversations/-` to retrieve messages across conversations.
+// Names may use `latest` as the message ID within each conversation.
 func (c *ConversationServiceHTTPClientImpl) BatchGetMessages(ctx context.Context, in *BatchGetMessagesRequest, opts ...http.CallOption) (*BatchGetMessagesResponse, error) {
 	var out BatchGetMessagesResponse
 	pattern := "/v1/{parent=conversations/*}/messages:batchGet"
@@ -889,6 +894,7 @@ func (c *ConversationServiceHTTPClientImpl) GetConversationUser(ctx context.Cont
 }
 
 // GetMessage Retrieves a message by resource name.
+// Use `latest` as the message ID for the greatest `(create_time, id)` in the conversation.
 func (c *ConversationServiceHTTPClientImpl) GetMessage(ctx context.Context, in *GetMessageRequest, opts ...http.CallOption) (*Message, error) {
 	var out Message
 	pattern := "/v1/{name=conversations/*/messages/*}"

@@ -625,7 +625,7 @@ func (s *API) GetMessage(ctx context.Context, req *v1.GetMessageRequest) (*v1.Me
 	}
 
 	m := &v1.Message{
-		Name:       formatMessageName(conversationID, result.Message.ID),
+		Name:       formatMessageName(result.Message.ConversationID, result.Message.ID),
 		Content:    result.Message.Content,
 		CreateTime: timestamppb.New(result.Message.CreateTime),
 		UpdateTime: timestamppb.New(result.Message.UpdateTime),
@@ -698,8 +698,7 @@ func (s *API) BatchGetMessages(ctx context.Context, req *v1.BatchGetMessagesRequ
 	if err != nil {
 		return nil, err
 	}
-	conversationIDs := make([]string, len(req.Names))
-	messageIDs := make([]string, len(req.Names))
+	messageNames := make([]query.BatchGetMessage, len(req.Names))
 	for i, name := range req.Names {
 		nameConversationID, messageID, err := parseMessageName(name)
 		if err != nil {
@@ -709,14 +708,16 @@ func (s *API) BatchGetMessages(ctx context.Context, req *v1.BatchGetMessagesRequ
 			return nil, ErrInvalidMessageResourceName
 		}
 
-		conversationIDs[i] = nameConversationID
-		messageIDs[i] = messageID
+		messageNames[i] = query.BatchGetMessage{
+			ConversationID: nameConversationID,
+			MessageID:      messageID,
+		}
 	}
 
 	result, err := query.Send(ctx, s.queryBus, query.BatchGetMessages{
 		ActorID:        subject,
 		ConversationID: conversationID,
-		MessageIDs:     messageIDs,
+		Messages:       messageNames,
 	})
 	if err != nil {
 		return nil, err
@@ -724,7 +725,7 @@ func (s *API) BatchGetMessages(ctx context.Context, req *v1.BatchGetMessagesRequ
 
 	messages := make([]*v1.Message, len(result.Messages))
 	for i, message := range result.Messages {
-		if message.ConversationID != conversationIDs[i] {
+		if message.ConversationID != messageNames[i].ConversationID {
 			return nil, common.ErrMessageNotFound
 		}
 

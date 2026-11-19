@@ -79,6 +79,49 @@ func (q *messageQuery) Find(ctx context.Context, messageID vo.MessageID, scope q
 	return &message, nil
 }
 
+func (q *messageQuery) FindLatest(ctx context.Context, scope query.MessageScope) (*common.MessageResult, error) {
+	const query = `
+		SELECT
+			m.id,
+			m.conversation_id,
+			m.user_id,
+			m.content,
+			m.create_time,
+			m.update_time
+		FROM conversation_users cu
+		INNER JOIN messages m
+			ON m.conversation_id = cu.conversation_id
+		WHERE cu.conversation_id = ?
+			AND cu.user_id = ?
+		ORDER BY
+			m.create_time DESC,
+			m.id DESC
+		LIMIT 1
+	`
+
+	row := executor(ctx, q.db).QueryRowContext(ctx, query,
+		scope.ConversationID.String(),
+		scope.UserID.String(),
+	)
+
+	message, err := scanQueryMessage(row)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		q.log.ErrorContext(ctx,
+			"failed to find latest message",
+			slog.String("conversation_id", scope.ConversationID.String()),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
+		return nil, err
+	}
+
+	return &message, nil
+}
+
 func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID, scope query.MessageBatchScope) (map[vo.MessageID]common.MessageResult, error) {
 	results := make(map[vo.MessageID]common.MessageResult, len(messageIDs))
 	if len(messageIDs) == 0 {
@@ -172,6 +215,121 @@ func (q *messageQuery) BatchFind(ctx context.Context, messageIDs []vo.MessageID,
 	for _, messageID := range messageIDs {
 		if message, ok := messages[messageID.String()]; ok {
 			results[messageID] = message
+		}
+	}
+
+	return results, nil
+}
+
+func (q *messageQuery) BatchFindLatest(ctx context.Context, conversationIDs []vo.ConversationID, scope query.MessageBatchScope) (map[vo.ConversationID]common.MessageResult, error) {
+	results := make(map[vo.ConversationID]common.MessageResult, len(conversationIDs))
+	if len(conversationIDs) == 0 {
+		return results, nil
+	}
+
+	placeholders := make([]string, len(conversationIDs))
+	args := make([]any, len(conversationIDs))
+
+	for i, conversationID := range conversationIDs {
+		placeholders[i] = "?"
+		args[i] = conversationID.String()
+	}
+
+	args = append(args, scope.UserID.String())
+
+	var (
+		query          string
+		conversationID string
+	)
+	if scope.ConversationID != nil {
+		conversationID = scope.ConversationID.String()
+		query = `
+			SELECT
+				m.id,
+				m.conversation_id,
+				m.user_id,
+				m.content,
+				m.create_time,
+				m.update_time
+			FROM conversation_users cu
+			INNER JOIN messages m
+				ON m.id = (
+					SELECT id
+					FROM messages
+					WHERE conversation_id = cu.conversation_id
+					ORDER BY
+						create_time DESC,
+						id DESC
+					LIMIT 1
+				)
+			WHERE cu.conversation_id IN (` + strings.Join(placeholders, ", ") + `)
+				AND cu.user_id = ?
+				AND cu.conversation_id = ?
+		`
+		args = append(args, conversationID)
+	} else {
+		query = `
+			SELECT
+				m.id,
+				m.conversation_id,
+				m.user_id,
+				m.content,
+				m.create_time,
+				m.update_time
+			FROM conversation_users cu
+			INNER JOIN messages m
+				ON m.id = (
+					SELECT id
+					FROM messages
+					WHERE conversation_id = cu.conversation_id
+					ORDER BY
+						create_time DESC,
+						id DESC
+					LIMIT 1
+				)
+			WHERE cu.conversation_id IN (` + strings.Join(placeholders, ", ") + `)
+				AND cu.user_id = ?
+		`
+	}
+
+	rows, err := executor(ctx, q.db).QueryContext(ctx, query, args...)
+	if err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to batch find latest messages",
+			slog.Int("conversation_count", len(conversationIDs)),
+			slog.String("conversation_id", conversationID),
+			slog.String("user_id", scope.UserID.String()),
+			slog.Any("error", err),
+		)
+		return nil, err
+	}
+	defer rows.Close()
+
+	messages := make(map[string]common.MessageResult, len(conversationIDs))
+	for rows.Next() {
+		message, err := scanQueryMessage(rows)
+		if err != nil {
+			q.log.ErrorContext(ctx,
+				"failed to scan latest message during batch find",
+				slog.Any("error", err),
+			)
+			return nil, err
+		}
+
+		messages[message.ConversationID] = message
+	}
+
+	if err := rows.Err(); err != nil {
+		q.log.ErrorContext(ctx,
+			"failed to iterate latest messages during batch find",
+			slog.Any("error", err),
+		)
+		return nil, err
+	}
+
+	for _, conversationID := range conversationIDs {
+		if message, ok := messages[conversationID.String()]; ok {
+			results[conversationID] = message
 		}
 	}
 

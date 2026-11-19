@@ -11,7 +11,12 @@ type BatchGetMessages struct {
 	ActorID string
 
 	ConversationID string
-	MessageIDs     []string
+	Messages       []BatchGetMessage
+}
+
+type BatchGetMessage struct {
+	ConversationID string
+	MessageID      string
 }
 
 type BatchGetMessagesResult struct {
@@ -48,25 +53,45 @@ func (h *batchGetMessagesHandler) Handle(
 		conversationID = &value
 	}
 
-	messageIDs := make([]vo.MessageID, len(qry.MessageIDs))
-	for i, messageID := range qry.MessageIDs {
-		messageIDs[i], _ = vo.NewMessageID(messageID)
+	messageIDs := make([]vo.MessageID, 0, len(qry.Messages))
+	latestConversationIDs := make([]vo.ConversationID, 0, len(qry.Messages))
+	for _, message := range qry.Messages {
+		if message.MessageID == messageAliasLatest {
+			conversationID, _ := vo.NewConversationID(message.ConversationID)
+			latestConversationIDs = append(latestConversationIDs, conversationID)
+		} else {
+			messageID, _ := vo.NewMessageID(message.MessageID)
+			messageIDs = append(messageIDs, messageID)
+		}
 	}
 
-	messages, err := h.messageQuery.BatchFind(ctx,
-		messageIDs,
-		MessageBatchScope{
-			ConversationID: conversationID,
-			UserID:         actorID,
-		},
-	)
+	scope := MessageBatchScope{
+		ConversationID: conversationID,
+		UserID:         actorID,
+	}
+
+	messages, err := h.messageQuery.BatchFind(ctx, messageIDs, scope)
+	if err != nil {
+		return BatchGetMessagesResult{}, err
+	}
+	latestMessages, err := h.messageQuery.BatchFindLatest(ctx, latestConversationIDs, scope)
 	if err != nil {
 		return BatchGetMessagesResult{}, err
 	}
 
-	messageResults := make([]common.MessageResult, len(messageIDs))
-	for i, messageID := range messageIDs {
-		message, ok := messages[messageID]
+	messageResults := make([]common.MessageResult, len(qry.Messages))
+	for i, requestedMessage := range qry.Messages {
+		var (
+			message common.MessageResult
+			ok      bool
+		)
+		if requestedMessage.MessageID == messageAliasLatest {
+			conversationID, _ := vo.NewConversationID(requestedMessage.ConversationID)
+			message, ok = latestMessages[conversationID]
+		} else {
+			messageID, _ := vo.NewMessageID(requestedMessage.MessageID)
+			message, ok = messages[messageID]
+		}
 		if !ok {
 			return BatchGetMessagesResult{}, common.ErrMessageNotFound
 		}

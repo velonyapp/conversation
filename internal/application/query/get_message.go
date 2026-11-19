@@ -42,16 +42,22 @@ func (h *getMessageHandler) Handle(
 ) (GetMessageResult, error) {
 	actorID := vo.NewUserID(qry.ActorID)
 
-	messageID, _ := vo.NewMessageID(qry.MessageID)
 	conversationID, _ := vo.NewConversationID(qry.ConversationID)
+	scope := MessageScope{
+		ConversationID: conversationID,
+		UserID:         actorID,
+	}
 
-	message, err := h.messageQuery.Find(ctx,
-		messageID,
-		MessageScope{
-			ConversationID: conversationID,
-			UserID:         actorID,
-		},
+	var (
+		message *common.MessageResult
+		err     error
 	)
+	if qry.MessageID == messageAliasLatest {
+		message, err = h.messageQuery.FindLatest(ctx, scope)
+	} else {
+		messageID, _ := vo.NewMessageID(qry.MessageID)
+		message, err = h.messageQuery.Find(ctx, messageID, scope)
+	}
 	if err != nil {
 		return GetMessageResult{}, err
 	}
